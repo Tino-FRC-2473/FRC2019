@@ -26,11 +26,6 @@ public class AlignToHatch extends Command {
 	public AlignToHatch() {
 		requires(Robot.driveSubsystem);
 	}
-	
-	@Override
-	protected void initialize() {
-		Robot.driveSubsystem.drive(normalPower, normalPower, normalPower + addedPower, normalPower + addedPower);
-	}
  
 	@Override
 	protected void execute() {
