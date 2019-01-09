@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+        Devices.getInstance().initializeCVSocket();
 		
 		// Turn on the CV light
 		// cvLight.set(Relay.Value.kReverse);
@@ -111,6 +112,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
+        Devices.getInstance().initializeCVSocket();
 		(new TeleopDrive()).start();
 	}
 
