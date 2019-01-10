@@ -15,13 +15,28 @@ import org.usfirst.frc.team2473.robot.Robot;
  */
 public class TeleopDrive extends Command {
 	
+	private AlignToHatch alignToHatch;
+
 	public TeleopDrive() {
 		requires(Robot.driveSubsystem);
 	}
 
 	@Override
+	protected void initialize() {
+		alignToHatch = new AlignToHatch();
+	}
+
+	@Override
 	protected void execute() {
-		Robot.driveSubsystem.teleopDrive(Robot.oi.getThrottle().getZ(), Robot.oi.getWheel().getX());
+		double throttleZ = Robot.oi.getThrottle().getZ();
+		double wheelX = Robot.oi.getWheel().getX();
+		boolean cvButtonPressed = Robot.oi.getCVButton().get();
+
+		if (cvButtonPressed && throttleZ == 0 && wheelX == 0) { // ensures that the CV button is pressed AND the throttle and wheel are zeroed before using CV
+			alignToHatch.move();
+		} else {
+			Robot.driveSubsystem.teleopDrive(throttleZ, wheelX);
+		}
 	}
 
 	@Override
