@@ -1,11 +1,14 @@
 package org.usfirst.frc.team2473.framework;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
+
+import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -29,7 +32,10 @@ public class Devices {
 	private ArrayList<DigitalInput> digitals; //collection of digital input sensors
 	private ArrayList<Servo> servos;	 //collection of servos
 	private Map<Integer, Solenoid> solenoids;
-	private Map<String, DoubleSolenoid> doubleSolenoids;
+    private Map<String, DoubleSolenoid> doubleSolenoids;
+    private UtilitySocket cvSocket;
+    private double cvAngle = 0;
+
 	private static Devices theInstance; //serves as the static instance to use at all times
 	
 	static { //construct theInstance as a static function
@@ -44,7 +50,7 @@ public class Devices {
 		digitals = new ArrayList<DigitalInput>();
 		solenoids = new HashMap<Integer, Solenoid>();
 		doubleSolenoids = new HashMap<String, DoubleSolenoid>();
-		servos = new ArrayList<Servo>();
+        servos = new ArrayList<Servo>();
 	}
 
 	/**
@@ -285,5 +291,25 @@ public class Devices {
 	
 	public void removeDoubleSolenoid(int forward, int reverse) {
 		if(doubleSolenoids.containsKey(forward + " " + reverse)) doubleSolenoids.remove(forward + " " + reverse);				
-	}	
+    }
+    
+    public void initializeCVSocket() {
+        if (cvSocket == null) {
+            try {
+                System.out.println("Creating socket for CV");
+                cvSocket = new UtilitySocket(RobotMap.JETSON_IP, RobotMap.JETSON_PORT);
+                System.out.println("Utility socket created!");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public double getCVAngle() throws NullPointerException{
+        if (cvSocket != null) {
+            String angleStr = cvSocket.getLine();
+            if (angleStr != null) cvAngle = Double.parseDouble(angleStr);
+            return cvAngle;
+        }
+        throw new NullPointerException("CV Socket not initialized");
+    }
 }
