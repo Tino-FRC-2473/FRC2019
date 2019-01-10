@@ -10,18 +10,15 @@ package org.usfirst.frc.team2473.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
 
-import java.io.IOException;
-
 import org.usfirst.frc.team2473.framework.Devices;
-import org.usfirst.frc.team2473.framework.UtilitySocket;
 
 /**
  * A class that aligns the robot to the hatch based on the angle provided by CV
  */
 public class AlignToHatch extends Command {
 	
-	double normalPower = 0.25;
-    double addedPower = 0.15;
+	private double normalPower = 0.25;
+    private double addedPower = 0.15;
     		
 	public AlignToHatch() {
 		requires(Robot.driveSubsystem);
@@ -34,18 +31,27 @@ public class AlignToHatch extends Command {
     
     public void move() {
         double angle = Devices.getInstance().getCVAngle();
+        double distance = Devices.getInstance().getCVDistance();
+
+        double adjustAddedPower = addedPower;
+        double adjustNormalPower = normalPower;
+        if (distance < 10 && Math.abs(angle) > 10) {
+            adjustAddedPower *= 1.5;
+            adjustNormalPower = 0.1;
+        }
+
 		System.out.println(angle);
 		if (Math.abs(angle) < 1) { // keep going in this direction
-			Robot.driveSubsystem.drive(normalPower, normalPower, normalPower, normalPower);
+			Robot.driveSubsystem.drive(adjustNormalPower, adjustNormalPower, adjustNormalPower, adjustNormalPower);
 		} else if (angle > 1) { // Robot is to the left of the target
-			Robot.driveSubsystem.drive(normalPower + addedPower, normalPower + addedPower, normalPower, normalPower);
+			Robot.driveSubsystem.drive(adjustNormalPower + adjustAddedPower, adjustNormalPower + adjustAddedPower, adjustNormalPower, adjustNormalPower);
 		} else { // Robot is to the right of the target
-			Robot.driveSubsystem.drive(normalPower, normalPower, normalPower + addedPower, normalPower + addedPower);
+			Robot.driveSubsystem.drive(adjustNormalPower, adjustNormalPower, adjustNormalPower + adjustAddedPower, adjustNormalPower + adjustAddedPower);
 		}
     }
 
 	@Override
 	protected boolean isFinished() {
-		return false;
+		return Devices.getInstance().getCVDistance() < 5;
 	}
 }

@@ -35,6 +35,7 @@ public class Devices {
     private Map<String, DoubleSolenoid> doubleSolenoids;
     private UtilitySocket cvSocket;
     private double cvAngle = 0;
+    private double cvDistance = 0;
 
 	private static Devices theInstance; //serves as the static instance to use at all times
 	
@@ -304,12 +305,35 @@ public class Devices {
             }
         }
     }
-    public double getCVAngle() throws NullPointerException{
+
+    private void fetchCVData() throws NullPointerException {
         if (cvSocket != null) {
-            String angleStr = cvSocket.getLine();
-            if (angleStr != null) cvAngle = Double.parseDouble(angleStr);
-            return cvAngle;
+            String[] str = cvSocket.getLine().split(" ");
+            String angleStr = str[0];
+            String distanceStr = str[1];
+            if (angleStr != null  && distanceStr != null) {
+                cvAngle = Double.parseDouble(angleStr);
+                cvDistance = Double.parseDouble(distanceStr);
+            }
         }
         throw new NullPointerException("CV Socket not initialized");
+    }
+    
+    public double getCVAngle() throws NullPointerException {
+        try {
+            fetchCVData();
+            return cvAngle;
+        } catch (NullPointerException e) {
+            throw e;
+        }
+    }
+
+    public double getCVDistance() throws NullPointerException {
+        try {
+            fetchCVData();
+            return cvDistance;
+        } catch (NullPointerException e) {
+            throw e;
+        }
     }
 }
