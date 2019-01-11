@@ -18,7 +18,21 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * This class contains all components of the robot necessary for driving.
  */
 public class Elevator extends Subsystem {
-	
+    
+    public enum ElevatorPosition {
+        BASE(100), FIRST(500), SECOND(1000), THIRD(1500);
+
+        private final int value;
+
+        private ElevatorPosition(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
 	private static Elevator instance;
 	
 	static {
@@ -63,7 +77,7 @@ public class Elevator extends Subsystem {
 	}
     
     public synchronized void printEncoders() {
-		System.out.println("Elevator:" + getEncoderTicks());
+		System.out.println("Elevator: " + getEncoderTicks());
     }
     
 	/**

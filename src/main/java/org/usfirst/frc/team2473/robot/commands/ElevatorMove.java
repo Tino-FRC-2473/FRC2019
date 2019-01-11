@@ -9,6 +9,7 @@ package org.usfirst.frc.team2473.robot.commands;
 
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -56,6 +57,15 @@ public class ElevatorMove extends Command {
 		
 		this.moveByInches = inches;
 		this.power = (inches < 0) ? -power : power;
+    }
+    
+    public ElevatorMove(ElevatorPosition pos, double power) {
+		requires(Robot.elevator);
+        
+        int delta = pos.getValue()-Robot.elevator.getEncoderTicks();
+
+		this.moveByInches = delta;
+		this.power = (delta < 0) ? -power : power;
 	}
 	
 	/**
