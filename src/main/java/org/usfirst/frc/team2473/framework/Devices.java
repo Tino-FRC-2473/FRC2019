@@ -1,14 +1,11 @@
 package org.usfirst.frc.team2473.framework;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
-
-import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -33,9 +30,6 @@ public class Devices {
 	private ArrayList<Servo> servos;	 //collection of servos
 	private Map<Integer, Solenoid> solenoids;
     private Map<String, DoubleSolenoid> doubleSolenoids;
-    private UtilitySocket cvSocket;
-    private double cvAngle = 0;
-    private double cvDistance = 0;
 
 	private static Devices theInstance; //serves as the static instance to use at all times
 	
@@ -292,48 +286,5 @@ public class Devices {
 	
 	public void removeDoubleSolenoid(int forward, int reverse) {
 		if(doubleSolenoids.containsKey(forward + " " + reverse)) doubleSolenoids.remove(forward + " " + reverse);				
-    }
-    
-    public void initializeCVSocket() {
-        if (cvSocket == null) {
-            try {
-                System.out.println("Creating socket for CV");
-                cvSocket = new UtilitySocket(RobotMap.JETSON_IP, RobotMap.JETSON_PORT);
-                System.out.println("Utility socket created!");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void fetchCVData() throws NullPointerException {
-        if (cvSocket != null) {
-            String[] str = cvSocket.getLine().split(" ");
-            String angleStr = str[0];
-            String distanceStr = str[1];
-            if (angleStr != null  && distanceStr != null) {
-                cvAngle = Double.parseDouble(angleStr);
-                cvDistance = Double.parseDouble(distanceStr);
-            }
-        }
-        throw new NullPointerException("CV Socket not initialized");
-    }
-    
-    public double getCVAngle() throws NullPointerException {
-        try {
-            fetchCVData();
-            return cvAngle;
-        } catch (NullPointerException e) {
-            throw e;
-        }
-    }
-
-    public double getCVDistance() throws NullPointerException {
-        try {
-            fetchCVData();
-            return cvDistance;
-        } catch (NullPointerException e) {
-            throw e;
-        }
     }
 }
