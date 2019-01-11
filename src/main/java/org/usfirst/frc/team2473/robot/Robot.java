@@ -13,6 +13,7 @@ import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
 import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -25,7 +26,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 public class Robot extends TimedRobot {
 	
 	public static DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
-	
+    public static Elevator elevator = Elevator.getInstance();
+    
 	public static Relay cvLight;
 	
 	public static OI oi;
