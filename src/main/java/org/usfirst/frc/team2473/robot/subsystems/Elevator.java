@@ -76,7 +76,7 @@ public class Elevator extends Subsystem {
 		return encoderResetComplete;
 	}
     
-    public synchronized void printEncoders() {
+    public void printEncoders() {
 		System.out.println("Elevator: " + getEncoderTicks());
     }
     

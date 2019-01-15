@@ -10,6 +10,7 @@ package org.usfirst.frc.team2473.robot;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.commands.AlignToHatch;
 import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
+import org.usfirst.frc.team2473.robot.commands.ElevatorTicksTest;
 import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
@@ -89,7 +90,10 @@ public class Robot extends TimedRobot {
 // 		System.out.println("Starting align to hatch ------------------------------------");
 		
 		//new StraightDrive(24, 0.3).start();
-		new AlignToHatch().start();
+		//new AlignToHatch().start();
+
+		elevator.resetEncoders();
+		new ElevatorTicksTest().start();
 		
 //		int distanceFirst  = prefs.getInt("1. First Distance", 48);
 //		int degrees  = prefs.getInt("2. Turn Degrees", 180);
