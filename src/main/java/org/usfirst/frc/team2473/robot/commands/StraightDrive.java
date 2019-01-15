@@ -33,7 +33,7 @@ public class StraightDrive extends Command {
 	 * The number of ticks that the robot should
 	 * be at if it has reached its goal.
 	 */
-	private double absoluteTickGoal;
+	private int absoluteTickGoal;
 	
 	/**
 	 * The absolute number of ticks that the robot
@@ -48,10 +48,12 @@ public class StraightDrive extends Command {
 	
 	/**
 	 * Create a StraightDrive object with given inch goal and power.
-	 * @param inches inches to move by
-	 * @param power initial power to move at
+	 * @param inches inches to move by (can be negative)
+	 * @param power initial power to move at (must be positive)
 	 */
 	public StraightDrive(double inches, double power) {
+		if(power < 0) throw new IllegalArgumentException("Power must be positive!");
+
 		requires(Robot.driveSubsystem);
 		
 		this.moveByInches = inches;
@@ -71,11 +73,13 @@ public class StraightDrive extends Command {
 	 */
 	private void setDistance(double inches) {
 		System.out.println("TICKSSSSS: " + Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
-		this.absoluteTickGoal = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR) + (this.moveByInches * RobotMap.K_TICKS_PER_INCH);
+		this.absoluteTickGoal = (int)(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR) + (inches * RobotMap.K_TICKS_PER_INCH));
 	}
 
 	@Override
 	protected void initialize() {
+		//these methods are here in initialize rather than in the constructor
+		//because the robot probably updates the encoder ticks values after the constructor is called
 		setDistance(moveByInches);
 		prevTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
 		
