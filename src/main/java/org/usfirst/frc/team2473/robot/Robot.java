@@ -13,6 +13,7 @@ import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
 import org.usfirst.frc.team2473.robot.commands.ElevatorTicksTest;
 import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
+import org.usfirst.frc.team2473.robot.commands.TeleopDrive2;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 
@@ -45,12 +46,12 @@ public class Robot extends TimedRobot {
 		// cvLight = new Relay(RobotMap.CV_LIGHT);
 		prefs = Preferences.getInstance();
 				
-		UsbCamera cubeCam = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
-		cubeCam.setBrightness(75);
-		cubeCam.setResolution(640, 480);
-		UsbCamera driveCam = CameraServer.getInstance().startAutomaticCapture("Front View", 1);
-		driveCam.setBrightness(75);
-		driveCam.setResolution(640, 480);
+		// UsbCamera cubeCam = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
+		// cubeCam.setBrightness(75);
+		// cubeCam.setResolution(640, 480);
+		// UsbCamera driveCam = CameraServer.getInstance().startAutomaticCapture("Front View", 1);
+		// driveCam.setBrightness(75);
+		// driveCam.setResolution(640, 480);
 		
 		Devices.getInstance().getNavXGyro().reset();
 	}
@@ -79,7 +80,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-        Devices.getInstance().initializeCVSocket();
+        //Devices.getInstance().initializeCVSocket();
 		
 		// Turn on the CV light
 		// cvLight.set(Relay.Value.kReverse);
@@ -118,8 +119,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
-        Devices.getInstance().initializeCVSocket();
-		(new TeleopDrive()).start();
+		//Devices.getInstance().initializeCVSocket();
+		new TeleopDrive2().start();
 	}
 
 	/**

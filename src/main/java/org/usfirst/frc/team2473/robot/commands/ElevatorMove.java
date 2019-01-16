@@ -46,6 +46,9 @@ public class ElevatorMove extends Command {
 	 * Initial power to move the elevator at.
 	 */
 	private double power;
+	private double initialPower;
+
+	private ElevatorPosition pos;
 	
 	/**
 	 * Create a ElevatorMove object with given inch goal and power.
@@ -61,11 +64,10 @@ public class ElevatorMove extends Command {
     
     public ElevatorMove(ElevatorPosition pos, double power) {
 		requires(Robot.elevator);
-        
-        int delta = pos.getValue()-Robot.elevator.getEncoderTicks();
-
-		this.moveByInches = delta;
-		this.power = (delta < 0) ? -power : power;
+		
+		this.power = power;
+		this.initialPower = power;
+        this.pos = pos;
 	}
 	
 	/**
@@ -78,9 +80,22 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void initialize() {
+		int delta = this.pos.getValue()-Robot.elevator.getEncoderTicks();
+
+		this.moveByInches = delta;
+		this.power = this.initialPower;
+
+		this.power = (delta < 0) ? -power : power;
+
+		System.out.println("Move by inches: " + moveByInches);
+
 		this.absoluteTickGoal = Robot.elevator.getEncoderTicks() + (this.moveByInches * RobotMap.K_ELEVATOR_TICKS_PER_INCH);
+		System.out.println("Absolute tick goal: " + absoluteTickGoal);
+		
 		prevTicks = Robot.elevator.getEncoderTicks();
 		Robot.elevator.set(power);
+
+		System.out.println("Power: " + power);
 	}
 
 	@Override
@@ -99,7 +114,6 @@ public class ElevatorMove extends Command {
 				
 		prevTicks = currTicks;
 		
-		Robot.elevator.printEncoders();
 		
 	}
 

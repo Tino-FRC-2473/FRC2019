@@ -26,7 +26,7 @@ public class ElevatorTicksTest extends Command {
 
 	@Override
 	protected void initialize() {
-		Robot.elevator.set(0.1);
+		Robot.elevator.set(0.2);
 	}
 
 	@Override
