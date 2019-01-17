@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -33,8 +34,9 @@ public class Devices {
 	private ArrayList<Servo> servos;	 //collection of servos
 	private Map<Integer, Solenoid> solenoids;
     private Map<String, DoubleSolenoid> doubleSolenoids;
-    private UtilitySocket cvSocket;
-    private double cvAngle = 0;
+    private SerialPort serialPort;
+    private double visionAngle = 0;
+    private double visionDistance = 0;
 
 	private static Devices theInstance; //serves as the static instance to use at all times
 	
@@ -51,6 +53,7 @@ public class Devices {
 		solenoids = new HashMap<Integer, Solenoid>();
 		doubleSolenoids = new HashMap<String, DoubleSolenoid>();
         servos = new ArrayList<Servo>();
+        serialPort = new SerialPort(9600, SerialPort.Port.kUSB);
 	}
 
 	/**
@@ -293,23 +296,23 @@ public class Devices {
 		if(doubleSolenoids.containsKey(forward + " " + reverse)) doubleSolenoids.remove(forward + " " + reverse);				
     }
     
-    public void initializeCVSocket() {
-        if (cvSocket == null) {
-            try {
-                System.out.println("Creating socket for CV");
-                cvSocket = new UtilitySocket(RobotMap.JETSON_IP, RobotMap.JETSON_PORT);
-                System.out.println("Utility socket created!");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    public void updateVisionValues() {
+        String recieve = serialPort.readString();
+        try {
+            String[] split = recieve.split(" ");
+            visionAngle = Double.parseDouble(split[0]);
+            visionDistance = Double.parseDouble(split[1]);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    public double getCVAngle() throws NullPointerException{
-        if (cvSocket != null) {
-            String angleStr = cvSocket.getLine();
-            if (angleStr != null) cvAngle = Double.parseDouble(angleStr);
-            return cvAngle;
-        }
-        throw new NullPointerException("CV Socket not initialized");
+
+    public double getVisionAngle() {
+        return visionAngle;
     }
+
+    public double getVisionDistance() {
+        return visionDistance;
+    }
+    
 }

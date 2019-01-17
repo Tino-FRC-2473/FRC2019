@@ -10,7 +10,6 @@ package org.usfirst.frc.team2473.robot;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.commands.AlignToHatch;
 import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
-import org.usfirst.frc.team2473.robot.commands.SerialTest;
 import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
@@ -87,7 +86,6 @@ public class Robot extends TimedRobot {
 // 		System.out.println("Starting align to hatch ------------------------------------");
 		
 		//new StraightDrive(24, 0.3).start();
-		new SerialTest().start();
 		
 //		int distanceFirst  = prefs.getInt("1. First Distance", 48);
 //		int degrees  = prefs.getInt("2. Turn Degrees", 180);
@@ -103,7 +101,10 @@ public class Robot extends TimedRobot {
 	 * Runs continuously during the autonomous state
 	 */
 	@Override
-	public void autonomousPeriodic() {		
+	public void autonomousPeriodic() {
+        Devices.getInstance().updateVisionValues();	
+        System.out.println("Vision - Angle: " + Devices.getInstance().getVisionAngle() + 
+            " Distance: " + Devices.getInstance().getVisionDistance());
 		Scheduler.getInstance().run();
 	}
 
@@ -120,6 +121,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+        Devices.getInstance().updateVisionValues();
 		Scheduler.getInstance().run();
 	}
 
