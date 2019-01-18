@@ -68,17 +68,17 @@ public class PointTurn extends Command {
 		/* power entered must only determine turn power and not direction */
 		if (power < 0) throw new IllegalArgumentException("Power must be positive for point turn!");
 		this.initialPower = power;
-		setPower(power);
-
+		
 		/*
-		 * If turning 45 degrees or less, starting at greater than the
-		 * K_START_STALL_POWER yields and inaccurate turn. Thus, it is
-		 * limited over here.
-		 */
+		* If turning 45 degrees or less, starting at greater than the
+		* K_START_STALL_POWER yields and inaccurate turn. Thus, it is
+		* limited over here.
+		*/
 		this.turnByDegrees = deltaDegrees;
 		if(Math.abs(deltaDegrees) < 45) power = RobotMap.K_START_STALL_POWER;
 		
 		isClockwise = deltaDegrees > 0;
+		setPower(power);
 		
 	}
 	
