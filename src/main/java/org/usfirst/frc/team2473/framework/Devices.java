@@ -298,13 +298,16 @@ public class Devices {
     
     public void updateVisionValues() {
         String recieve = serialPort.readString();
-        try {
-            String[] split = recieve.split(" ");
-            visionAngle = Double.parseDouble(split[0]);
-            visionDistance = Double.parseDouble(split[1]);
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(recieve.length() != 0 && 
+            recieve.contains(" ") &&
+            recieve.indexOf(" ") != recieve.length()-1) {
+            try {
+                String[] split = recieve.split(" ");
+                visionAngle = Double.parseDouble(split[0]);
+                visionDistance = Double.parseDouble(split[1]);
+            } catch (Exception e) {}
         }
+        
     }
 
     public double getVisionAngle() {
