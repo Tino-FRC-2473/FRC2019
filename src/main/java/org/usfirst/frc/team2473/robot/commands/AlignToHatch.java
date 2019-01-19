@@ -10,9 +10,7 @@ package org.usfirst.frc.team2473.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
 
-import java.io.IOException;
-
-import org.usfirst.frc.team2473.framework.Devices;
+import org.usfirst.frc.team2473.framework.JetsonPort;
 
 /**
  * A class that aligns the robot to the hatch based on the angle provided by CV
@@ -32,7 +30,7 @@ public class AlignToHatch extends Command {
     }
     
     public void move() {
-        double angle = Devices.getInstance().getVisionAngle();
+        double angle = JetsonPort.getInstance().getVisionAngle();
 		System.out.println(angle);
 		if (Math.abs(angle) < 1) { // keep going in this direction
 			Robot.driveSubsystem.drive(normalPower, normalPower, normalPower, normalPower);

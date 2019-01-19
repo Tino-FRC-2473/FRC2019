@@ -8,15 +8,10 @@
 package org.usfirst.frc.team2473.robot;
 
 import org.usfirst.frc.team2473.framework.Devices;
-import org.usfirst.frc.team2473.robot.commands.AlignToHatch;
-import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
-import org.usfirst.frc.team2473.robot.commands.StraightDrive;
+import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -102,9 +97,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-        Devices.getInstance().updateVisionValues();	
-        System.out.println("Vision - Angle: " + Devices.getInstance().getVisionAngle() + 
-            " Distance: " + Devices.getInstance().getVisionDistance());
+        JetsonPort.getInstance().updateVisionValues();	
+        System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
+            " Distance: " + JetsonPort.getInstance().getVisionDistance());
 		Scheduler.getInstance().run();
 	}
 
@@ -121,7 +116,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-        Devices.getInstance().updateVisionValues();
+        JetsonPort.getInstance().updateVisionValues();
 		Scheduler.getInstance().run();
 	}
 

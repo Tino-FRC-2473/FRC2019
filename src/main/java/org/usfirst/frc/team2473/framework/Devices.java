@@ -1,6 +1,5 @@
 package org.usfirst.frc.team2473.framework;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,14 +7,11 @@ import java.util.Map;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
-import org.usfirst.frc.team2473.robot.RobotMap;
-
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Solenoid;
 
@@ -34,9 +30,6 @@ public class Devices {
 	private ArrayList<Servo> servos;	 //collection of servos
 	private Map<Integer, Solenoid> solenoids;
     private Map<String, DoubleSolenoid> doubleSolenoids;
-    private SerialPort serialPort;
-    private double visionAngle = 0;
-    private double visionDistance = 0;
 
 	private static Devices theInstance; //serves as the static instance to use at all times
 	
@@ -53,7 +46,6 @@ public class Devices {
 		solenoids = new HashMap<Integer, Solenoid>();
 		doubleSolenoids = new HashMap<String, DoubleSolenoid>();
         servos = new ArrayList<Servo>();
-        serialPort = new SerialPort(9600, SerialPort.Port.kUSB);
 	}
 
 	/**
@@ -294,28 +286,6 @@ public class Devices {
 	
 	public void removeDoubleSolenoid(int forward, int reverse) {
 		if(doubleSolenoids.containsKey(forward + " " + reverse)) doubleSolenoids.remove(forward + " " + reverse);				
-    }
-    
-    public void updateVisionValues() {
-        String recieve = serialPort.readString();
-        if(recieve.length() != 0 && 
-            recieve.contains(" ") &&
-            recieve.indexOf(" ") != recieve.length()-1) {
-            try {
-                String[] split = recieve.split(" ");
-                visionAngle = Double.parseDouble(split[0]);
-                visionDistance = Double.parseDouble(split[1]);
-            } catch (Exception e) {}
-        }
-        
-    }
-
-    public double getVisionAngle() {
-        return visionAngle;
-    }
-
-    public double getVisionDistance() {
-        return visionDistance;
     }
     
 }
