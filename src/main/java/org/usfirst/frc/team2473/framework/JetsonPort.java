@@ -13,7 +13,7 @@ public class JetsonPort extends SerialPort {
 		theInstance = new JetsonPort(9600, Port.kUSB);
     }
     
-    public JetsonPort(int baudrate, Port port) {
+    private JetsonPort(int baudrate, Port port) {
         super(baudrate, port);
     }
 
