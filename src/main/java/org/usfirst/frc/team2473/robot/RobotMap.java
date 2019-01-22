@@ -12,6 +12,9 @@ public class RobotMap {
 	public static final int TALON_BR = 6;
 	public static final int TALON_FL = 2;
 	public static final int TALON_FR = 7;
+
+	public static final int SPARK_L = 3;
+	public static final int SPARK_R = 4;
 	
 	public static double K_TICKS_PER_INCH = 55;
 	public static double K_ENCODER_THRESHOLD = 750;

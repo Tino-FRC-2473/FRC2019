@@ -11,6 +11,7 @@ import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
+import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
@@ -20,6 +21,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 public class Robot extends TimedRobot {
 	
 	public static DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
+	public static SparkDriveSubsystem sparkDriveSubsystem = SparkDriveSubsystem.getInstance();
 	
 	public static Relay cvLight;
 	

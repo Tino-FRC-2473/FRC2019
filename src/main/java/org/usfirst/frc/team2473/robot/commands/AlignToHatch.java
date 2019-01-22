@@ -21,7 +21,7 @@ public class AlignToHatch extends Command {
     double addedPower = 0.15;
     		
 	public AlignToHatch() {
-		requires(Robot.driveSubsystem);
+		requires(Robot.sparkDriveSubsystem);
 	}
  
 	@Override
@@ -33,11 +33,11 @@ public class AlignToHatch extends Command {
         double angle = JetsonPort.getInstance().getVisionAngle();
 		System.out.println(angle);
 		if (Math.abs(angle) < 1) { // keep going in this direction
-			Robot.driveSubsystem.drive(normalPower, normalPower, normalPower, normalPower);
+			Robot.sparkDriveSubsystem.drive(normalPower, normalPower);
 		} else if (angle > 1) { // Robot is to the left of the target
-			Robot.driveSubsystem.drive(normalPower + addedPower, normalPower + addedPower, normalPower, normalPower);
+			Robot.sparkDriveSubsystem.drive(normalPower + addedPower, normalPower);
 		} else { // Robot is to the right of the target
-			Robot.driveSubsystem.drive(normalPower, normalPower, normalPower + addedPower, normalPower + addedPower);
+			Robot.sparkDriveSubsystem.drive(normalPower, normalPower + addedPower);
 		}
     }
 

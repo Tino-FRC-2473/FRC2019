@@ -16,12 +16,12 @@ import org.usfirst.frc.team2473.robot.Robot;
 public class TeleopDrive extends Command {
 	
 	public TeleopDrive() {
-		requires(Robot.driveSubsystem);
+		requires(Robot.sparkDriveSubsystem);
 	}
 
 	@Override
 	protected void execute() {
-		Robot.driveSubsystem.teleopDrive(Robot.oi.getThrottle().getZ(), Robot.oi.getWheel().getX());
+		Robot.sparkDriveSubsystem.teleopDrive(Robot.oi.getThrottle().getZ(), Robot.oi.getWheel().getX());
 	}
 
 	@Override
