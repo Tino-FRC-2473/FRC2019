@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Elevator extends Subsystem {
     
     public enum ElevatorPosition {
-        BASE(100), FIRST(500), SECOND(1000), THIRD(1500);
+        ZERO(0), BASE(100), FIRST(220), SECOND(400), THIRD(600);
 
         private final int value;
 
@@ -56,6 +56,7 @@ public class Elevator extends Subsystem {
 	}
     
     public void set(double speed) {
+        System.out.println("Setting " + speed);
         talon.set(speed);
     }
 

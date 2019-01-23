@@ -14,36 +14,41 @@ import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import org.usfirst.frc.team2473.robot.Robot;
+import org.usfirst.frc.team2473.robot.RobotMap;
 
 /**
  * A class that sets the talons to specific powers upon current joystick positions
  */
 public class TeleopDrive2 extends Command {
 	
-	private AlignToHatch alignToHatch;
-    WPI_TalonSRX t = new WPI_TalonSRX(11);
+	boolean useThrottle = false;
+
+	ElevatorMove move;
+
 	public TeleopDrive2() {
-		requires(Robot.driveSubsystem);
+		requires(Robot.elevator);
 	}
 
 	@Override
 	protected void initialize() {
-		t.setSelectedSensorPosition(0,0,0);
-		alignToHatch = new AlignToHatch();
-
-		Robot.oi.getB0().whenPressed(new ElevatorMove(ElevatorPosition.BASE, 0.2));
-		Robot.oi.getB1().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, 0.2));
-		Robot.oi.getB2().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, 0.2));
-		Robot.oi.getB3().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, 0.2));
+		if (!useThrottle) {
+			Robot.oi.getB0().whenPressed(new ElevatorMove(ElevatorPosition.BASE, 0.2));
+			Robot.oi.getB1().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, 0.2));
+			Robot.oi.getB2().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, 0.2));
+			Robot.oi.getB3().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, 0.2));
+			Robot.oi.getB4().whenPressed(new ElevatorMove(ElevatorPosition.ZERO, 0.2));
+		}	
 	}
 
 	@Override
 	protected void execute() {
-        // double throttleZ = Robot.oi.getThrottle().getZ();
+        double throttleZ = Robot.oi.getThrottle().getZ();
 		// t.set(throttleZ);
 		// System.out.println(t.getSelectedSensorPosition());
-
 		
+		if (useThrottle) {
+			Robot.elevator.set(-throttleZ);
+		}
 		
 		Robot.elevator.printEncoders();
 	}

@@ -120,7 +120,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		//Devices.getInstance().initializeCVSocket();
+		
+		elevator.resetEncoders();
 		new TeleopDrive2().start();
+		
 	}
 
 	/**
