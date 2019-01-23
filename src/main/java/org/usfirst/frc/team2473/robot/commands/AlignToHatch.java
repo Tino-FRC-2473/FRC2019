@@ -17,9 +17,12 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
  */
 public class AlignToHatch extends Command {
 	
-	double normalPower = 0.25;
+	double normalPower = 0.15;
+	double slowPower = 0.07;
     double addedPower = 0.15;
-    		
+	private int numMoves = 0;
+	private double angle = 0;
+
 	public AlignToHatch() {
 		requires(Robot.sparkDriveSubsystem);
 	}
@@ -30,15 +33,41 @@ public class AlignToHatch extends Command {
     }
     
     public void move() {
-        double angle = JetsonPort.getInstance().getVisionAngle();
-		System.out.println(angle);
-		if (Math.abs(angle) < 1) { // keep going in this direction
+		numMoves++;
+		double thresholdAngle = 3;
+
+		//if (numMoves % 3 == 0) {
+		angle = JetsonPort.getInstance().getVisionAngle();
+		//}
+        
+		//System.out.println(angle);
+		
+
+		
+		
+		if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
 			Robot.sparkDriveSubsystem.drive(normalPower, normalPower);
-		} else if (angle > 1) { // Robot is to the left of the target
-			Robot.sparkDriveSubsystem.drive(normalPower + addedPower, normalPower);
-		} else { // Robot is to the right of the target
-			Robot.sparkDriveSubsystem.drive(normalPower, normalPower + addedPower);
+		} else if (Math.abs(angle) > 10) {
+			if (angle > thresholdAngle) { // Robot is to the left of the target
+				Robot.sparkDriveSubsystem.drive(slowPower, -slowPower);
+			} else { // Robot is to the right of the target
+				Robot.sparkDriveSubsystem.drive(-slowPower, slowPower);
+			}
+		} else {
+			if (angle > thresholdAngle) { // Robot is to the left of the target
+				Robot.sparkDriveSubsystem.drive(slowPower, 0);
+			} else { // Robot is to the right of the target
+				Robot.sparkDriveSubsystem.drive(0, slowPower);
+			}
 		}
+
+		// if (Math.abs(angle) < 1) {
+		// 	Robot.sparkDriveSubsystem.drive(normalPower, normalPower, normalPower, normalPower);
+		// } else {
+		// 	PointTurn p = new PointTurn(angle, 0.45);
+		// 	p.initialize();
+		// 	p.move();
+		// }
     }
 
 	@Override

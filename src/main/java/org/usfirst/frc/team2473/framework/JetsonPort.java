@@ -6,6 +6,8 @@ public class JetsonPort extends SerialPort {
 
     private double visionAngle = 0;
     private double visionDistance = 0;
+    private int numCalls = 0;
+    private int saveSum = 0;
 
     private static JetsonPort theInstance;
 
@@ -28,9 +30,26 @@ public class JetsonPort extends SerialPort {
             recieve.indexOf(" ") != recieve.length()-1) {
             try {
                 String[] split = recieve.split(" ");
-                visionAngle = Double.parseDouble(split[0]);
-                visionDistance = Double.parseDouble(split[1]);
-            } catch (Exception e) {}
+
+                String visionAngleStr = split[0];
+                String visionDistanceStr = split[1];
+
+                //System.out.println("angle: ///" + visionAngleStr + "/// distance: ///" + visionDistanceStr + "///");
+
+                if (visionAngleStr.charAt(0) != 'J' || visionDistanceStr.charAt(visionDistanceStr.length()-1) != 'J') {
+                    //System.out.println("No J");
+                    return;
+                }
+                
+            
+                double ang = Double.parseDouble(visionAngleStr.substring(1));
+                if (ang != -2473) {
+                    visionAngle = ang;
+                    visionDistance = Double.parseDouble(visionDistanceStr.substring(0, visionDistanceStr.length() - 1));
+                }
+            } catch (Exception e) {
+                
+            }
         }
         
     }

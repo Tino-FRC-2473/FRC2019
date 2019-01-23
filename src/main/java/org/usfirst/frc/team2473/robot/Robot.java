@@ -9,6 +9,7 @@ package org.usfirst.frc.team2473.robot;
 
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
+import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
@@ -16,6 +17,7 @@ import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
@@ -36,7 +38,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		oi = new OI();
 		
-		// cvLight = new Relay(RobotMap.CV_LIGHT);
+		cvLight = new Relay(0);
 		prefs = Preferences.getInstance();
 				
 		// UsbCamera cubeCam = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
@@ -92,6 +94,8 @@ public class Robot extends TimedRobot {
 //		tester.addDriveTurnDrive(distanceFirst, degrees, distanceSecond);
 //		tester.start();
 
+		new StraightDrive(20, 0.3).start();
+
 	}
 
 	/**
@@ -110,6 +114,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
+		cvLight.set(Value.kForward);
 		(new TeleopDrive()).start();
 	}
 

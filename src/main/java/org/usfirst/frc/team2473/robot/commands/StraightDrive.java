@@ -33,13 +33,13 @@ public class StraightDrive extends Command {
 	 * The number of ticks that the robot should
 	 * be at if it has reached its goal.
 	 */
-	private int absoluteTickGoal;
+	private double absoluteTickGoal;
 	
 	/**
 	 * The absolute number of ticks that the robot
 	 * was at after the last call of execute.
 	 */
-	private int prevTicks;
+	private double prevTicks;
 	
 	/**
 	 * Initial power to drive the robot at.
@@ -54,7 +54,7 @@ public class StraightDrive extends Command {
 	public StraightDrive(double inches, double power) {
 		if(power < 0) throw new IllegalArgumentException("Power must be positive!");
 
-		requires(Robot.driveSubsystem);
+		requires(Robot.sparkDriveSubsystem);
 		
 		this.moveByInches = inches;
 		this.power = (inches < 0) ? -power : power;
@@ -72,8 +72,8 @@ public class StraightDrive extends Command {
 	 * Set the target distance
 	 */
 	private void setDistance(double inches) {
-		System.out.println("TICKSSSSS: " + Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR));
-		this.absoluteTickGoal = (int)(Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR) + (inches * RobotMap.K_TICKS_PER_INCH));
+		System.out.println("TICKSSSSS: " + Robot.sparkDriveSubsystem.getEncoderTicks(RobotMap.SPARK_R));
+		this.absoluteTickGoal = (int)(Robot.sparkDriveSubsystem.getEncoderTicks(RobotMap.SPARK_R) + (inches * RobotMap.K_TICKS_PER_INCH));
 	}
 
 	@Override
@@ -81,37 +81,37 @@ public class StraightDrive extends Command {
 		//these methods are here in initialize rather than in the constructor
 		//because the robot probably updates the encoder ticks values after the constructor is called
 		setDistance(moveByInches);
-		prevTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
+		prevTicks = Robot.sparkDriveSubsystem.getEncoderTicks(RobotMap.SPARK_R);
 		
-		System.out.println("ANGLE: " + Robot.driveSubsystem.getGyroAngle());
+		System.out.println("ANGLE: " + Robot.sparkDriveSubsystem.getGyroAngle());
 
 		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
-		Robot.driveSubsystem.drive(power, power, power, power);
+		Robot.sparkDriveSubsystem.drive(power, power);
 	}
 
 	@Override
 	protected void execute() {
 		double tempPower = power;
-		int currTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
+		double currTicks = Robot.sparkDriveSubsystem.getEncoderTicks(RobotMap.SPARK_R);
 		
-		int delta = currTicks - prevTicks;
+		double delta = currTicks - prevTicks;
 		
 		/* If the robot has exceeded the threshold below, it will move at a slower power */
 		if (Math.abs(absoluteTickGoal - (currTicks + delta)) < RobotMap.K_ENCODER_THRESHOLD) { // Math.abs() allows this to work regardless of driving direction (forwards or backwards)
 			if (moveByInches > 0) tempPower = SLOW_POWER;
 			else tempPower = -SLOW_POWER;
 		}
-		Robot.driveSubsystem.drive(tempPower,tempPower,tempPower,tempPower);
+		Robot.sparkDriveSubsystem.drive(tempPower,tempPower);
 				
 		prevTicks = currTicks;
 		
-		Robot.driveSubsystem.printEncoders();
+		Robot.sparkDriveSubsystem.printEncoders();
 		
 	}
 
 	@Override
 	protected boolean isFinished() {
-		int currTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.TALON_FR);
+		double currTicks = Robot.sparkDriveSubsystem.getEncoderTicks(RobotMap.SPARK_R);
 		if (this.moveByInches > 0) return (absoluteTickGoal < currTicks);
 		else return (absoluteTickGoal > currTicks);
 	}
@@ -121,16 +121,16 @@ public class StraightDrive extends Command {
 		System.out.println(power);
 		System.out.println("----------------");
 		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
-		Robot.driveSubsystem.printEncoders();		
-		System.out.println("Difference: " + Robot.driveSubsystem.encoderDifference());
+		Robot.sparkDriveSubsystem.printEncoders();		
+		System.out.println("Difference: " + Robot.sparkDriveSubsystem.encoderDifference());
 		
 		System.out.println();
 		
-		Robot.driveSubsystem.stopMotors();
+		Robot.sparkDriveSubsystem.stopMotors();
 	}
 
 	@Override
 	protected void interrupted() {
-		Robot.driveSubsystem.stopMotors();
+		Robot.sparkDriveSubsystem.stopMotors();
 	}
 }
