@@ -56,7 +56,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledInit() {
-		//cvLight.set(Relay.Value.kOff);
+        //cvLight.set(Relay.Value.kOff);
+        sparkDriveSubsystem.drive(0, 0);
 		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
 		Scheduler.getInstance().removeAll();
 		
@@ -94,7 +95,8 @@ public class Robot extends TimedRobot {
 //		tester.addDriveTurnDrive(distanceFirst, degrees, distanceSecond);
 //		tester.start();
 
-		new StraightDrive(20, 0.3).start();
+        // new StraightDrive(1000, 0.2).start();
+        sparkDriveSubsystem.drive(0.2, 0.2);
 
 	}
 
@@ -104,8 +106,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
         JetsonPort.getInstance().updateVisionValues();	
-        System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
-            " Distance: " + JetsonPort.getInstance().getVisionDistance());
+        sparkDriveSubsystem.drive(0.2, 0.2);
+        // System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
+        //     " Distance: " + JetsonPort.getInstance().getVisionDistance());
 		Scheduler.getInstance().run();
 	}
 
