@@ -30,14 +30,12 @@ public class CHS_SparkMax {
 	}
 
 	public double getEncoderPosition() {
-        double change = 1;
-        if (getSparkMaxObject().getDeviceId() == RobotMap.SPARK_L) change = -1;
-		if (encoder.getPosition() == 0) {
-			return change * lastEncoderValue;
-		} else {
-			lastEncoderValue = encoder.getPosition();
-			return change * lastEncoderValue;
+		double position = encoder.getPosition();
+		if (position != 0) {
+			lastEncoderValue = position;
 		}
+		
+		return lastEncoderValue;
 	}
 
 	public double getEncoderPositionUnmodified() {

@@ -78,9 +78,9 @@ public class SparkDriveSubsystem extends Subsystem {
 	}
 
 	public double getEncoderTicks(int id) {
-		if (id == RobotMap.SPARK_L) return leftSpark.getEncoderPosition();
+		if (id == RobotMap.SPARK_L) return -leftSpark.getEncoderPosition();
 		else if (id == RobotMap.SPARK_R) return rightSpark.getEncoderPosition();
-		throw new IllegalArgumentException("Invalid Spark Max ID");
+		throw new IllegalArgumentException("Invalid Spark MAX ID");
 	}
 
 	public void printEncoders() {
