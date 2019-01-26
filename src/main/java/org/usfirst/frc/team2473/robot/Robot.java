@@ -94,7 +94,8 @@ public class Robot extends TimedRobot {
 		//new AlignToHatch().start();
 
 		elevator.resetEncoders();
-		new ElevatorTicksTest().start();
+		//new ElevatorTicksTest().start();
+		new TeleopDrive2(false).start();
 		
 //		int distanceFirst  = prefs.getInt("1. First Distance", 48);
 //		int degrees  = prefs.getInt("2. Turn Degrees", 180);
@@ -122,7 +123,7 @@ public class Robot extends TimedRobot {
 		//Devices.getInstance().initializeCVSocket();
 		
 		elevator.resetEncoders();
-		new TeleopDrive2().start();
+		new TeleopDrive2(true).start();
 		
 	}
 
@@ -135,7 +136,14 @@ public class Robot extends TimedRobot {
 	}
 
 	@Override
+	public void testInit() {
+		elevator.resetEncoders();
+		new TeleopDrive2(true).start();
+	}
+
+	@Override
 	public void testPeriodic() {
+		Scheduler.getInstance().run();
 	}
 	
 }

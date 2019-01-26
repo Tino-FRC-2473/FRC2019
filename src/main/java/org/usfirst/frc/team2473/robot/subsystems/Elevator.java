@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Elevator extends Subsystem {
     
     public enum ElevatorPosition {
-        ZERO(0), BASE(100), FIRST(220), SECOND(400), THIRD(600);
+        ZERO(0), BASE(100), FIRST(300), SECOND(550), THIRD(850);
 
         private final int value;
 

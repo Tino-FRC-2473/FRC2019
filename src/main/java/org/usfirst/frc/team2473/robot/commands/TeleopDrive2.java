@@ -21,33 +21,38 @@ import org.usfirst.frc.team2473.robot.RobotMap;
  */
 public class TeleopDrive2 extends Command {
 	
-	boolean useThrottle = false;
+
+	// Using wheel for elevator testing, not for actual control
+	boolean useWheel = false;
 
 	ElevatorMove move;
 
-	public TeleopDrive2() {
+	public TeleopDrive2(boolean useWheel) {
 		requires(Robot.elevator);
+
+		this.useWheel = useWheel;
 	}
 
 	@Override
 	protected void initialize() {
-		if (!useThrottle) {
-			Robot.oi.getB0().whenPressed(new ElevatorMove(ElevatorPosition.BASE, 0.2));
-			Robot.oi.getB1().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, 0.2));
-			Robot.oi.getB2().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, 0.2));
-			Robot.oi.getB3().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, 0.2));
-			Robot.oi.getB4().whenPressed(new ElevatorMove(ElevatorPosition.ZERO, 0.2));
+		if (!useWheel) {
+			double power = 0.4;
+
+			Robot.oi.getB0().whenPressed(new ElevatorMove(ElevatorPosition.BASE, power));
+			Robot.oi.getB1().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, power));
+			Robot.oi.getB2().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, power));
+			Robot.oi.getB3().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, power));
+			Robot.oi.getB4().whenPressed(new ElevatorMove(ElevatorPosition.ZERO, power));
 		}	
 	}
 
 	@Override
 	protected void execute() {
-        double throttleZ = Robot.oi.getThrottle().getZ();
-		// t.set(throttleZ);
-		// System.out.println(t.getSelectedSensorPosition());
+
+        double wheelX = Robot.oi.getWheel().getX();
 		
-		if (useThrottle) {
-			Robot.elevator.set(-throttleZ);
+		if (useWheel) {
+			Robot.elevator.set(wheelX);
 		}
 		
 		Robot.elevator.printEncoders();
