@@ -18,9 +18,7 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
 public class AlignToHatch extends Command {
 	
 	double normalPower = 0.15;
-	double slowPower = 0.07;
-    double addedPower = 0.15;
-	private int numMoves = 0;
+	double turnPower = 0.25;
 	private double angle = 0;
 
 	public AlignToHatch() {
@@ -33,21 +31,13 @@ public class AlignToHatch extends Command {
     }
     
     public void move() {
-		numMoves++;
 		double thresholdAngle = 3;
-
-		//if (numMoves % 3 == 0) {
-		angle = JetsonPort.getInstance().getVisionAngle();
-		//}
+        angle = JetsonPort.getInstance().getVisionAngle();
         
-		//System.out.println(angle);
-		
-
-		
-		
 		if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
 			Robot.driveSubsystem.drive(normalPower, normalPower);
 		} else if (Math.abs(angle) > 10) {
+<<<<<<< HEAD
 			if (angle > thresholdAngle) { // Robot is to the left of the target
 				Robot.driveSubsystem.drive(slowPower, -slowPower);
 			} else { // Robot is to the right of the target
@@ -58,16 +48,20 @@ public class AlignToHatch extends Command {
 				Robot.driveSubsystem.drive(slowPower, 0);
 			} else { // Robot is to the right of the target
 				Robot.driveSubsystem.drive(0, slowPower);
+=======
+			if (angle > 0) { // Robot is to the left of the target
+				Robot.driveSubsystem.drive(turnPower, -turnPower);
+			} else { // Robot is to the right of the target
+				Robot.driveSubsystem.drive(-turnPower, turnPower);
+			}
+		} else {
+			if (angle > thresholdAngle) { // Robot is to the left of the target
+				Robot.driveSubsystem.drive(turnPower, 0);
+			} else { // Robot is to the right of the target
+				Robot.driveSubsystem.drive(0, turnPower);
+>>>>>>> Make CV alignment value receiving quicker
 			}
 		}
-
-		// if (Math.abs(angle) < 1) {
-		// 	Robot.sparkDriveSubsystem.drive(normalPower, normalPower, normalPower, normalPower);
-		// } else {
-		// 	PointTurn p = new PointTurn(angle, 0.45);
-		// 	p.initialize();
-		// 	p.move();
-		// }
     }
 
 	@Override
