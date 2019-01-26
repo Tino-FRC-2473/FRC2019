@@ -4,10 +4,13 @@ import edu.wpi.first.wpilibj.SerialPort;
 
 public class JetsonPort extends SerialPort {
 
-    private double visionAngle = 0;
-    private double visionDistance = 0;
-    private int numCalls = 0;
-    private int saveSum = 0;
+    private static final String START = "S";
+    private static final String END = "E";
+
+    private int visionAngle = 0;
+    private int visionDistance = 0;
+    private boolean firstStart = false;
+    private String buffer = "";
 
     private static JetsonPort theInstance;
 
@@ -24,35 +27,28 @@ public class JetsonPort extends SerialPort {
 	}
 
     public void updateVisionValues() {
-        String recieve = readString();
-        if(recieve.length() != 0 && 
-            recieve.contains(" ") &&
-            recieve.indexOf(" ") != recieve.length()-1) {
-            try {
-                String[] split = recieve.split(" ");
+        String receive = readString();
+        if (!firstStart) {
+            if (receive.contains(START)) {
+                firstStart = true;
+                receive = receive.substring(receive.indexOf(START));
+            }
+        }
+        if (firstStart) {
+            buffer += receive; 
+            if (buffer.contains(END)) {
+                String data = buffer.substring(buffer.indexOf(START)+1, buffer.indexOf(END));
+                if (data.length() == 6) {
+                    visionAngle = Integer.parseInt(data.substring(0, 3));
+                    visionDistance = Integer.parseInt(data.substring(3));
 
-                String visionAngleStr = split[0];
-                String visionDistanceStr = split[1];
-
-                //System.out.println("angle: ///" + visionAngleStr + "/// distance: ///" + visionDistanceStr + "///");
-
-                if (visionAngleStr.charAt(0) != 'J' || visionDistanceStr.charAt(visionDistanceStr.length()-1) != 'J') {
-                    //System.out.println("No J");
-                    return;
+                    buffer = buffer.substring(buffer.indexOf(END)+1);
                 }
-                
-            
-                double ang = Double.parseDouble(visionAngleStr.substring(1));
-                if (ang != -2473) {
-                    visionAngle = ang;
-                    visionDistance = Double.parseDouble(visionDistanceStr.substring(0, visionDistanceStr.length() - 1));
-                }
-            } catch (Exception e) {
                 
             }
         }
-        
     }
+
 
     public double getVisionAngle() {
         return visionAngle;
