@@ -26,6 +26,8 @@ public class Robot extends TimedRobot {
 	
 	public static OI oi;
 
+	private int i = 0;
+
 	Preferences prefs;
 
 	/**
@@ -65,7 +67,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-
+        cvLight.set(Value.kForward);
 	}
 
 	/**
@@ -74,8 +76,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
         JetsonPort.getInstance().updateVisionValues();	
-        System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
-            " Distance: " + JetsonPort.getInstance().getVisionDistance());
+		if (++i % 4 == 0) {
+			System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
+				" Distance: " + JetsonPort.getInstance().getVisionDistance());
+		}
 		Scheduler.getInstance().run();
 	}
 
@@ -96,8 +100,12 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
         JetsonPort.getInstance().updateVisionValues();
-        System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
-        " Distance: " + JetsonPort.getInstance().getVisionDistance());
+		
+		if (++i % 4 == 0) {
+			System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
+				" Distance: " + JetsonPort.getInstance().getVisionDistance());
+		}
+
         
 		Scheduler.getInstance().run();
 	}
