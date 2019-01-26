@@ -19,7 +19,7 @@ public class RobotMap {
 	public static double K_TICKS_PER_INCH = 1;
 	public static double K_ENCODER_THRESHOLD = 2;
 	
-	public static double K_START_STALL_POWER = 0.19;
+	public static double K_START_STALL_POWER = 0.25;
 	public static double K_RUNNING_STALL_POWER = 0.2;
 	public static double K_OPPOSITE_POWER = 0.2;
 	public static double K_TURN = 0.95;
