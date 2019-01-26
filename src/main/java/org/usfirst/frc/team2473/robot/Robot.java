@@ -9,9 +9,7 @@ package org.usfirst.frc.team2473.robot;
 
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
-import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
-import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
 
 import edu.wpi.first.wpilibj.Preferences;
@@ -22,10 +20,9 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
 	
-	public static DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
-	public static SparkDriveSubsystem sparkDriveSubsystem = SparkDriveSubsystem.getInstance();
+	public static SparkDriveSubsystem driveSubsystem = SparkDriveSubsystem.getInstance();
 	
-	public static Relay cvLight;
+    public static Relay cvLight;
 	
 	public static OI oi;
 
@@ -39,15 +36,8 @@ public class Robot extends TimedRobot {
 		oi = new OI();
 		
 		cvLight = new Relay(0);
-		prefs = Preferences.getInstance();
-				
-		// UsbCamera cubeCam = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
-		// cubeCam.setBrightness(75);
-		// cubeCam.setResolution(640, 480);
-		// UsbCamera driveCam = CameraServer.getInstance().startAutomaticCapture("Front View", 1);
-		// driveCam.setBrightness(75);
-		// driveCam.setResolution(640, 480);
-		
+        prefs = Preferences.getInstance();
+        
 		Devices.getInstance().getNavXGyro().reset();
 	}
 	
@@ -56,8 +46,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledInit() {
-        //cvLight.set(Relay.Value.kOff);
-        sparkDriveSubsystem.drive(0, 0);
+        driveSubsystem.drive(0, 0);
 		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
 		Scheduler.getInstance().removeAll();
 		
@@ -76,27 +65,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		
-		// Turn on the CV light
-		// cvLight.set(Relay.Value.kReverse);
-		
-// 		driveSubsystem.resetEncoders();
-// //	
-		
-// 		System.out.println("Starting align to hatch ------------------------------------");
-		
-		//new StraightDrive(24, 0.3).start();
-		
-//		int distanceFirst  = prefs.getInt("1. First Distance", 48);
-//		int degrees  = prefs.getInt("2. Turn Degrees", 180);
-//		int distanceSecond  = prefs.getInt("3. Second Distance", 48);
-//				
-//		AutonomousTester tester = new AutonomousTester();
-//		tester.addDriveTurnDrive(distanceFirst, degrees, distanceSecond);
-//		tester.start();
-
-        // new StraightDrive(1000, 0.2).start();
-        sparkDriveSubsystem.drive(0.2, 0.2);
 
 	}
 
@@ -106,9 +74,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
         JetsonPort.getInstance().updateVisionValues();	
-        sparkDriveSubsystem.drive(0.2, 0.2);
-        // System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
-        //     " Distance: " + JetsonPort.getInstance().getVisionDistance());
+        System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
+            " Distance: " + JetsonPort.getInstance().getVisionDistance());
 		Scheduler.getInstance().run();
 	}
 
@@ -117,7 +84,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		cvLight.set(Value.kForward);
+        cvLight.set(Value.kForward);
+        JetsonPort.getInstance().updateVisionValues();	
+        System.out.println("Vision - " + JetsonPort.getInstance().getVisionAngle() + JetsonPort.getInstance().getVisionDistance());
 		(new TeleopDrive()).start();
 	}
 
@@ -127,6 +96,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
         JetsonPort.getInstance().updateVisionValues();
+        System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
+        " Distance: " + JetsonPort.getInstance().getVisionDistance());
+        
 		Scheduler.getInstance().run();
 	}
 

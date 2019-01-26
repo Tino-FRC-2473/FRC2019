@@ -4,6 +4,8 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import org.usfirst.frc.team2473.robot.RobotMap;
+
 public class CHS_SparkMax {
 	private CANSparkMax spark;
 	private CANEncoder encoder;
@@ -28,11 +30,13 @@ public class CHS_SparkMax {
 	}
 
 	public double getEncoderPosition() {
+        double change = 1;
+        if (getSparkMaxObject().getDeviceId() == RobotMap.SPARK_L) change = -1;
 		if (encoder.getPosition() == 0) {
-			return lastEncoderValue;
+			return change * lastEncoderValue;
 		} else {
 			lastEncoderValue = encoder.getPosition();
-			return lastEncoderValue;
+			return change * lastEncoderValue;
 		}
 	}
 

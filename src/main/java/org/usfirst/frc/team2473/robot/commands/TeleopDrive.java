@@ -26,7 +26,7 @@ public class TeleopDrive extends Command {
 	double prevAngle;
 
 	public TeleopDrive() {
-		requires(Robot.sparkDriveSubsystem);
+		requires(Robot.driveSubsystem);
 
 		alignToHatch = new AlignToHatch();
 	}
@@ -41,7 +41,7 @@ public class TeleopDrive extends Command {
 
 		double throttleZ = Robot.oi.getThrottle().getZ();
 		double originalZ = throttleZ;
-		double wheelX = Robot.oi.getWheel().getX();
+		double wheelX = -Robot.oi.getWheel().getX();
 
 		double outputZ = 0;
 		double outputX = 0;
@@ -78,7 +78,7 @@ public class TeleopDrive extends Command {
 				outputX = wheelX;
 			}
 
-			Robot.sparkDriveSubsystem.teleopDrive(outputZ, outputX);
+			Robot.driveSubsystem.teleopDrive(outputZ, outputX);
 		}
 
 	}

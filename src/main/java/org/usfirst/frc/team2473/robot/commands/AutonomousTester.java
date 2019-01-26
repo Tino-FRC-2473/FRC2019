@@ -25,7 +25,7 @@ public class AutonomousTester extends CommandGroup {
 	 * @param turnAngle 		the angle to turn (degrees)
 	 * @param distanceSecond	the distance to drive after turning (inches)
 	 */
-	public void addDriveTurnDrive(int distanceFirst, int turnAngle, int distanceSecond) {
+	public void addDriveTurnDrive(double distanceFirst, int turnAngle, double distanceSecond) {
 		addSequential(new StraightDrive(distanceFirst, 0.3));
 		addSequential(new WaitCommand(WAIT));
 		addSequential(new PointTurn(turnAngle, 0.45));

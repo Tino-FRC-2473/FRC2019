@@ -58,7 +58,7 @@ public class StallExperiment extends Command {
     @Override
     protected void initialize() {
         prevAngle = Devices.getInstance().getNavXGyro().getAngle();
-        Robot.driveSubsystem.driveRawPower(power, power, -power, -power);
+        Robot.driveSubsystem.drive(power, -power);
     }
     
     @Override
@@ -71,7 +71,7 @@ public class StallExperiment extends Command {
             System.out.println("New power: " + power);
         }
         
-        Robot.driveSubsystem.driveRawPower(power, power, -power, -power);
+        Robot.driveSubsystem.drive(power, -power);
         
     }
 
