@@ -27,7 +27,8 @@ import org.opencv.imgproc.Imgproc;
 
 public class Robot extends TimedRobot {
 	
-	public static SparkDriveSubsystem driveSubsystem = null;
+	public static SparkDriveSubsystem driveSubsystem = null; 
+	//TODO sketchy temporary fix to SparkDriveSubsystem not on robot
 	
     public static Relay cvLight;
 	
@@ -47,6 +48,7 @@ public class Robot extends TimedRobot {
         
 		Devices.getInstance().getNavXGyro().reset();
 
+		//TODO sketchy code that somehow made the camera work
 		new Thread(() -> {
 			UsbCamera camera =CameraServer.getInstance().startAutomaticCapture();
 			camera.setResolution(640, 480);
