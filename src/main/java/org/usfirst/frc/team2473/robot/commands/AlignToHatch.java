@@ -24,7 +24,7 @@ public class AlignToHatch extends Command {
 	private double angle = 0;
 
 	public AlignToHatch() {
-		requires(Robot.sparkDriveSubsystem);
+		requires(Robot.driveSubsystem);
 	}
  
 	@Override
@@ -46,23 +46,23 @@ public class AlignToHatch extends Command {
 		
 		
 		if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
-			Robot.sparkDriveSubsystem.drive(normalPower, normalPower);
+			Robot.driveSubsystem.drive(normalPower, normalPower);
 		} else if (Math.abs(angle) > 10) {
 			if (angle > thresholdAngle) { // Robot is to the left of the target
-				Robot.sparkDriveSubsystem.drive(slowPower, -slowPower);
+				Robot.driveSubsystem.drive(slowPower, -slowPower);
 			} else { // Robot is to the right of the target
-				Robot.sparkDriveSubsystem.drive(-slowPower, slowPower);
+				Robot.driveSubsystem.drive(-slowPower, slowPower);
 			}
 		} else {
 			if (angle > thresholdAngle) { // Robot is to the left of the target
-				Robot.sparkDriveSubsystem.drive(slowPower, 0);
+				Robot.driveSubsystem.drive(slowPower, 0);
 			} else { // Robot is to the right of the target
-				Robot.sparkDriveSubsystem.drive(0, slowPower);
+				Robot.driveSubsystem.drive(0, slowPower);
 			}
 		}
 
 		// if (Math.abs(angle) < 1) {
-		// 	Robot.sparkDriveSubsystem.drive(normalPower, normalPower, normalPower, normalPower);
+		// 	Robot.driveSubsystem.drive(normalPower, normalPower, normalPower, normalPower);
 		// } else {
 		// 	PointTurn p = new PointTurn(angle, 0.45);
 		// 	p.initialize();
