@@ -12,15 +12,22 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 public class Robot extends TimedRobot {
 	
-	public static SparkDriveSubsystem driveSubsystem = SparkDriveSubsystem.getInstance();
+	public static SparkDriveSubsystem driveSubsystem = null;
 	
     public static Relay cvLight;
 	
@@ -39,6 +46,23 @@ public class Robot extends TimedRobot {
         prefs = Preferences.getInstance();
         
 		Devices.getInstance().getNavXGyro().reset();
+
+		new Thread(() -> {
+			UsbCamera camera =CameraServer.getInstance().startAutomaticCapture();
+			camera.setResolution(640, 480);
+			
+			CvSink cvSink = CameraServer.getInstance().getVideo();
+			CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
+			
+			Mat source = new Mat();
+			Mat output = new Mat();
+			
+			while(!Thread.interrupted()) {
+				cvSink.grabFrame(source);
+				Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+				outputStream.putFrame(output);
+			}
+		}).start();
 	}
 	
 	/**
@@ -46,7 +70,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledInit() {
-        driveSubsystem.drive(0, 0);
+       // driveSubsystem.drive(0, 0);
 		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
 		Scheduler.getInstance().removeAll();
 		
