@@ -8,6 +8,8 @@
 package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.usfirst.frc.team2473.robot.Robot;
 
 import org.usfirst.frc.team2473.framework.JetsonPort;
@@ -31,8 +33,11 @@ public class AlignToHatch extends Command {
 	protected void execute() {
 		move();
     }
-    
+	
+	//this method is used in TeleopDrive rather than execute
     public void move() {
+		updateSmartDashboard(); //put thit here since execute is not always called
+
 		numMoves++;
 		double thresholdAngle = 3;
 
@@ -68,7 +73,12 @@ public class AlignToHatch extends Command {
 		// 	p.initialize();
 		// 	p.move();
 		// }
-    }
+	}
+	
+	public void updateSmartDashboard(){
+		SmartDashboard.putNumber("angle", JetsonPort.getInstance().getVisionAngle());
+		SmartDashboard.putNumber("distance", JetsonPort.getInstance().getVisionDistance());
+	}
 
 	@Override
 	protected boolean isFinished() {
