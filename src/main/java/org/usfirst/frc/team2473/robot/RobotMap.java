@@ -24,6 +24,7 @@ public class RobotMap {
 	public static double K_OPPOSITE_POWER = 0.2;
 	public static double K_TURN = 0.95;
 
+	public static boolean RUNNING_FORWARD = true;
 	
 	public static double DEADBAND_MINIMUM_POWER = 0.2;
 	public static double DEADBAND_MINIMUM_TURN = 0.1;

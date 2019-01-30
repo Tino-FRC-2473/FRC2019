@@ -8,6 +8,7 @@
 package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.Robot;
@@ -34,6 +35,12 @@ public class TeleopDrive extends Command {
 	@Override
 	protected void initialize() {
 		prevAngle = JetsonPort.getInstance().getVisionAngle();
+		Robot.oi.getReverseDriveButton().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
+			}
+		});
 	}
 
 	@Override
