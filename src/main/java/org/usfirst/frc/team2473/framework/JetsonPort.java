@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2473.framework;
 
+import org.usfirst.frc.team2473.robot.RobotMap;
+
 import edu.wpi.first.wpilibj.SerialPort;
 
 public class JetsonPort extends SerialPort {
@@ -7,8 +9,11 @@ public class JetsonPort extends SerialPort {
     private static final String START = "S";
     private static final String END = "E";
 
-    private int visionAngle = 0;
-    private int visionDistance = 0;
+    private int fVisionAngle = 0;
+    private int fVisionDistance = 0;
+    private int bVisionAngle = 0;
+    private int bVisionDistance = 0;
+
     private boolean firstStart = false;
     private String buffer = "";
 
@@ -34,13 +39,16 @@ public class JetsonPort extends SerialPort {
                 receive = receive.substring(receive.indexOf(START));
             }
         }
+
         if (firstStart) {
             buffer += receive; 
             if (buffer.contains(END)) {
                 String data = buffer.substring(buffer.indexOf(START)+1, buffer.indexOf(END));
-                if (data.length() == 6) {
-                    visionAngle = Integer.parseInt(data.substring(0, 3));
-                    visionDistance = Integer.parseInt(data.substring(3));
+                if (data.length() == 12) {
+                    fVisionAngle = Integer.parseInt(data.substring(0, 3));
+                    fVisionDistance = Integer.parseInt(data.substring(3, 6));
+                    bVisionAngle = Integer.parseInt(data.substring(6, 9));
+                    bVisionDistance = Integer.parseInt(data.substring(9));
 
                     buffer = buffer.substring(buffer.indexOf(END)+1);
                 }
@@ -49,12 +57,15 @@ public class JetsonPort extends SerialPort {
         }
     }
 
+    public void printVisionAngles() {
+        System.out.println(String.format("FRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d", fVisionAngle, fVisionDistance, bVisionAngle, bVisionDistance));
+    }
 
     public double getVisionAngle() {
-        return visionAngle;
+        return fVisionAngle;
     }
 
     public double getVisionDistance() {
-        return visionDistance;
+        return fVisionDistance;
     }
 }
