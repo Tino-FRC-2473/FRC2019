@@ -12,8 +12,11 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -30,6 +33,8 @@ public class Robot extends TimedRobot {
 
 	Preferences prefs;
 
+	SerialPort serialPort;
+
 	/**
 	 * Runs once when the robot turns on
 	 */
@@ -41,6 +46,17 @@ public class Robot extends TimedRobot {
         prefs = Preferences.getInstance();
         
 		Devices.getInstance().getNavXGyro().reset();
+
+		UsbCamera frontCam = CameraServer.getInstance().startAutomaticCapture("Front Camera", 0);
+		frontCam.setBrightness(25);
+		frontCam.setFPS(15);
+		frontCam.setResolution(320, 240);
+		UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
+		backCam.setBrightness(75);
+		backCam.setFPS(15);
+		backCam.setResolution(320, 240);
+
+		// serialPort = new SerialPort(9600, SerialPort.Port.kOnboard);
 	}
 	
 	/**
@@ -67,7 +83,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-        cvLight.set(Value.kForward);
+		cvLight.set(Value.kForward);
 	}
 
 	/**
@@ -75,11 +91,13 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-        JetsonPort.getInstance().updateVisionValues();	
-		if (++i % 4 == 0) {
-			System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
-				" Distance: " + JetsonPort.getInstance().getVisionDistance());
-		}
+		// serialPort.writeString("Hello World!");
+
+        // JetsonPort.getInstance().updateVisionValues();	
+		// if (++i % 4 == 0) {
+		// 	JetsonPort.getInstance().printVisionAngles();
+		// }
+		//System.out.println("Hello World!");
 		Scheduler.getInstance().run();
 	}
 
@@ -89,8 +107,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
         cvLight.set(Value.kForward);
-        JetsonPort.getInstance().updateVisionValues();	
-        System.out.println("Vision - " + JetsonPort.getInstance().getVisionAngle() + JetsonPort.getInstance().getVisionDistance());
+		JetsonPort.getInstance().updateVisionValues();
+		JetsonPort.getInstance().printVisionAngles();
 		(new TeleopDrive()).start();
 	}
 
@@ -102,8 +120,7 @@ public class Robot extends TimedRobot {
         JetsonPort.getInstance().updateVisionValues();
 		
 		if (++i % 4 == 0) {
-			System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
-				" Distance: " + JetsonPort.getInstance().getVisionDistance());
+			JetsonPort.getInstance().printVisionAngles();
 		}
 
         
