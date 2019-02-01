@@ -2,7 +2,9 @@ package org.usfirst.frc.team2473.framework;
 
 import edu.wpi.first.wpilibj.SerialPort;
 
-public class JetsonPort extends SerialPort {
+public class JetsonPort 
+//extends SerialPort 
+{
 
     private double visionAngle = 0;
     private double visionDistance = 0;
@@ -12,18 +14,21 @@ public class JetsonPort extends SerialPort {
     private static JetsonPort theInstance;
 
     static {
-		theInstance = new JetsonPort(9600, Port.kUSB);
+		theInstance = new JetsonPort();
+		//theInstance = new JetsonPort(9600, Port.kUSB);
     }
     
-    private JetsonPort(int baudrate, Port port) {
-        super(baudrate, port);
-    }
+    // private JetsonPort(int baudrate, Port port) {
+    //     super(baudrate, port);
+    // }
 
     public static JetsonPort getInstance() { 
 		return theInstance;
 	}
 
-    public void updateVisionValues() {
+    public void updateVisionValues() {}
+
+    /*public void updateVisionValues() {
         String recieve = readString();
         if(recieve.length() != 0 && 
             recieve.contains(" ") &&
@@ -52,13 +57,19 @@ public class JetsonPort extends SerialPort {
             }
         }
         
-    }
+    }*/
 
     public double getVisionAngle() {
-        return visionAngle;
+        return Math.random()*180 - 90;
     }
+    // public double getVisionAngle() {
+    //     return visionAngle;
+    // }
 
     public double getVisionDistance() {
-        return visionDistance;
+        return Math.random()*60;
     }
+    // public double getVisionDistance() {
+    //     return visionDistance;
+    // }
 }

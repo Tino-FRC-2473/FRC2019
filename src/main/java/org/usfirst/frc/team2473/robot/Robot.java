@@ -9,6 +9,7 @@ package org.usfirst.frc.team2473.robot;
 
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
+import org.usfirst.frc.team2473.robot.commands.AlignToHatch;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
 
@@ -103,6 +104,7 @@ public class Robot extends TimedRobot {
 		timer.reset();
 		timer.start();
 		
+		new AlignToHatch().start(); //run the code to start CV
 	}
 
 	/**
