@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.CvSink;
@@ -45,36 +46,39 @@ public class Robot extends TimedRobot {
 
 	private Timer timer = new Timer();
 
+	private ShuffleboardTab tab = Shuffleboard.getTab("Shuffleboard");
 	/**
 	 * Runs once when the robot turns on
 	 */
 	@Override
 	public void robotInit() {
-		entry = SmartDashboard.getEntry("time");
+
+		entry = tab.add("Time","0").withWidget("Text View").getEntry();
+		//entry = SmartDashboard.getEntry("time");
 		oi = new OI();
 		
 		cvLight = new Relay(0);
         prefs = Preferences.getInstance();
         
 		Devices.getInstance().getNavXGyro().reset();
-
+		
 		//TODO sketchy code that somehow made the camera work
-		new Thread(() -> {
-			UsbCamera camera =CameraServer.getInstance().startAutomaticCapture();
-			camera.setResolution(640, 480);
+		// new Thread(() -> {
+		// 	UsbCamera camera =CameraServer.getInstance().startAutomaticCapture();
+		// 	camera.setResolution(640, 480);
 			
-			CvSink cvSink = CameraServer.getInstance().getVideo();
-			CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
+		// 	CvSink cvSink = CameraServer.getInstance().getVideo();
+		// 	CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
 			
-			Mat source = new Mat();
-			Mat output = new Mat();
+		// 	Mat source = new Mat();
+		// 	Mat output = new Mat();
 			
-			while(!Thread.interrupted()) {
-				cvSink.grabFrame(source);
-				//Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
-				outputStream.putFrame(output);
-			}
-		}).start();
+		// 	while(!Thread.interrupted()) {
+		// 		cvSink.grabFrame(source);
+		// 		//Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+		// 		outputStream.putFrame(output);
+		// 	}
+		// }).start();
 	}
 	
 	/**
@@ -113,6 +117,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 
+		//Calculates the min and sec left based on t and updates shuffleboard
 		double t = 15-timer.get();
 		if(t<0) t= 0;
 		String min = ""+(int)(t/60);
@@ -144,6 +149,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+
+		//Calculates the min and sec left based on t and updates shuffleboard
 		double t = 135-timer.get();
 		if(t<0) t= 0;
 		String min = ""+(int)(t/60);
