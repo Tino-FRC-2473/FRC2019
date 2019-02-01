@@ -7,12 +7,15 @@ public class OI {
 	private Joystick throttle;
 	private Joystick wheel;
 
-	private JoystickButton cvButton;
+    private JoystickButton cvButton;
+    private JoystickButton reverseDriveButton;
 
 	public OI() {
 		throttle = new Joystick(2);		
-		wheel = new Joystick(0);
-		cvButton = new JoystickButton(wheel, 1);		
+        wheel = new Joystick(0);
+        
+		cvButton = new JoystickButton(wheel, 1);
+		reverseDriveButton = new JoystickButton(wheel, 2);		
 	}
 	
 	public Joystick getThrottle() {
@@ -25,5 +28,9 @@ public class OI {
 
 	public JoystickButton getCVButton() {
 		return cvButton;
+    }
+    
+	public JoystickButton getReverseDriveButton() {
+		return reverseDriveButton;
 	}
 }

@@ -47,14 +47,14 @@ public class Robot extends TimedRobot {
         
 		Devices.getInstance().getNavXGyro().reset();
 
-		UsbCamera frontCam = CameraServer.getInstance().startAutomaticCapture("Front Camera", 0);
-		frontCam.setBrightness(25);
-		frontCam.setFPS(15);
-		frontCam.setResolution(320, 240);
-		UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
-		backCam.setBrightness(75);
-		backCam.setFPS(15);
-		backCam.setResolution(320, 240);
+		// UsbCamera frontCam = CameraServer.getInstance().startAutomaticCapture("Front Camera", 0);
+		// frontCam.setBrightness(25);
+		// frontCam.setFPS(15);
+		// frontCam.setResolution(320, 240);
+		// UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
+		// backCam.setBrightness(75);
+		// backCam.setFPS(15);
+		// backCam.setResolution(320, 240);
 
 		// serialPort = new SerialPort(9600, SerialPort.Port.kOnboard);
 	}
@@ -93,10 +93,10 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
 		// serialPort.writeString("Hello World!");
 
-        // JetsonPort.getInstance().updateVisionValues();	
-		// if (++i % 4 == 0) {
-		// 	JetsonPort.getInstance().printVisionAngles();
-		// }
+        JetsonPort.getInstance().updateVisionValues();	
+		if (++i % 4 == 0) {
+			JetsonPort.getInstance().printVisionAngles();
+		}
 		//System.out.println("Hello World!");
 		Scheduler.getInstance().run();
 	}
@@ -120,7 +120,8 @@ public class Robot extends TimedRobot {
         JetsonPort.getInstance().updateVisionValues();
 		
 		if (++i % 4 == 0) {
-			JetsonPort.getInstance().printVisionAngles();
+            JetsonPort.getInstance().printVisionAngles();
+            System.out.println("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
 		}
 
         
