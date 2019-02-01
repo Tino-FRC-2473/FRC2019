@@ -62,10 +62,10 @@ public class JetsonPort extends SerialPort {
     }
 
     public double getVisionAngle() {
-        return fVisionAngle;
+        return RobotMap.RUNNING_FORWARD ? fVisionAngle : bVisionAngle;
     }
 
     public double getVisionDistance() {
-        return fVisionDistance;
+        return RobotMap.RUNNING_FORWARD ? fVisionDistance : bVisionDistance;
     }
 }

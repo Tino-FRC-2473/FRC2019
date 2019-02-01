@@ -9,7 +9,7 @@ package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
-
+import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 
 /**
@@ -17,9 +17,10 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
  */
 public class AlignToHatch extends Command {
 	
-	double normalPower = 0.15;
-	double turnPower = 0.25;
+	double normalPower = 0.2;
+	double turnPower = 0.1;
 	private double angle = 0;
+    private double distance = 0;
 
 	public AlignToHatch() {
 		requires(Robot.driveSubsystem);
@@ -33,8 +34,11 @@ public class AlignToHatch extends Command {
     public void move() {
 		double thresholdAngle = 3;
         angle = JetsonPort.getInstance().getVisionAngle();
-        
-		if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
+        distance = JetsonPort.getInstance().getVisionDistance();
+        if (!RobotMap.RUNNING_FORWARD) angle = -angle;
+        if (distance < 20) {
+            Robot.driveSubsystem.drive(0, 0);
+		} else if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
 			Robot.driveSubsystem.drive(normalPower, normalPower);
 		} else if (Math.abs(angle) > 10) {
 <<<<<<< HEAD

@@ -60,12 +60,21 @@ public class SparkDriveSubsystem extends Subsystem {
     }
 	
 	public void teleopDrive(double speed, double rotation) {
-		drive.arcadeDrive(speed, rotation);
+		if (RobotMap.RUNNING_FORWARD) {
+			drive.arcadeDrive(speed, rotation);
+		} else {
+			drive.arcadeDrive(-speed, rotation);
+		}
 	}
 
 	public void drive(double left, double right) {
-		leftSpark.set(-left);
-		rightSpark.set(right);
+		if (RobotMap.RUNNING_FORWARD) {
+			leftSpark.set(-left);
+			rightSpark.set(right);
+		} else {
+			leftSpark.set(left);
+			rightSpark.set(-right);
+		}
 	}
 
 	public void stopMotors() {
