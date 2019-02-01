@@ -12,12 +12,16 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
@@ -36,11 +40,16 @@ public class Robot extends TimedRobot {
 
 	Preferences prefs;
 
+	private NetworkTableEntry entry;
+
+	private Timer timer = new Timer();
+
 	/**
 	 * Runs once when the robot turns on
 	 */
 	@Override
 	public void robotInit() {
+		entry = SmartDashboard.getEntry("time");
 		oi = new OI();
 		
 		cvLight = new Relay(0);
@@ -61,7 +70,7 @@ public class Robot extends TimedRobot {
 			
 			while(!Thread.interrupted()) {
 				cvSink.grabFrame(source);
-				Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+				//Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
 				outputStream.putFrame(output);
 			}
 		}).start();
@@ -91,7 +100,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-
+		timer.reset();
+		timer.start();
+		
 	}
 
 	/**
@@ -99,9 +110,18 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-        JetsonPort.getInstance().updateVisionValues();	
-        System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
-            " Distance: " + JetsonPort.getInstance().getVisionDistance());
+
+		double t = 15-timer.get();
+		if(t<0) t= 0;
+		String min = ""+(int)(t/60);
+		String sec = ""+(int)(t%60);
+		if(sec.length()==1) sec = "0"+sec;
+		entry.setString(min+":"+sec);
+
+
+        //JetsonPort.getInstance().updateVisionValues();	
+        // System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
+        //     " Distance: " + JetsonPort.getInstance().getVisionDistance());
 		Scheduler.getInstance().run();
 	}
 
@@ -110,9 +130,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
-        cvLight.set(Value.kForward);
-        JetsonPort.getInstance().updateVisionValues();	
-        System.out.println("Vision - " + JetsonPort.getInstance().getVisionAngle() + JetsonPort.getInstance().getVisionDistance());
+		timer.reset();
+        //cvLight.set(Value.kForward);
+        //JetsonPort.getInstance().updateVisionValues();	
+        //System.out.println("Vision - " + JetsonPort.getInstance().getVisionAngle() + JetsonPort.getInstance().getVisionDistance());
 		(new TeleopDrive()).start();
 	}
 
@@ -121,9 +142,17 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-        JetsonPort.getInstance().updateVisionValues();
-        System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
-        " Distance: " + JetsonPort.getInstance().getVisionDistance());
+		double t = 135-timer.get();
+		if(t<0) t= 0;
+		String min = ""+(int)(t/60);
+		String sec = ""+(int)(t%60);
+		if(sec.length()==1) sec = "0"+sec;
+		entry.setString(min+":"+sec);
+
+
+        // JetsonPort.getInstance().updateVisionValues();
+        // System.out.println("Vision - Angle: " + JetsonPort.getInstance().getVisionAngle() + 
+        // " Distance: " + JetsonPort.getInstance().getVisionDistance());
         
 		Scheduler.getInstance().run();
 	}
