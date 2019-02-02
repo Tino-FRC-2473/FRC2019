@@ -53,7 +53,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 
-		entry = tab.add("Time","0").withWidget("Text View").getEntry();
+		entry = tab.add("Time","0").withSize(1,1).withPosition(0,0).getEntry();
+		
 		//entry = SmartDashboard.getEntry("time");
 		oi = new OI();
 		
@@ -61,7 +62,10 @@ public class Robot extends TimedRobot {
         prefs = Preferences.getInstance();
         
 		Devices.getInstance().getNavXGyro().reset();
-		
+		UsbCamera camera1 = CameraServer.getInstance().startAutomaticCapture(0);
+		camera1.setResolution(640, 480);
+		UsbCamera camera2 = CameraServer.getInstance().startAutomaticCapture(1);
+		camera2.setResolution(640, 480);
 		//TODO sketchy code that somehow made the camera work
 		// new Thread(() -> {
 		// 	UsbCamera camera =CameraServer.getInstance().startAutomaticCapture();
