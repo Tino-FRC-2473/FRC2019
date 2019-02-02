@@ -26,6 +26,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode.PixelFormat;
+import edu.wpi.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 
@@ -65,9 +67,18 @@ public class Robot extends TimedRobot {
         
 		Devices.getInstance().getNavXGyro().reset();
 		UsbCamera camera1 = CameraServer.getInstance().startAutomaticCapture(0);
-		camera1.setResolution(640, 480);
+		camera1.setResolution(240, 240);
+		camera1.setFPS(20);
+		camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+		camera1.setVideoMode(PixelFormat.kMJPEG,240,240,20);
+		
 		UsbCamera camera2 = CameraServer.getInstance().startAutomaticCapture(1);
-		camera2.setResolution(640, 480);
+		camera2.setResolution(240, 240);
+		camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+		camera2.setExposureManual(30);
+		camera2.setBrightness(20);
+		camera2.setFPS(20);
+		camera2.setVideoMode(PixelFormat.kMJPEG,240,240,20);
 		//TODO sketchy code that somehow made the camera work
 		// new Thread(() -> {
 		// 	UsbCamera camera =CameraServer.getInstance().startAutomaticCapture();
