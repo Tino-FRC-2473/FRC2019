@@ -21,12 +21,15 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
+
+import java.util.Map;
 
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -42,19 +45,18 @@ public class Robot extends TimedRobot {
 
 	Preferences prefs;
 
-	private NetworkTableEntry entry;
-
-	private Timer timer = new Timer();
-
 	private ShuffleboardTab tab = Shuffleboard.getTab("Shuffleboard");
+	private NetworkTableEntry timerEntry;
+	public static NetworkTableEntry angleEntry;
+	private Timer timer = new Timer();
 	/**
 	 * Runs once when the robot turns on
 	 */
 	@Override
 	public void robotInit() {
-
-		entry = tab.add("Time","0").withSize(1,1).withPosition(0,0).getEntry();
-		
+		angleEntry = tab.add("angle","-90").withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", -90, "max", 90)).getEntry();
+		//timerEntry = tab.add("Time","0").withWidget("Text View").getEntry();
+		timerEntry = tab.add("Time","0").withSize(1,1).withPosition(0,0).getEntry();
 		//entry = SmartDashboard.getEntry("time");
 		oi = new OI();
 		
@@ -127,7 +129,7 @@ public class Robot extends TimedRobot {
 		String min = ""+(int)(t/60);
 		String sec = ""+(int)(t%60);
 		if(sec.length()==1) sec = "0"+sec;
-		entry.setString(min+":"+sec);
+		timerEntry.setString(min+":"+sec);
 
 
         //JetsonPort.getInstance().updateVisionValues();	
@@ -145,7 +147,7 @@ public class Robot extends TimedRobot {
         //cvLight.set(Value.kForward);
         //JetsonPort.getInstance().updateVisionValues();	
         //System.out.println("Vision - " + JetsonPort.getInstance().getVisionAngle() + JetsonPort.getInstance().getVisionDistance());
-		(new TeleopDrive()).start();
+		//(new TeleopDrive()).start();
 	}
 
 	/**
@@ -160,7 +162,7 @@ public class Robot extends TimedRobot {
 		String min = ""+(int)(t/60);
 		String sec = ""+(int)(t%60);
 		if(sec.length()==1) sec = "0"+sec;
-		entry.setString(min+":"+sec);
+		timerEntry.setString(min+":"+sec);
 
 
         // JetsonPort.getInstance().updateVisionValues();
