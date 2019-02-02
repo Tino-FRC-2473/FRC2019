@@ -9,9 +9,11 @@ package org.usfirst.frc.team2473.robot.subsystems;
 
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.RobotMap;
+import org.usfirst.frc.team2473.robot.commands.ElevatorMove;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -20,10 +22,15 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Elevator extends Subsystem {
     
     public enum ElevatorPosition {
+        //Units are encoder ticks. 
+        //TODO These are now just dummy values
         ZERO(0), BASE(100), FIRST(300), SECOND(550), THIRD(850);
 
         private final int value;
 
+        /**
+         * @param value refers to the number of encoder ticks of a certain position
+         */
         private ElevatorPosition(int value) {
             this.value = value;
         }
@@ -58,6 +65,9 @@ public class Elevator extends Subsystem {
     public void set(double speed) {
         System.out.println("Setting " + speed);
         talon.set(speed);
+
+        if(Math.abs(speed) >= ElevatorMove.SLOW_POWER - 0.01)
+            encoderResetComplete = false;
     }
 
     public void stop() {
@@ -70,6 +80,9 @@ public class Elevator extends Subsystem {
 
     public synchronized void resetEncoders() {
         talon.setSelectedSensorPosition(0, 0, 0);
+        while(!talon.hasResetOccurred()){
+            Timer.delay(0.001);
+        }
         encoderResetComplete = true;
     }
 

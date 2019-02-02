@@ -23,7 +23,7 @@ public class ElevatorMove extends Command {
 	 * Lowest power elevator will run at towards the end of
 	 * the move.
 	 */
-	private static double SLOW_POWER = 0.1;
+	public static final double SLOW_POWER = 0.1;
 	
 	/**
 	 * The number of ticks that the elevator should
@@ -41,7 +41,7 @@ public class ElevatorMove extends Command {
 	 * Initial power to move the elevator at.
 	 */
 	private double power;
-	private double initialPower;
+	private double initialPower; //TODO may be useless
 
 	private int initialTickDelta;
 
