@@ -115,8 +115,10 @@ public class ElevatorMove extends Command {
 	@Override
 	protected boolean isFinished() {
 		int currTicks = Robot.elevator.getEncoderTicks();
-		if (this.initialTickDelta > 0) return (absoluteTickGoal < currTicks);
-		else return (absoluteTickGoal > currTicks);
+		if (this.initialTickDelta > 0) 
+			return (absoluteTickGoal < currTicks);
+		else 
+			return (absoluteTickGoal > currTicks);
 	}
 
 	@Override
