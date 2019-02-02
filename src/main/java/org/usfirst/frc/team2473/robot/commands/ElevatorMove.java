@@ -14,7 +14,7 @@ import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 import edu.wpi.first.wpilibj.command.Command;
 
 /**
- * A class that enables accurate elevator mvoement to a given distance
+ * A class that enables accurate elevator movement to a given distance
  * at a given power.
  */
 public class ElevatorMove extends Command {
