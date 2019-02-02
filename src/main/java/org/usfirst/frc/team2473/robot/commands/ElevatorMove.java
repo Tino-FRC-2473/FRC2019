@@ -12,6 +12,7 @@ import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * A class that enables accurate elevator movement to a given distance
@@ -88,6 +89,7 @@ public class ElevatorMove extends Command {
 		Robot.elevator.set(power);
 
 		System.out.println("Power: " + power);
+		SmartDashboard.putBoolean("Elevator Status", true);
 	}
 
 	@Override
@@ -108,7 +110,12 @@ public class ElevatorMove extends Command {
 		Robot.elevator.set(tempPower);
 				
 		prevTicks = currTicks;
-		
+		//Checks if while executing, elevator move is moving by a minimum number of ticks per cycle.
+		if(delta < RobotMap.ELEVATOR_MIN_TICKS){
+			SmartDashboard.putBoolean("Elevator Status", false);
+		}else if (!SmartDashboard.getBoolean("Elevator Status", true) && delta > RobotMap.ELEVATOR_MIN_TICKS){
+			SmartDashboard.putBoolean("Elevator Status", true);
+		}
 		
 	}
 
