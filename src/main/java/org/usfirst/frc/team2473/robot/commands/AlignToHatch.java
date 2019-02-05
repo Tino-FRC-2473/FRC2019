@@ -32,9 +32,11 @@ public class AlignToHatch extends Command {
     }
     
     public void move() {
+        if (!RobotMap.CV_RUNNING) return;
+        
 		double thresholdAngle = 3;
-        angle = JetsonPort.getInstance().getVisionAngle();
-        distance = JetsonPort.getInstance().getVisionDistance();
+        angle = Robot.jetsonPort.getVisionAngle();
+        distance = Robot.jetsonPort.getVisionDistance();
         if (!RobotMap.RUNNING_FORWARD) angle = -angle;
         if (distance < 20) {
             Robot.driveSubsystem.drive(0, 0);

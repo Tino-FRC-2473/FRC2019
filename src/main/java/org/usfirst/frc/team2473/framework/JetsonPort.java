@@ -13,48 +13,44 @@ public class JetsonPort extends SerialPort {
     private int fVisionDistance = 0;
     private int bVisionAngle = 0;
     private int bVisionDistance = 0;
-
+     
     private boolean firstStart = false;
     private String buffer = "";
-
-    private static JetsonPort theInstance;
-
-    static {
-		theInstance = new JetsonPort(9600, Port.kUSB);
-    }
     
-    private JetsonPort(int baudrate, Port port) {
+    public JetsonPort(int baudrate, Port port) {
         super(baudrate, port);
     }
 
-    public static JetsonPort getInstance() { 
-		return theInstance;
-	}
-
     public void updateVisionValues() {
-        String receive = readString();
-        if (!firstStart) {
-            if (receive.contains(START)) {
-                firstStart = true;
-                receive = receive.substring(receive.indexOf(START));
-            }
-        }
-
-        if (firstStart) {
-            buffer += receive; 
-            if (buffer.contains(END)) {
-                String data = buffer.substring(buffer.indexOf(START)+1, buffer.indexOf(END));
-                if (data.length() == 12) {
-                    fVisionAngle = Integer.parseInt(data.substring(0, 3));
-                    fVisionDistance = Integer.parseInt(data.substring(3, 6));
-                    bVisionAngle = Integer.parseInt(data.substring(6, 9));
-                    bVisionDistance = Integer.parseInt(data.substring(9));
-
-                    buffer = buffer.substring(buffer.indexOf(END)+1);
+        try {
+            String receive = readString();
+            if (!firstStart) {
+                if (receive.contains(START)) {
+                    firstStart = true;
+                    receive = receive.substring(receive.indexOf(START));
                 }
-                
             }
+
+            if (firstStart) {
+                buffer += receive; 
+                if (buffer.contains(END)) {
+                    String data = buffer.substring(buffer.indexOf(START)+1, buffer.indexOf(END));
+                    if (data.length() == 12) {
+                        fVisionAngle = Integer.parseInt(data.substring(0, 3));
+                        fVisionDistance = Integer.parseInt(data.substring(3, 6));
+                        bVisionAngle = Integer.parseInt(data.substring(6, 9));
+                        bVisionDistance = Integer.parseInt(data.substring(9));
+
+                        buffer = buffer.substring(buffer.indexOf(END)+1);
+                    }
+                    
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getClass());
+            RobotMap.CV_RUNNING = false;
         }
+        
     }
 
     public void printVisionAngles() {
