@@ -121,8 +121,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		//Devices.getInstance().initializeCVSocket();
-		
+		System.out.println("STARTING ELEVATOR -----------------------------------");
 		elevator.resetEncoders();
+		System.out.println("ENCODERS RESET");
 		new TeleopDrive2(true).start();
 		
 	}
@@ -132,6 +133,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		System.out.println("Running Elevator " + Robot.oi.getWheel().getX());
+
 		Scheduler.getInstance().run();
 	}
 

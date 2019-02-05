@@ -24,7 +24,7 @@ public class Elevator extends Subsystem {
     public enum ElevatorPosition {
         //Units are encoder ticks. 
         //TODO These are now just dummy values
-        ZERO(0), BASE(100), FIRST(300), SECOND(550), THIRD(850);
+        ZERO(0), BASE(200), FIRST(800), SECOND(1600), THIRD(2800);
 
         private final int value;
 
@@ -80,9 +80,9 @@ public class Elevator extends Subsystem {
 
     public synchronized void resetEncoders() {
         talon.setSelectedSensorPosition(0, 0, 0);
-        while(!talon.hasResetOccurred()){
-            Timer.delay(0.001);
-        }
+        // while(!talon.hasResetOccurred()){
+        //     Timer.delay(0.001);
+        // }
         encoderResetComplete = true;
     }
 
