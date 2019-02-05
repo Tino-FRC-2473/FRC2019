@@ -74,7 +74,8 @@ public class SparkDriveSubsystem extends Subsystem {
 	}
 
 	public void resetEncoders() {
-		// reset encoder, currently don't know how
+		leftSpark.resetEncoder();
+		rightSpark.resetEncoder();
 	}
 
 	public double getEncoderTicks(int id) {

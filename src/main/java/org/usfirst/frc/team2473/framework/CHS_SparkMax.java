@@ -39,10 +39,10 @@ public class CHS_SparkMax {
 			lastEncoderValue = position - encoderOffset;
 		}
 		
-		return lastEncoderValue;
+		return lastEncoderValue; //TODO using lastEncoderValue may be problematic
 	}
 
-	//Emily is confused as to the purpose of this method
+	// Emily is confused as to the purpose of this method
 	// public double getEncoderPositionUnmodified() {
 	// 	return encoder.getPosition();
 	// }
