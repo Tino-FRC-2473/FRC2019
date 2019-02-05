@@ -29,6 +29,8 @@ public class RobotMap {
 	public static double DEADBAND_MINIMUM_TURN = 0.1;
 
 
+	public static final double DRIVE_MIN_TICKS = 10;
+
     public static final int CV_LIGHT = 1;
     public static final String JETSON_IP = "10.24.73.19";
     public static final int JETSON_PORT = 5801;

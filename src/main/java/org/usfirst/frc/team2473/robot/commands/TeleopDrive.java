@@ -8,6 +8,7 @@
 package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.Robot;
@@ -22,7 +23,8 @@ public class TeleopDrive extends Command {
 	private AlignToHatch alignToHatch;
 
 	private final double M = (1 - RobotMap.K_START_STALL_POWER) / (1 - RobotMap.DEADBAND_MINIMUM_POWER);
-
+	
+	double prevTicks;
 	double prevAngle;
 
 	public TeleopDrive() {
@@ -79,6 +81,13 @@ public class TeleopDrive extends Command {
 			}
 
 			Robot.driveSubsystem.teleopDrive(outputZ, outputX);
+			if(Math.abs(outputZ) > RobotMap.DEADBAND_MINIMUM_POWER || Math.abs(outputX) > RobotMap.DEADBAND_MINIMUM_TURN){
+				if(Math.abs(Robot.driveSubsystem.getEncoderTicks(1) - prevTicks) < RobotMap.DRIVE_MIN_TICKS){
+					SmartDashboard.putBoolean("Motor Status", false);
+				}else{
+					SmartDashboard.putBoolean("Motor Status", true);
+				}
+			}
 		}
 
 	}
