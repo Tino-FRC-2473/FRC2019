@@ -47,18 +47,22 @@ public class Robot extends TimedRobot {
 
 	Preferences prefs;
 
-	private ShuffleboardTab tab = Shuffleboard.getTab("Shuffleboard");
-	private NetworkTableEntry timerEntry;
-	public static NetworkTableEntry angleEntry;
+	private static ShuffleboardTab tab = Shuffleboard.getTab("Board");
+	// private static NetworkTableEntry timerEntry;
+	// public static NetworkTableEntry angleEntry;
+	// public static NetworkTableEntry distanceEntry;
 	private Timer timer = new Timer();
+
+
 	/**
 	 * Runs once when the robot turns on
 	 */
 	@Override
 	public void robotInit() {
-		angleEntry = tab.add("angle","-90").withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", -90, "max", 90)).getEntry();
+		//angleEntry = tab.add("angle","-90").withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", -90, "max", 90)).getEntry();
 		//timerEntry = tab.add("Time","0").withWidget("Text View").getEntry();
-		timerEntry = tab.add("Time","0").withSize(1,1).withPosition(0,0).getEntry();
+		//timerEntry = tab.add("Time","0").withSize(1,1).withPosition(0,0).getEntry();
+		//distanceEntry = tab.add("distance","0").withSize(1, 1).withPosition(2, 2).getEntry();
 		//entry = SmartDashboard.getEntry("time");
 		oi = new OI();
 		
@@ -79,23 +83,6 @@ public class Robot extends TimedRobot {
 		camera2.setBrightness(20);
 		camera2.setFPS(20);
 		camera2.setVideoMode(PixelFormat.kMJPEG,240,240,20);
-		//TODO sketchy code that somehow made the camera work
-		// new Thread(() -> {
-		// 	UsbCamera camera =CameraServer.getInstance().startAutomaticCapture();
-		// 	camera.setResolution(640, 480);
-			
-		// 	CvSink cvSink = CameraServer.getInstance().getVideo();
-		// 	CvSource outputStream = CameraServer.getInstance().putVideo("Blur", 640, 480);
-			
-		// 	Mat source = new Mat();
-		// 	Mat output = new Mat();
-			
-		// 	while(!Thread.interrupted()) {
-		// 		cvSink.grabFrame(source);
-		// 		//Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
-		// 		outputStream.putFrame(output);
-		// 	}
-		// }).start();
 	}
 	
 	/**
@@ -140,7 +127,7 @@ public class Robot extends TimedRobot {
 		String min = ""+(int)(t/60);
 		String sec = ""+(int)(t%60);
 		if(sec.length()==1) sec = "0"+sec;
-		timerEntry.setString(min+":"+sec);
+		SmartDashboard.putString("Time", min+":"+sec);
 
 
         //JetsonPort.getInstance().updateVisionValues();	
@@ -173,7 +160,7 @@ public class Robot extends TimedRobot {
 		String min = ""+(int)(t/60);
 		String sec = ""+(int)(t%60);
 		if(sec.length()==1) sec = "0"+sec;
-		timerEntry.setString(min+":"+sec);
+		SmartDashboard.putString("Time", min+":"+sec);
 
 
         // JetsonPort.getInstance().updateVisionValues();

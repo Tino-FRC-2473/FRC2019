@@ -73,10 +73,8 @@ public class AlignToHatch extends Command {
 	}
 	
 	public void updateSmartDashboard(){
-		SmartDashboard.putNumber("angle", JetsonPort.getInstance().getVisionAngle());
-		Robot.angleEntry.setNumber(JetsonPort.getInstance().getVisionAngle());
-
-		SmartDashboard.putNumber("distance", JetsonPort.getInstance().getVisionDistance());
+		SmartDashboard.putNumber("Angle", JetsonPort.getInstance().getVisionAngle());
+		SmartDashboard.putNumber("Distance", JetsonPort.getInstance().getVisionDistance());
 	}
 
 	@Override
@@ -86,8 +84,8 @@ public class AlignToHatch extends Command {
 
 	@Override
 	protected void end() {
-		Robot.angleEntry.setNumber(-90);
+		SmartDashboard.putNumber("Angle", -90);
 		super.end();
-		SmartDashboard.putNumber("distance", -1000);
+		SmartDashboard.putNumber("Distance", -1000);
 	}
 }
