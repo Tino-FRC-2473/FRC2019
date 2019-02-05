@@ -47,6 +47,9 @@ public class ElevatorMove extends Command {
 	private int initialTickDelta;
 
 	private ElevatorPosition pos;
+
+	//variable for testing shuffleboard
+	private int test = 0;
 	
 	/**
 	 * Create a ElevatorMove object with given inch goal and power.
@@ -94,6 +97,7 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void execute() {
+		test++;
 		double tempPower = power;
 		int currTicks = Robot.elevator.getEncoderTicks();
 		
@@ -115,6 +119,55 @@ public class ElevatorMove extends Command {
 			SmartDashboard.putBoolean("Elevator Status", false);
 		}else if (!SmartDashboard.getBoolean("Elevator Status", true) && delta > RobotMap.ELEVATOR_MIN_TICKS){
 			SmartDashboard.putBoolean("Elevator Status", true);
+		}
+
+		//sets the elevator value in shuffleboard based on ticks
+		//currTicks = Robot.elevator.getEncoderTicks();
+		currTicks = test;
+		double diff = 0;
+		double gap = 0;
+		double value = 0;
+		if(currTicks==ElevatorPosition.ZERO.getValue()){
+			SmartDashboard.putNumber("Elevator", -1);
+		}
+		else if(currTicks<ElevatorPosition.BASE.getValue()){
+			diff = currTicks-ElevatorPosition.ZERO.getValue();
+			gap = ElevatorPosition.BASE.getValue()-ElevatorPosition.ZERO.getValue();
+			value = diff/gap;
+			SmartDashboard.putNumber("Elevator",-1+value);
+		}
+		else if(currTicks==ElevatorPosition.BASE.getValue()){
+			SmartDashboard.putNumber("Elevator",0);
+		}
+		else if(currTicks<ElevatorPosition.FIRST.getValue()){
+			diff = currTicks-ElevatorPosition.BASE.getValue();
+			gap = ElevatorPosition.FIRST.getValue()-ElevatorPosition.BASE.getValue();
+			value = diff/gap;
+			SmartDashboard.putNumber("Elevator",value);
+		}
+		else if(currTicks==ElevatorPosition.FIRST.getValue()){
+			SmartDashboard.putNumber("Elevator",1);
+		}
+		else if(currTicks<ElevatorPosition.SECOND.getValue()){
+			diff = currTicks-ElevatorPosition.FIRST.getValue();
+			gap = ElevatorPosition.SECOND.getValue()-ElevatorPosition.FIRST.getValue();
+			value = diff/gap;
+			SmartDashboard.putNumber("Elevator",1+value);
+		}
+		else if(currTicks==ElevatorPosition.SECOND.getValue()){
+			SmartDashboard.putNumber("Elevator",2);
+		}
+		else if(currTicks<ElevatorPosition.THIRD.getValue()){
+			diff = currTicks-ElevatorPosition.SECOND.getValue();
+			gap = ElevatorPosition.THIRD.getValue()-ElevatorPosition.SECOND.getValue();
+			value = diff/gap;
+			SmartDashboard.putNumber("Elevator",2+value);
+		}
+		else if(currTicks==ElevatorPosition.THIRD.getValue()){
+			SmartDashboard.putNumber("Elevator",3);
+		}
+		else {
+			SmartDashboard.putNumber("Elevator",3.5);
 		}
 		
 	}
