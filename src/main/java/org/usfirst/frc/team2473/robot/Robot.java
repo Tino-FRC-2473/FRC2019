@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
@@ -27,14 +28,13 @@ public class Robot extends TimedRobot {
 	
     public static Relay cvLight;
 	
-	public static OI oi;
+    public static OI oi;
+
+    public static JetsonPort jetsonPort;
 
 	private int i = 0;
 
 	Preferences prefs;
-
-	SerialPort serialPort;
-
 	/**
 	 * Runs once when the robot turns on
 	 */
@@ -44,6 +44,15 @@ public class Robot extends TimedRobot {
 		
 		cvLight = new Relay(0);
         prefs = Preferences.getInstance();
+
+        try {
+            jetsonPort = new JetsonPort(9600, Port.kUSB);
+            RobotMap.CV_RUNNING = true;
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getClass());
+            RobotMap.CV_RUNNING = false;
+        }
+        
         
 		Devices.getInstance().getNavXGyro().reset();
 
@@ -75,6 +84,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledPeriodic() {
+        if (RobotMap.CV_RUNNING) {
+            jetsonPort.updateVisionValues();
+        }
 		Scheduler.getInstance().run();
 	}
 
@@ -92,11 +104,12 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
 		// serialPort.writeString("Hello World!");
-
-        JetsonPort.getInstance().updateVisionValues();	
-		if (++i % 4 == 0) {
-			JetsonPort.getInstance().printVisionAngles();
-		}
+        if (RobotMap.CV_RUNNING) {
+            jetsonPort.updateVisionValues();	
+            if (++i % 4 == 0) {
+                jetsonPort.printVisionAngles();
+            }
+        }
 		//System.out.println("Hello World!");
 		Scheduler.getInstance().run();
 	}
@@ -107,8 +120,10 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
         cvLight.set(Value.kForward);
-		JetsonPort.getInstance().updateVisionValues();
-		JetsonPort.getInstance().printVisionAngles();
+        if (RobotMap.CV_RUNNING) {
+            jetsonPort.updateVisionValues();
+		    jetsonPort.printVisionAngles();
+        }
 		(new TeleopDrive()).start();
 	}
 
@@ -117,10 +132,15 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-        JetsonPort.getInstance().updateVisionValues();
+
+        if (RobotMap.CV_RUNNING) {
+            jetsonPort.updateVisionValues();
+        }
 		
 		if (++i % 4 == 0) {
-            JetsonPort.getInstance().printVisionAngles();
+            if (RobotMap.CV_RUNNING) {
+                jetsonPort.printVisionAngles();
+            }
             System.out.println("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
 		}
 

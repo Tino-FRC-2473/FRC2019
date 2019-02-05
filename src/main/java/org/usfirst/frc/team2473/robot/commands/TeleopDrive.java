@@ -34,7 +34,7 @@ public class TeleopDrive extends Command {
 
 	@Override
 	protected void initialize() {
-        prevAngle = JetsonPort.getInstance().getVisionAngle();
+        prevAngle = Robot.jetsonPort.getVisionAngle();
         
         Robot.oi.getReverseDriveButton().whenPressed(new InstantCommand() {
 			@Override
@@ -66,14 +66,9 @@ public class TeleopDrive extends Command {
 		throttleZ = M*(throttleZ - RobotMap.DEADBAND_MINIMUM_POWER);
 
 		//System.out.println("scaled " + throttleZ + " " + wheelX);
-		double newAngle = JetsonPort.getInstance().getVisionAngle();
-		if (newAngle != prevAngle) {
-			prevAngle = newAngle;
-			System.out.println(newAngle);
-		}
 
 		// Align To Hatch
-		if (Robot.oi.getCVButton().get() && Math.abs(originalZ) < RobotMap.DEADBAND_MINIMUM_POWER && Math.abs(wheelX) < RobotMap.DEADBAND_MINIMUM_TURN) {
+		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get() && Math.abs(originalZ) < RobotMap.DEADBAND_MINIMUM_POWER && Math.abs(wheelX) < RobotMap.DEADBAND_MINIMUM_TURN) {
 			alignToHatch.move();
 		} else { // Move using controls, not CV
 
