@@ -36,7 +36,7 @@ public class TeleopDrive2 extends Command {
 	@Override
 	protected void initialize() {
 		if (!useWheel) {
-			double power = 0.4;
+			double power = 0.8;
 
 			Robot.oi.getB0().whenPressed(new ElevatorMove(ElevatorPosition.BASE, power));
 			Robot.oi.getB1().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, power));
