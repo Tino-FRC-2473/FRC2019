@@ -46,7 +46,9 @@ public class Elevator extends Subsystem {
 		instance = new Elevator();
 	}
     
-    private WPI_TalonSRX talon;
+    private WPI_TalonSRX talon; 
+
+    private int zero;
 
     private boolean encoderResetComplete;
 	/**
@@ -75,7 +77,7 @@ public class Elevator extends Subsystem {
     }
 
     public int getEncoderTicks() {
-        return talon.getSelectedSensorPosition(0);
+        return talon.getSelectedSensorPosition(0) - zero;
     }
 
     public synchronized void resetEncoders() {
@@ -84,6 +86,11 @@ public class Elevator extends Subsystem {
         //     Timer.delay(0.001);
         // }
         encoderResetComplete = true;
+        zero = 0;
+    }
+
+    public void setEncoderZero(int newZero) {
+        zero = newZero;
     }
 
     public synchronized boolean isEncoderResetComplete() {
