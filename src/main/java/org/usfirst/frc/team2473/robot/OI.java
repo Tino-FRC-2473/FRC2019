@@ -55,7 +55,8 @@ public class OI {
 
 	public JoystickButton getB4() {
 		return b4;
-
+    }
+    
   public JoystickButton getCVButton() {
 		return cvButton;
   }

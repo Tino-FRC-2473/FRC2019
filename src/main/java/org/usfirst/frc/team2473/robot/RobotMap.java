@@ -22,7 +22,6 @@ public class RobotMap {
 	public static final int SPARK_R = 4;
 	
 	public static double K_TICKS_PER_INCH = 1;
-	public static double K_ENCODER_THRESHOLD = 2;
 	
 	public static double K_START_STALL_POWER = 0.25;
 	public static double K_RUNNING_STALL_POWER = 0.2;
