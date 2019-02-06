@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-    elevator.resetEncoders();
+        elevator.resetEncoders();
 		cvLight.set(Value.kForward);
 	}
 
@@ -130,13 +130,13 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
-    elevator.resetEncoders();
-    cvLight.set(Value.kForward);
-    if (RobotMap.CV_RUNNING) {
-        jetsonPort.updateVisionValues();
-		    jetsonPort.printVisionAngles();
-    }
-		(new TeleopDrive()).start();
+        elevator.resetEncoders();
+        cvLight.set(Value.kForward);
+        if (RobotMap.CV_RUNNING) {
+            jetsonPort.updateVisionValues();
+            jetsonPort.printVisionAngles();
+        }
+            (new TeleopDrive()).start();
 	}
 
 	/**
@@ -147,15 +147,15 @@ public class Robot extends TimedRobot {
 		System.out.println("Running Elevator " + Robot.oi.getWheel().getX());
 
 
-    if (RobotMap.CV_RUNNING) {
-        jetsonPort.updateVisionValues();
-    }
+        if (RobotMap.CV_RUNNING) {
+            jetsonPort.updateVisionValues();
+        }
 		
 		if (++i % 4 == 0) {
-        if (RobotMap.CV_RUNNING) {
-            jetsonPort.printVisionAngles();
-        }
-        System.out.println("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
+            if (RobotMap.CV_RUNNING) {
+                jetsonPort.printVisionAngles();
+            }
+            System.out.println("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
 		}
 		Scheduler.getInstance().run();
 	}
