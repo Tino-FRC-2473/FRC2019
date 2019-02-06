@@ -43,18 +43,6 @@ public class AlignToHatch extends Command {
 		} else if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
 			Robot.driveSubsystem.drive(normalPower, normalPower);
 		} else if (Math.abs(angle) > 10) {
-<<<<<<< HEAD
-			if (angle > thresholdAngle) { // Robot is to the left of the target
-				Robot.driveSubsystem.drive(slowPower, -slowPower);
-			} else { // Robot is to the right of the target
-				Robot.driveSubsystem.drive(-slowPower, slowPower);
-			}
-		} else {
-			if (angle > thresholdAngle) { // Robot is to the left of the target
-				Robot.driveSubsystem.drive(slowPower, 0);
-			} else { // Robot is to the right of the target
-				Robot.driveSubsystem.drive(0, slowPower);
-=======
 			if (angle > 0) { // Robot is to the left of the target
 				Robot.driveSubsystem.drive(turnPower, -turnPower);
 			} else { // Robot is to the right of the target
@@ -65,7 +53,6 @@ public class AlignToHatch extends Command {
 				Robot.driveSubsystem.drive(turnPower, 0);
 			} else { // Robot is to the right of the target
 				Robot.driveSubsystem.drive(0, turnPower);
->>>>>>> Make CV alignment value receiving quicker
 			}
 		}
     }
