@@ -11,18 +11,29 @@ public class RobotMap {
 	public static final int TALON_BL = 3;
 	public static final int TALON_BR = 6;
 	public static final int TALON_FL = 2;
-    public static final int TALON_FR = 7;
-    public static final int TALON_ELEVATOR = 11;
+  public static final int TALON_FR = 7;
+  public static final int TALON_ELEVATOR = 11;
+
+
+  public static double K_ENCODER_THRESHOLD = 750;
+  public static final int K_ENCODER_ELEVATOR_THRESHOLD = 150;
+
+	public static final int SPARK_L = 3;
+	public static final int SPARK_R = 4;
 	
-    public static double K_TICKS_PER_INCH = 55;
-    public static final int K_ELEVATOR_TICKS_PER_INCH = 1;
-    public static double K_ENCODER_THRESHOLD = 750;
-    public static final int K_ENCODER_ELEVATOR_THRESHOLD = 150;
+	public static double K_TICKS_PER_INCH = 1;
+	public static double K_ENCODER_THRESHOLD = 2;
 	
-	public static double K_START_STALL_POWER = 0.19;
+	public static double K_START_STALL_POWER = 0.25;
 	public static double K_RUNNING_STALL_POWER = 0.2;
 	public static double K_OPPOSITE_POWER = 0.2;
 	public static double K_TURN = 0.95;
+
+    public static boolean RUNNING_FORWARD = true;
+    public static boolean CV_RUNNING = false;
+	
+	public static double DEADBAND_MINIMUM_POWER = 0.2;
+	public static double DEADBAND_MINIMUM_TURN = 0.1;
 
 
     public static final int CV_LIGHT = 1;

@@ -14,31 +14,36 @@ import org.usfirst.frc.team2473.robot.commands.ElevatorMove;
 import org.usfirst.frc.team2473.robot.commands.ElevatorTicksTest;
 import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
-import org.usfirst.frc.team2473.robot.commands.TeleopDrive2;
 import org.usfirst.frc.team2473.robot.subsystems.DriveSubsystem;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
+import org.usfirst.frc.team2473.framework.JetsonPort;
+import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
+import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
+
 import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
-import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Relay.Value;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
 	
-	public static DriveSubsystem driveSubsystem = DriveSubsystem.getInstance();
-    public static Elevator elevator = Elevator.getInstance();
-    
+	public static SparkDriveSubsystem driveSubsystem = SparkDriveSubsystem.getInstance();
 	public static Relay cvLight;
 	
-	public static OI oi;
+  public static OI oi;
+  public static JetsonPort jetsonPort;
+
+	private int i = 0;
 
 	Preferences prefs;
-
 	/**
 	 * Runs once when the robot turns on
 	 */
@@ -46,17 +51,31 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		oi = new OI();
 		
-		// cvLight = new Relay(RobotMap.CV_LIGHT);
-		prefs = Preferences.getInstance();
-				
-		// UsbCamera cubeCam = CameraServer.getInstance().startAutomaticCapture("Cube View", 0);
-		// cubeCam.setBrightness(75);
-		// cubeCam.setResolution(640, 480);
-		// UsbCamera driveCam = CameraServer.getInstance().startAutomaticCapture("Front View", 1);
-		// driveCam.setBrightness(75);
-		// driveCam.setResolution(640, 480);
-		
+
+		cvLight = new Relay(0);
+    prefs = Preferences.getInstance();
+
+    try {
+      jetsonPort = new JetsonPort(9600, Port.kUSB);
+      RobotMap.CV_RUNNING = true;
+    } catch (Exception e) {
+      System.out.println("ERROR: " + e.getClass());
+      RobotMap.CV_RUNNING = false;
+    }
+        
+        
 		Devices.getInstance().getNavXGyro().reset();
+
+		// UsbCamera frontCam = CameraServer.getInstance().startAutomaticCapture("Front Camera", 0);
+		// frontCam.setBrightness(25);
+		// frontCam.setFPS(15);
+		// frontCam.setResolution(320, 240);
+		// UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
+		// backCam.setBrightness(75);
+		// backCam.setFPS(15);
+		// backCam.setResolution(320, 240);
+
+		// serialPort = new SerialPort(9600, SerialPort.Port.kOnboard);
 	}
 	
 	/**
@@ -64,7 +83,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledInit() {
-		//cvLight.set(Relay.Value.kOff);
+        driveSubsystem.drive(0, 0);
 		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
 		Scheduler.getInstance().removeAll();
 		
@@ -75,6 +94,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledPeriodic() {
+        if (RobotMap.CV_RUNNING) {
+            jetsonPort.updateVisionValues();
+        }
 		Scheduler.getInstance().run();
 	}
 
@@ -83,40 +105,23 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		SmartDashboard.putNumber("Elevator", -1);
-		new ElevatorMove(ElevatorPosition.THIRD,0.4).start();
-        //Devices.getInstance().initializeCVSocket();
-		
-		// Turn on the CV light
-		// cvLight.set(Relay.Value.kReverse);
-		
-// 		driveSubsystem.resetEncoders();
-// //	
-		
-// 		System.out.println("Starting align to hatch ------------------------------------");
-		
-		//new StraightDrive(24, 0.3).start();
-		//new AlignToHatch().start();
-
-		elevator.resetEncoders();
-		//new ElevatorTicksTest().start();
-		new TeleopDrive2(false).start();
-		
-//		int distanceFirst  = prefs.getInt("1. First Distance", 48);
-//		int degrees  = prefs.getInt("2. Turn Degrees", 180);
-//		int distanceSecond  = prefs.getInt("3. Second Distance", 48);
-//				
-//		AutonomousTester tester = new AutonomousTester();
-//		tester.addDriveTurnDrive(distanceFirst, degrees, distanceSecond);
-//		tester.start();
-
+    elevator.resetEncoders();
+		cvLight.set(Value.kForward);
 	}
 
 	/**
 	 * Runs continuously during the autonomous state
 	 */
 	@Override
-	public void autonomousPeriodic() {		
+	public void autonomousPeriodic() {
+		// serialPort.writeString("Hello World!");
+        if (RobotMap.CV_RUNNING) {
+            jetsonPort.updateVisionValues();	
+            if (++i % 4 == 0) {
+                jetsonPort.printVisionAngles();
+            }
+        }
+		//System.out.println("Hello World!");
 		Scheduler.getInstance().run();
 	}
 
@@ -125,12 +130,13 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		//Devices.getInstance().initializeCVSocket();
-		System.out.println("STARTING ELEVATOR -----------------------------------");
-		elevator.resetEncoders();
-		System.out.println("ENCODERS RESET");
-		new TeleopDrive2(true).start();
-		
+    elevator.resetEncoders();
+    cvLight.set(Value.kForward);
+    if (RobotMap.CV_RUNNING) {
+        jetsonPort.updateVisionValues();
+		    jetsonPort.printVisionAngles();
+    }
+		(new TeleopDrive()).start();
 	}
 
 	/**
@@ -140,13 +146,24 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
 		System.out.println("Running Elevator " + Robot.oi.getWheel().getX());
 
+
+    if (RobotMap.CV_RUNNING) {
+        jetsonPort.updateVisionValues();
+    }
+		
+		if (++i % 4 == 0) {
+        if (RobotMap.CV_RUNNING) {
+            jetsonPort.printVisionAngles();
+        }
+        System.out.println("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
+		}
 		Scheduler.getInstance().run();
 	}
 
 	@Override
 	public void testInit() {
 		elevator.resetEncoders();
-		new TeleopDrive2(true).start();
+		
 	}
 
 	@Override

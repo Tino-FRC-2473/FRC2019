@@ -9,20 +9,19 @@ package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
-
-import java.io.IOException;
-
-import org.usfirst.frc.team2473.framework.Devices;
-import org.usfirst.frc.team2473.framework.UtilitySocket;
+import org.usfirst.frc.team2473.robot.RobotMap;
+import org.usfirst.frc.team2473.framework.JetsonPort;
 
 /**
  * A class that aligns the robot to the hatch based on the angle provided by CV
  */
 public class AlignToHatch extends Command {
 	
-	double normalPower = 0.25;
-    double addedPower = 0.15;
-    		
+	double normalPower = 0.2;
+	double turnPower = 0.1;
+	private double angle = 0;
+    private double distance = 0;
+
 	public AlignToHatch() {
 		requires(Robot.driveSubsystem);
 	}
@@ -33,14 +32,28 @@ public class AlignToHatch extends Command {
     }
     
     public void move() {
-        double angle = Devices.getInstance().getCVAngle();
-		System.out.println(angle);
-		if (Math.abs(angle) < 1) { // keep going in this direction
-			Robot.driveSubsystem.drive(normalPower, normalPower, normalPower, normalPower);
-		} else if (angle > 1) { // Robot is to the left of the target
-			Robot.driveSubsystem.drive(normalPower + addedPower, normalPower + addedPower, normalPower, normalPower);
-		} else { // Robot is to the right of the target
-			Robot.driveSubsystem.drive(normalPower, normalPower, normalPower + addedPower, normalPower + addedPower);
+        if (!RobotMap.CV_RUNNING) return;
+        
+		double thresholdAngle = 3;
+        angle = Robot.jetsonPort.getVisionAngle();
+        distance = Robot.jetsonPort.getVisionDistance();
+        if (!RobotMap.RUNNING_FORWARD) angle = -angle;
+        if (distance < 20) {
+            Robot.driveSubsystem.drive(0, 0);
+		} else if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
+			Robot.driveSubsystem.drive(normalPower, normalPower);
+		} else if (Math.abs(angle) > 10) {
+			if (angle > 0) { // Robot is to the left of the target
+				Robot.driveSubsystem.drive(turnPower, -turnPower);
+			} else { // Robot is to the right of the target
+				Robot.driveSubsystem.drive(-turnPower, turnPower);
+			}
+		} else {
+			if (angle > thresholdAngle) { // Robot is to the left of the target
+				Robot.driveSubsystem.drive(turnPower, 0);
+			} else { // Robot is to the right of the target
+				Robot.driveSubsystem.drive(0, turnPower);
+			}
 		}
     }
 

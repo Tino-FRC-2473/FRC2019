@@ -68,17 +68,17 @@ public class PointTurn extends Command {
 		/* power entered must only determine turn power and not direction */
 		if (power < 0) throw new IllegalArgumentException("Power must be positive for point turn!");
 		this.initialPower = power;
-		setPower(power);
-
+		
 		/*
-		 * If turning 45 degrees or less, starting at greater than the
-		 * K_START_STALL_POWER yields and inaccurate turn. Thus, it is
-		 * limited over here.
-		 */
+		* If turning 45 degrees or less, starting at greater than the
+		* K_START_STALL_POWER yields and inaccurate turn. Thus, it is
+		* limited over here.
+		*/
 		this.turnByDegrees = deltaDegrees;
 		if(Math.abs(deltaDegrees) < 45) power = RobotMap.K_START_STALL_POWER;
 		
 		isClockwise = deltaDegrees > 0;
+		setPower(power);
 		
 	}
 	
@@ -108,7 +108,7 @@ public class PointTurn extends Command {
 		prevAngle = Robot.driveSubsystem.getGyroAngle();
 		this.initialAngle = prevAngle;
 		this.angleGoal = prevAngle + this.turnByDegrees;
-		Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
+		Robot.driveSubsystem.drive(leftPower, rightPower);
 	}
 
 	@Override
@@ -140,12 +140,12 @@ public class PointTurn extends Command {
 		 */
 		if (degreesToGoal <= 10 && movingInTurnDirection) {
 			if (isClockwise) {
-				Robot.driveSubsystem.drive(-RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER);
+				Robot.driveSubsystem.drive(-RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER);
 			} else {
-				Robot.driveSubsystem.drive(RobotMap.K_OPPOSITE_POWER, RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER);
+				Robot.driveSubsystem.drive(RobotMap.K_OPPOSITE_POWER, -RobotMap.K_OPPOSITE_POWER);
 			}
 		}else {
-			Robot.driveSubsystem.drive(leftPower, leftPower, rightPower, rightPower);
+			Robot.driveSubsystem.drive(leftPower, rightPower);
 		}
 		
 		//System.out.printf("Power: %-5.3f | DTG: %.3f \n", Devices.getInstance().getTalon(RobotMap.TALON_BL).get(), degreesToGoal);
