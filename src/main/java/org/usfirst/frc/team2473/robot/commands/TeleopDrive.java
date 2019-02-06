@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 /**
  * A class that sets the talons to specific powers upon current joystick
@@ -41,8 +42,16 @@ public class TeleopDrive extends Command {
 			protected void execute() {
 				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
 			}
-		});
-	}
+        });
+        
+        double power = 0.8;
+
+        Robot.oi.getB0().whenPressed(new ElevatorMove(ElevatorPosition.BASE, power));
+        Robot.oi.getB1().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, power));
+        Robot.oi.getB2().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, power));
+        Robot.oi.getB3().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, power));
+        Robot.oi.getB4().whenPressed(new ElevatorMove(ElevatorPosition.ZERO, power));
+}
 
 	@Override
 	protected void execute() {
