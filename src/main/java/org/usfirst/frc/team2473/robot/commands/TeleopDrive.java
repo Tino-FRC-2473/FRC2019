@@ -78,6 +78,8 @@ public class TeleopDrive extends Command {
 		Robot.oi.getElevatorUp().whenPressed(new ElevatorMoveRaw(power/2));
 
 		Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-power/2));
+
+		Robot.cargo.setState(Robot.cargo.RELEASING);
 	}
 
 	@Override
@@ -128,8 +130,8 @@ public class TeleopDrive extends Command {
 
 		Enum event = null;
 
-		double voltageMotorSide = Robot.cargoState.getSharpVoltageMotorSide();
-		double voltageLimitSide = Robot.cargoState.getSharpVoltageLimitSide();
+		double voltageMotorSide = Robot.cargo.getSharpVoltageMotorSide();
+		double voltageLimitSide = Robot.cargo.getSharpVoltageLimitSide();
 
 		//System.out.printf("%.5f %.5f\n", voltageMotorSide, voltageLimitSide);
 
@@ -156,10 +158,10 @@ public class TeleopDrive extends Command {
 		}
 
 		while (!eventStack.isEmpty()) {
-			State newState = Robot.cargoState.getState().handleEvent(eventStack.pop());
+			State newState = Robot.cargo.getState().handleEvent(eventStack.pop());
 			if (newState != null) {
 				System.out.println("CHANGING STATE TO " + newState + " ----------------------------------");
-				Robot.cargoState.setState(newState);
+				Robot.cargo.setState(newState);
 			}
 		}
 
