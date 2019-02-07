@@ -17,6 +17,7 @@ import org.usfirst.frc.team2473.framework.State;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.robot.subsystems.Cargo;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 /**
  * A class that sets the talons to specific powers upon current joystick
@@ -29,6 +30,7 @@ public class TeleopDrive extends Command {
 	private final double M = (1 - RobotMap.K_START_STALL_POWER) / (1 - RobotMap.DEADBAND_MINIMUM_POWER);
 
 	double prevAngle;
+	double power = 0.8;
 	
 	private Enum lastCargoEvent = null;
 
@@ -52,6 +54,30 @@ public class TeleopDrive extends Command {
 				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
 			}
 		});
+
+		/*
+		-------------------------------------
+		 E L E V A T O R   M E C H A N I S M 
+		-------------------------------------
+		*/
+
+        Robot.oi.getReverseDriveButton().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
+			}
+		});
+
+		Robot.oi.getElevatorZero().whenPressed(new ElevatorZero());
+
+		Robot.oi.getElevatorPos1().whenPressed(new ElevatorMove(ElevatorPosition.BASE, power));
+		Robot.oi.getElevatorPos2().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, power));
+		Robot.oi.getElevatorPos3().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, power));
+		Robot.oi.getElevatorPos4().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, power));
+
+		Robot.oi.getElevatorUp().whenPressed(new ElevatorMoveRaw(power/2));
+
+		Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-power/2));
 	}
 
 	@Override
