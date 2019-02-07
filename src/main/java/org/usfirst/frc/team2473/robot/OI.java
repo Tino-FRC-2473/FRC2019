@@ -11,6 +11,8 @@ public class OI {
     private JoystickButton reverseDriveButton;
 	private Joystick buttonPanel;
 
+	private JoystickButton cargoButton;
+
 	private JoystickButton elevatorPos1;
 	private JoystickButton elevatorPos2;
 	private JoystickButton elevatorPos3;
@@ -29,6 +31,8 @@ public class OI {
 		reverseDriveButton = new JoystickButton(wheel, 2);	
 		
 		buttonPanel = new Joystick(3);
+
+		cargoButton = new JoystickButton(buttonPanel, 2);
 
 		elevatorPos1 = new JoystickButton(buttonPanel, 7);
 		elevatorPos2 = new JoystickButton(buttonPanel, 5);
@@ -74,6 +78,10 @@ public class OI {
     
 	public JoystickButton getReverseDriveButton() {
 		return reverseDriveButton;
+	}
+
+	public JoystickButton getCargoButton() {
+		return cargoButton;
 	}
 
 	public JoystickButton getElevatorPos1() {
