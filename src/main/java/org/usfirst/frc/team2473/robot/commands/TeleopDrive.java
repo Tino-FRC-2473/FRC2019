@@ -10,9 +10,13 @@ package org.usfirst.frc.team2473.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
+import java.util.Stack;
+
 import org.usfirst.frc.team2473.framework.JetsonPort;
+import org.usfirst.frc.team2473.framework.State;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
+import org.usfirst.frc.team2473.robot.subsystems.Cargo;
 
 /**
  * A class that sets the talons to specific powers upon current joystick
@@ -25,11 +29,17 @@ public class TeleopDrive extends Command {
 	private final double M = (1 - RobotMap.K_START_STALL_POWER) / (1 - RobotMap.DEADBAND_MINIMUM_POWER);
 
 	double prevAngle;
+	
+	private Enum lastCargoEvent = null;
+
+	Stack<Enum> eventStack;
 
 	public TeleopDrive() {
 		requires(Robot.driveSubsystem);
 
 		alignToHatch = new AlignToHatch();
+		
+		eventStack = new Stack<>();
 	}
 
 	@Override
@@ -82,6 +92,49 @@ public class TeleopDrive extends Command {
 			}
 
 			Robot.driveSubsystem.teleopDrive(outputZ, outputX);
+		}
+
+		/*
+		-------------------------------
+		 C A R G O   M E C H A N I S M 
+		-------------------------------
+		*/
+
+		Enum event = null;
+
+		double voltageMotorSide = Robot.cargoState.getSharpVoltageMotorSide();
+		double voltageLimitSide = Robot.cargoState.getSharpVoltageLimitSide();
+
+		//System.out.printf("%.5f %.5f\n", voltageMotorSide, voltageLimitSide);
+
+		if (voltageMotorSide < Cargo.UNSAFE_VOLTAGE_MIN && voltageLimitSide < Cargo.UNSAFE_VOLTAGE_MIN) { // not holding a ball
+			event = Cargo.BallEvent.NONE;
+		} else if ((voltageMotorSide >= Cargo.UNSAFE_VOLTAGE_MIN && voltageMotorSide <= Cargo.UNSAFE_VOLTAGE_MAX)
+				|| (voltageLimitSide >= Cargo.UNSAFE_VOLTAGE_MIN && voltageLimitSide <= Cargo.UNSAFE_VOLTAGE_MAX)
+				|| (Math.abs(voltageMotorSide - voltageLimitSide) >= 0.1)) {
+			event = Cargo.BallEvent.UNSAFE;
+		} else if (voltageMotorSide >= Cargo.CAPTURE_VOLTAGE) {
+			event = Cargo.BallEvent.CAPTURED;
+		} else {
+			event = Cargo.BallEvent.SAFE;
+		}
+
+		if (lastCargoEvent != event) {
+			eventStack.add(event);
+			System.out.println("ADDING " + event + " TO STACK");
+			lastCargoEvent = event;
+		}
+
+		if (Robot.oi.getCargoButton().get()) {
+			eventStack.add(Cargo.RequestEvent.RELEASE);
+		}
+
+		while (!eventStack.isEmpty()) {
+			State newState = Robot.cargoState.getState().handleEvent(eventStack.pop());
+			if (newState != null) {
+				System.out.println("CHANGING STATE TO " + newState + " ----------------------------------");
+				Robot.cargoState.setState(newState);
+			}
 		}
 
 	}
