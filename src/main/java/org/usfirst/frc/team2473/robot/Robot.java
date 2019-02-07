@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 public class Robot extends TimedRobot {
 	
 	public static SparkDriveSubsystem driveSubsystem = SparkDriveSubsystem.getInstance();
-	public static Cargo cargoState = Cargo.getInstance();
+	public static Cargo cargo = Cargo.getInstance();
     public static Elevator elevator = Elevator.getInstance();
     
     public static Relay cvLight;
