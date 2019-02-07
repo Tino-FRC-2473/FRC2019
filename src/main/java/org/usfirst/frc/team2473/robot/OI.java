@@ -30,8 +30,6 @@ public class OI {
 		
 		buttonPanel = new Joystick(3);
 
-		cargoButton = new JoystickButton(buttonPanel, 2);
-
 		elevatorPos1 = new JoystickButton(buttonPanel, 7);
 		elevatorPos2 = new JoystickButton(buttonPanel, 5);
 		elevatorPos3 = new JoystickButton(buttonPanel, 3);
