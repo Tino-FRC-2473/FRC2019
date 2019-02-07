@@ -10,6 +10,7 @@ package org.usfirst.frc.team2473.robot;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
 
 import edu.wpi.cscore.UsbCamera;
@@ -25,7 +26,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 public class Robot extends TimedRobot {
 	
 	public static SparkDriveSubsystem driveSubsystem = SparkDriveSubsystem.getInstance();
-	
+    public static Elevator elevator = Elevator.getInstance();
+    
     public static Relay cvLight;
 	
     public static OI oi;
