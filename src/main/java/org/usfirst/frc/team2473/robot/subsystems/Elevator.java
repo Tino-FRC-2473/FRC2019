@@ -57,10 +57,13 @@ public class Elevator extends Subsystem {
 		return instance;
 	}
 	
-	
 	private Elevator() {
 		talon = Devices.getInstance().getTalon(RobotMap.TALON_ELEVATOR);
-	}
+    }
+    
+    public boolean isLowerLimitSwitchPressed() {
+        return !talon.getSensorCollection().isRevLimitSwitchClosed();
+    }
     
     public void set(double speed) {
         System.out.println("Setting " + speed);

@@ -30,14 +30,13 @@ public class ElevatorZero extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		return !Robot.oi.getElevatorZero().get();
+		return Robot.elevator.isLowerLimitSwitchPressed();
 	}
 
 	@Override
 	protected void end() {
 		Robot.elevator.stop();
 		Robot.elevator.resetEncoders();
-		//Robot.elevator.setEncoderZero(Robot.elevator.getEncoderTicks());
 	}
 
 	@Override
