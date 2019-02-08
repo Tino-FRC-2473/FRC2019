@@ -75,10 +75,6 @@ public class TeleopDrive extends Command {
 		Robot.oi.getElevatorPos3().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, power));
 		Robot.oi.getElevatorPos4().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, power));
 
-		Robot.oi.getElevatorUp().whenPressed(new ElevatorMoveRaw(power/2));
-
-		Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-power/2));
-
 		Robot.cargo.setState(Robot.cargo.RELEASING);
 	}
 

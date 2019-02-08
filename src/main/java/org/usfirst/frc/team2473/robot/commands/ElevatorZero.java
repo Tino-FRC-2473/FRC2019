@@ -9,6 +9,7 @@ package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 
 /**
  * A class that aligns the robot to the hatch based on the angle provided by CV
@@ -17,6 +18,7 @@ public class ElevatorZero extends Command {
 
 	public ElevatorZero() {
 		requires(Robot.elevator);
+		setInterruptible(false);
 	}
 
 	@Override
@@ -37,6 +39,7 @@ public class ElevatorZero extends Command {
 	protected void end() {
 		Robot.elevator.stop();
 		Robot.elevator.resetEncoders();
+		Robot.elevator.setElevatorPosition(Elevator.ElevatorPosition.ZERO);
 	}
 
 	@Override

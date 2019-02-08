@@ -58,7 +58,7 @@ public class ElevatorMove extends Command {
 		
 		this.power = power;
 		this.initialPower = power;
-        this.pos = pos;
+		this.pos = pos;
 	}
 	
 	/**
@@ -113,7 +113,7 @@ public class ElevatorMove extends Command {
 		//Checks if while executing, elevator move is moving by a minimum number of ticks per cycle.
 		if(delta < RobotMap.ELEVATOR_MIN_TICKS){
 			SmartDashboard.putBoolean("Elevator Status", false);
-		}else if (!SmartDashboard.getBoolean("Elevator Status", true) && delta > RobotMap.ELEVATOR_MIN_TICKS){
+		} else if (!SmartDashboard.getBoolean("Elevator Status", true) && delta > RobotMap.ELEVATOR_MIN_TICKS){
 			SmartDashboard.putBoolean("Elevator Status", true);
 		}
 		
@@ -134,6 +134,8 @@ public class ElevatorMove extends Command {
 		System.out.println("----------------");
 		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
 		Robot.elevator.printEncoders();		
+
+		Robot.elevator.setElevatorPosition(pos);
 		
 		System.out.println();
 		

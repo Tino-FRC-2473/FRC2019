@@ -40,6 +40,8 @@ public class Elevator extends Subsystem {
         }
     }
 
+    private ElevatorPosition currentPosition;
+
 	private static Elevator instance;
 	
 	static {
@@ -49,9 +51,10 @@ public class Elevator extends Subsystem {
     private WPI_TalonSRX talon; 
 
     private boolean encoderResetComplete;
+
 	/**
 	 * Gets the current instance.
-	 * @return current instance of DriveSubsystem
+	 * @return current instance of Elevator
 	 */
 	public static Elevator getInstance() {
 		return instance;
@@ -60,7 +63,15 @@ public class Elevator extends Subsystem {
 	private Elevator() {
 		talon = Devices.getInstance().getTalon(RobotMap.TALON_ELEVATOR);
     }
+
+    public ElevatorPosition getElevatorPosition() {
+        return currentPosition;
+    }
     
+    public void setElevatorPosition(ElevatorPosition newPosition) {
+        this.currentPosition = newPosition;
+    }
+
     public boolean isLowerLimitSwitchPressed() {
         return !talon.getSensorCollection().isRevLimitSwitchClosed();
     }
@@ -83,9 +94,6 @@ public class Elevator extends Subsystem {
 
     public synchronized void resetEncoders() {
         talon.setSelectedSensorPosition(0, 0, 0);
-        // while(!talon.hasResetOccurred()){
-        //     Timer.delay(0.001);
-        // }
         encoderResetComplete = true;
     }
 
