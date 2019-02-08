@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team2473.robot.Robot;
-
+import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 
 /**
@@ -19,11 +19,10 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
  */
 public class AlignToHatch extends Command {
 	
-	double normalPower = 0.15;
-	double slowPower = 0.07;
-    double addedPower = 0.15;
-	private int numMoves = 0;
+	double normalPower = 0.2;
+	double turnPower = 0.1;
 	private double angle = 0;
+    private double distance = 0;
 
 	public AlignToHatch() {
 		//requires(Robot.driveSubsystem);
@@ -38,43 +37,34 @@ public class AlignToHatch extends Command {
     public void move() {
 		updateSmartDashboard(); //put thit here since execute is not always called
 
-		numMoves++;
-		double thresholdAngle = 3;
-
-		//if (numMoves % 3 == 0) {
-		angle = JetsonPort.getInstance().getVisionAngle();
-		//}
+		if (!RobotMap.CV_RUNNING) return;
         
-		//System.out.println(angle);
-		
-		// if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
-		// 	Robot.driveSubsystem.drive(normalPower, normalPower);
-		// } else if (Math.abs(angle) > 10) {
-		// 	if (angle > thresholdAngle) { // Robot is to the left of the target
-		// 		Robot.driveSubsystem.drive(slowPower, -slowPower);
-		// 	} else { // Robot is to the right of the target
-		// 		Robot.driveSubsystem.drive(-slowPower, slowPower);
-		// 	}
-		// } else {
-		// 	if (angle > thresholdAngle) { // Robot is to the left of the target
-		// 		Robot.driveSubsystem.drive(slowPower, 0);
-		// 	} else { // Robot is to the right of the target
-		// 		Robot.driveSubsystem.drive(0, slowPower);
-		// 	}
-		// }
+		double thresholdAngle = 3;
+        /*angle = Robot.jetsonPort.getVisionAngle();
+        distance = Robot.jetsonPort.getVisionDistance();
+        if (!RobotMap.RUNNING_FORWARD) angle = -angle;
+        if (distance < 20) {
+            Robot.driveSubsystem.drive(0, 0);
+		} else if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
+			Robot.driveSubsystem.drive(normalPower, normalPower);
+		} else if (Math.abs(angle) > 10) {
+			if (angle > 0) { // Robot is to the left of the target
+				Robot.driveSubsystem.drive(turnPower, -turnPower);
+			} else { // Robot is to the right of the target
+				Robot.driveSubsystem.drive(-turnPower, turnPower);
+			}
+		} else {
+			if (angle > thresholdAngle) { // Robot is to the left of the target
+				Robot.driveSubsystem.drive(turnPower, 0);
+			} else { // Robot is to the right of the target
+				Robot.driveSubsystem.drive(0, turnPower);
+			}
+		}*/
+    }
 
-		// // if (Math.abs(angle) < 1) {
-		// // 	Robot.driveSubsystem.drive(normalPower, normalPower, normalPower, normalPower);
-		// // } else {
-		// // 	PointTurn p = new PointTurn(angle, 0.45);
-		// // 	p.initialize();
-		// // 	p.move();
-		// // }
-	}
-	
 	public void updateSmartDashboard(){
-		SmartDashboard.putNumber("Angle", JetsonPort.getInstance().getVisionAngle());
-		SmartDashboard.putNumber("Distance", JetsonPort.getInstance().getVisionDistance());
+		SmartDashboard.putNumber("Angle", Robot.jetsonPort.getVisionAngle());
+		SmartDashboard.putNumber("Distance", Robot.jetsonPort.getVisionDistance());
 	}
 
 	@Override

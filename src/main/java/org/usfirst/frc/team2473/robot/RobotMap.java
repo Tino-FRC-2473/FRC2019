@@ -14,8 +14,13 @@ public class RobotMap {
 	public static final int TALON_FR = 7;
 
 	public static final int SPARK_L = 3;
-	public static final int SPARK_R = 4;
-	
+    public static final int SPARK_R = 4;
+    
+    public static final int TALON_ELEVATOR = 11;
+    
+    public static final int K_ENCODER_ELEVATOR_THRESHOLD = 150;
+    public static final int ELEVATOR_MIN_TICKS = 50;
+    
 	public static double K_TICKS_PER_INCH = 1;
 	public static double K_ENCODER_THRESHOLD = 2;
 	
@@ -24,6 +29,8 @@ public class RobotMap {
 	public static double K_OPPOSITE_POWER = 0.2;
 	public static double K_TURN = 0.95;
 
+    public static boolean RUNNING_FORWARD = true;
+    public static boolean CV_RUNNING = false;
 	
 	public static double DEADBAND_MINIMUM_POWER = 0.2;
 	public static double DEADBAND_MINIMUM_TURN = 0.1;

@@ -9,10 +9,16 @@ package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+
+import java.util.Stack;
 
 import org.usfirst.frc.team2473.framework.JetsonPort;
+import org.usfirst.frc.team2473.framework.State;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
+import org.usfirst.frc.team2473.robot.subsystems.Cargo;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 /**
  * A class that sets the talons to specific powers upon current joystick
@@ -26,16 +32,56 @@ public class TeleopDrive extends Command {
 	
 	double prevTicks;
 	double prevAngle;
+	double power = 0.8;
+	
+	private Enum lastCargoEvent = null;
+
+	Stack<Enum> eventStack;
 
 	public TeleopDrive() {
 		requires(Robot.driveSubsystem);
 
 		alignToHatch = new AlignToHatch();
+		
+		eventStack = new Stack<>();
 	}
 
 	@Override
 	protected void initialize() {
-		prevAngle = JetsonPort.getInstance().getVisionAngle();
+        prevAngle = Robot.jetsonPort.getVisionAngle();
+        
+        Robot.oi.getReverseDriveButton().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
+			}
+		});
+
+		/*
+		-------------------------------------
+		 E L E V A T O R   M E C H A N I S M 
+		-------------------------------------
+		*/
+
+        Robot.oi.getReverseDriveButton().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
+			}
+		});
+
+		Robot.oi.getElevatorZero().whenPressed(new ElevatorZero());
+
+		Robot.oi.getElevatorPos1().whenPressed(new ElevatorMove(ElevatorPosition.BASE, power));
+		Robot.oi.getElevatorPos2().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, power));
+		Robot.oi.getElevatorPos3().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, power));
+		Robot.oi.getElevatorPos4().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, power));
+
+		Robot.oi.getElevatorUp().whenPressed(new ElevatorMoveRaw(power/2));
+
+		Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-power/2));
+
+		Robot.cargo.setState(Robot.cargo.RELEASING);
 	}
 
 	@Override
@@ -60,14 +106,9 @@ public class TeleopDrive extends Command {
 		throttleZ = M*(throttleZ - RobotMap.DEADBAND_MINIMUM_POWER);
 
 		//System.out.println("scaled " + throttleZ + " " + wheelX);
-		double newAngle = JetsonPort.getInstance().getVisionAngle();
-		if (newAngle != prevAngle) {
-			prevAngle = newAngle;
-			System.out.println(newAngle);
-		}
 
 		// Align To Hatch
-		if (Robot.oi.getCVButton().get() && Math.abs(originalZ) < RobotMap.DEADBAND_MINIMUM_POWER && Math.abs(wheelX) < RobotMap.DEADBAND_MINIMUM_TURN) {
+		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get() && Math.abs(originalZ) < RobotMap.DEADBAND_MINIMUM_POWER && Math.abs(wheelX) < RobotMap.DEADBAND_MINIMUM_TURN) {
 			alignToHatch.move();
 		} else { // Move using controls, not CV
 
@@ -87,6 +128,49 @@ public class TeleopDrive extends Command {
 				}else{
 					SmartDashboard.putBoolean("Motor Status", true);
 				}
+			}
+		}
+
+		/*
+		-------------------------------
+		 C A R G O   M E C H A N I S M 
+		-------------------------------
+		*/
+
+		Enum event = null;
+
+		double voltageMotorSide = Robot.cargo.getSharpVoltageMotorSide();
+		double voltageLimitSide = Robot.cargo.getSharpVoltageLimitSide();
+
+		//System.out.printf("%.5f %.5f\n", voltageMotorSide, voltageLimitSide);
+
+		if (voltageMotorSide < Cargo.UNSAFE_VOLTAGE_MIN && voltageLimitSide < Cargo.UNSAFE_VOLTAGE_MIN) { // not holding a ball
+			event = Cargo.BallEvent.NONE;
+		} else if ((voltageMotorSide >= Cargo.UNSAFE_VOLTAGE_MIN && voltageMotorSide <= Cargo.UNSAFE_VOLTAGE_MAX)
+				|| (voltageLimitSide >= Cargo.UNSAFE_VOLTAGE_MIN && voltageLimitSide <= Cargo.UNSAFE_VOLTAGE_MAX)
+				|| (Math.abs(voltageMotorSide - voltageLimitSide) >= 0.1)) {
+			event = Cargo.BallEvent.UNSAFE;
+		} else if (voltageMotorSide >= Cargo.CAPTURE_VOLTAGE) {
+			event = Cargo.BallEvent.CAPTURED;
+		} else {
+			event = Cargo.BallEvent.SAFE;
+		}
+
+		if (lastCargoEvent != event) {
+			eventStack.add(event);
+			System.out.println("ADDING " + event + " TO STACK");
+			lastCargoEvent = event;
+		}
+
+		if (Robot.oi.getCargoButton().get()) {
+			eventStack.add(Cargo.RequestEvent.RELEASE);
+		}
+
+		while (!eventStack.isEmpty()) {
+			State newState = Robot.cargo.getState().handleEvent(eventStack.pop());
+			if (newState != null) {
+				System.out.println("CHANGING STATE TO " + newState + " ----------------------------------");
+				Robot.cargo.setState(newState);
 			}
 		}
 

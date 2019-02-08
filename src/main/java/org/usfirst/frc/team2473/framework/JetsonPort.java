@@ -1,66 +1,76 @@
 package org.usfirst.frc.team2473.framework;
 
-import edu.wpi.first.wpilibj.SerialPort;
+import org.usfirst.frc.team2473.robot.RobotMap;
 
-public class JetsonPort 
-//extends SerialPort 
+import edu.wpi.first.wpilibj.SerialPort;
+import edu.wpi.first.wpilibj.SerialPort.Port;
+
+public class JetsonPort //extends SerialPort 
 {
 
-    private double visionAngle = 0;
-    private double visionDistance = 0;
-    private int numCalls = 0;
-    private int saveSum = 0;
+    private static final String START = "S";
+    private static final String END = "E";
 
-    private static JetsonPort theInstance;
-
-    static {
-		theInstance = new JetsonPort();
-		//theInstance = new JetsonPort(9600, Port.kUSB);
-    }
     
-    // private JetsonPort(int baudrate, Port port) {
+    /*FROM MASTER START*/
+    private int fVisionAngle = 0;
+    private int fVisionDistance = 0;
+    private int bVisionAngle = 0;
+    private int bVisionDistance = 0;
+    
+    private boolean firstStart = false;
+    private String buffer = "";
+    
+    public JetsonPort(int baudrate, Port port) {
+        //super(baudrate, port);
+    }
+    // public JetsonPort(int baudrate, Port port) {
     //     super(baudrate, port);
     // }
-
-    public static JetsonPort getInstance() { 
-		return theInstance;
-	}
-
+    
+    
     public void updateVisionValues() {}
-
     /*public void updateVisionValues() {
-        String recieve = readString();
-        if(recieve.length() != 0 && 
-            recieve.contains(" ") &&
-            recieve.indexOf(" ") != recieve.length()-1) {
-            try {
-                String[] split = recieve.split(" ");
-
-                String visionAngleStr = split[0];
-                String visionDistanceStr = split[1];
-
-                //System.out.println("angle: ///" + visionAngleStr + "/// distance: ///" + visionDistanceStr + "///");
-
-                if (visionAngleStr.charAt(0) != 'J' || visionDistanceStr.charAt(visionDistanceStr.length()-1) != 'J') {
-                    //System.out.println("No J");
-                    return;
+        try {
+            String receive = readString();
+            if (!firstStart) {
+                if (receive.contains(START)) {
+                    firstStart = true;
+                    receive = receive.substring(receive.indexOf(START));
                 }
-                
-            
-                double ang = Double.parseDouble(visionAngleStr.substring(1));
-                if (ang != -2473) {
-                    visionAngle = ang;
-                    visionDistance = Double.parseDouble(visionDistanceStr.substring(0, visionDistanceStr.length() - 1));
-                }
-            } catch (Exception e) {
-                
             }
+            /*FROM MASTER END
+
+
+            if (firstStart) {
+                buffer += receive; 
+                if (buffer.contains(END)) {
+                    String data = buffer.substring(buffer.indexOf(START)+1, buffer.indexOf(END));
+                    if (data.length() == 12) {
+                        fVisionAngle = Integer.parseInt(data.substring(0, 3));
+                        fVisionDistance = Integer.parseInt(data.substring(3, 6));
+                        bVisionAngle = Integer.parseInt(data.substring(6, 9));
+                        bVisionDistance = Integer.parseInt(data.substring(9));
+
+                        buffer = buffer.substring(buffer.indexOf(END)+1);
+                    }
+                    
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getClass());
+            RobotMap.CV_RUNNING = false;
         }
         
     }*/
 
+    public void printVisionAngles() {
+        System.out.println(String.format("FRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d", fVisionAngle, fVisionDistance, bVisionAngle, bVisionDistance));
+    }
+
     public double getVisionAngle() {
         return Math.random()*180 - 90;
+        //return RobotMap.RUNNING_FORWARD ? fVisionAngle : bVisionAngle;
     }
     // public double getVisionAngle() {
     //     return visionAngle;
