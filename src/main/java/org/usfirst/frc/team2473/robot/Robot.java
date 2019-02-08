@@ -10,10 +10,12 @@ package org.usfirst.frc.team2473.robot;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.AlignToHatch;
+import org.usfirst.frc.team2473.robot.commands.ElevatorMove;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.Cargo;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -155,6 +157,9 @@ public class Robot extends TimedRobot {
 		
 		new AlignToHatch().start(); //run the code to start CV
 		cvLight.set(Value.kForward);
+
+		SmartDashboard.putNumber("Elevator", -1);
+		new ElevatorMove(ElevatorPosition.THIRD,0.4).start();
 	}
 
 	/**
@@ -193,6 +198,8 @@ public class Robot extends TimedRobot {
 	public void teleopInit() {
 		timer.reset();
 		timer.start();
+
+		new AlignToHatch().start(); //run the code to start CV
 
         //cvLight.set(Value.kForward);
         //JetsonPort.getInstance().updateVisionValues();	
