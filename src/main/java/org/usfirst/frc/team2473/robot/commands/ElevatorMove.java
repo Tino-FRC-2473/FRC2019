@@ -168,9 +168,6 @@ public class ElevatorMove extends Command {
 		else if(currTicks==ElevatorPosition.THIRD.getValue()){
 			SmartDashboard.putNumber("Elevator",3);
 		}
-		else {
-			SmartDashboard.putNumber("Elevator",3.5);
-		}
 
 
 		
