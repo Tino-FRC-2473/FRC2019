@@ -148,7 +148,7 @@ public class TeleopDrive extends Command {
 			event = Cargo.BallEvent.NONE;
 		} else if ((voltageMotorSide >= Cargo.UNSAFE_VOLTAGE_MIN && voltageMotorSide <= Cargo.UNSAFE_VOLTAGE_MAX)
 				|| (voltageLimitSide >= Cargo.UNSAFE_VOLTAGE_MIN && voltageLimitSide <= Cargo.UNSAFE_VOLTAGE_MAX)
-				|| (Math.abs(voltageMotorSide - voltageLimitSide) >= 0.1)) {
+				|| (Math.abs(voltageMotorSide - voltageLimitSide) >= 0.2)) {
 			event = Cargo.BallEvent.UNSAFE;
 		} else if (voltageMotorSide >= Cargo.CAPTURE_VOLTAGE) {
 			event = Cargo.BallEvent.CAPTURED;

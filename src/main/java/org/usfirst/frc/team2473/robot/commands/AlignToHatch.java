@@ -20,7 +20,7 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
 public class AlignToHatch extends Command {
 	
 	double normalPower = 0.2;
-	double turnPower = 0.1;
+	double turnPower = 0.18;
 	private double angle = 0;
     private double distance = 0;
 

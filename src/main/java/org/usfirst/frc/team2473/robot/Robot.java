@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
 
 	private int i = 0;
 
-	private static ShuffleboardTab tab = Shuffleboard.getTab("Board");
+	//private static ShuffleboardTab tab = Shuffleboard.getTab("Board");
 	
 	// private static NetworkTableEntry timerEntry;
 	// public static NetworkTableEntry angleEntry;
@@ -115,12 +115,11 @@ public class Robot extends TimedRobot {
 		// UsbCamera frontCam = CameraServer.getInstance().startAutomaticCapture("Front Camera", 0);
 		// frontCam.setBrightness(25);
 		// frontCam.setFPS(15);
-		// frontCam.setResolution(320, 240);
+		// frontCam.setResolution(160, 120);
 		// UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
 		// backCam.setBrightness(75);
 		// backCam.setFPS(15);
-		// backCam.setResolution(320, 240);
-
+		// backCam.setResolution(160, 120);
 		// serialPort = new SerialPort(9600, SerialPort.Port.kOnboard);
 		/* FROM MASTER END */
 	}

@@ -55,7 +55,7 @@ public class ElevatorMove extends Command {
 	 * @param pos ElevatorPosition to move to
 	 * @param power initial power to move at
 	 */
-    public ElevatorMove(ElevatorPosition pos, double power) {
+	public ElevatorMove(ElevatorPosition pos, double power) {
 		requires(Robot.elevator);
 		
 		this.power = power;
@@ -101,7 +101,7 @@ public class ElevatorMove extends Command {
 		
 		int currTicks = shuffleboardTestTicks;
 		shuffleboardTestTicks+=(int)(Math.random()*10);
-		System.out.println(currTicks);
+		//System.out.println(currTicks);
 		
 		int delta = currTicks - prevTicks;
 		
