@@ -61,26 +61,23 @@ public class TeleopDrive extends Command {
 		-------------------------------------
 		*/
 
-        Robot.oi.getReverseDriveButton().whenPressed(new InstantCommand() {
-			@Override
-			protected void execute() {
-				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
-			}
-		});
-
 		Robot.oi.getElevatorZero().whenPressed(new ElevatorZero());
 
 		Robot.oi.getElevatorPos1().whenPressed(new ElevatorMove(ElevatorPosition.BASE, power));
 		Robot.oi.getElevatorPos2().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, power));
 		Robot.oi.getElevatorPos3().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, power));
 		Robot.oi.getElevatorPos4().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, power));
+        
+        Robot.oi.getElevatorUp().whenPressed(new ElevatorMoveRaw(power/2));
+        Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-power/2));
+
 
 		Robot.cargo.setState(Robot.cargo.RELEASING);
 	}
 
 	@Override
 	protected void execute() {
-
+        Robot.elevator.printEncoders();
 		double throttleZ = Robot.oi.getThrottle().getZ();
 		double originalZ = throttleZ;
 		double wheelX = -Robot.oi.getWheel().getX();
