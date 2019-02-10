@@ -10,6 +10,7 @@ package org.usfirst.frc.team2473.robot;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.ElevatorZero;
+import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.Cargo;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator;
@@ -101,7 +102,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		cvLight.set(Value.kForward);
-		new ElevatorZero().start();
+        //new ElevatorZero().start();
+        
+        // new StraightDrive(10, 0.2).start();
 	}
 
 	/**
@@ -116,6 +119,9 @@ public class Robot extends TimedRobot {
                 jetsonPort.printVisionAngles();
             }
         }
+
+        // driveSubsystem.printEncoders();
+
 		//System.out.println("Hello World!");
 		Scheduler.getInstance().run();
 	}

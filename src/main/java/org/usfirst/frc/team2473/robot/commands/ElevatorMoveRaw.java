@@ -37,7 +37,8 @@ public class ElevatorMoveRaw extends Command {
 		if (power < 0) {
 			return !Robot.oi.getElevatorDown().get();
 		} else {
-			return !Robot.oi.getElevatorUp().get();
+            //return true;
+			return !Robot.oi.getElevatorInitialStow().get();
 		}
 	}
 

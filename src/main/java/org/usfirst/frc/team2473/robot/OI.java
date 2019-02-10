@@ -18,7 +18,7 @@ public class OI {
 	private JoystickButton elevatorPos3;
 	private JoystickButton elevatorPos4;
 	
-	private JoystickButton elevatorUp;
+	private JoystickButton elevatorInitialStow;
 	private JoystickButton elevatorDown;
 
 	private JoystickButton elevatorZero;
@@ -27,7 +27,7 @@ public class OI {
 		throttle = new Joystick(2);		
         wheel = new Joystick(0);
         
-		cvButton = new JoystickButton(wheel, 1);
+		cvButton = new JoystickButton(wheel, 6);
 		reverseDriveButton = new JoystickButton(wheel, 2);	
 		
 		buttonPanel = new Joystick(3);
@@ -39,7 +39,7 @@ public class OI {
 		elevatorPos3 = new JoystickButton(buttonPanel, 3);
 		elevatorPos4 = new JoystickButton(buttonPanel, 1);
 
-		elevatorUp = new JoystickButton(buttonPanel, 6);
+		elevatorInitialStow = new JoystickButton(buttonPanel, 6);
 		elevatorDown = new JoystickButton(buttonPanel, 8);
 
 		elevatorZero = new JoystickButton(buttonPanel, 4);
@@ -100,8 +100,8 @@ public class OI {
 		return elevatorPos4;
 	}
 
-	public JoystickButton getElevatorUp() {
-		return elevatorUp;
+	public JoystickButton getElevatorInitialStow() {
+		return elevatorInitialStow;
 	}
 
 	public JoystickButton getElevatorDown() {

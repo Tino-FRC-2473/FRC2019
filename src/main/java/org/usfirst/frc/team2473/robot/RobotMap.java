@@ -21,8 +21,8 @@ public class RobotMap {
     public static final int K_ENCODER_ELEVATOR_THRESHOLD = 150;
     public static final int ELEVATOR_MIN_TICKS = 50;
     
-	public static double K_TICKS_PER_INCH = 1;
-	public static double K_ENCODER_THRESHOLD = 2;
+	public static double K_TICKS_PER_INCH = 0.5398;
+	public static double K_ENCODER_THRESHOLD = 4 * K_TICKS_PER_INCH;
 	
 	public static double K_START_STALL_POWER = 0.25;
 	public static double K_RUNNING_STALL_POWER = 0.2;
