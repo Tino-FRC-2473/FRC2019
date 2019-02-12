@@ -32,6 +32,7 @@ public class Robot extends TimedRobot {
 	public static Cargo cargo = Cargo.getInstance();
     public static Elevator elevator = Elevator.getInstance();
     
+    TeleopDrive teleopDrive;
     public static Relay cvLight;
 	
     public static OI oi;
@@ -47,7 +48,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		oi = new OI();
-		
+        
+        teleopDrive = new TeleopDrive();
+
 		cvLight = new Relay(0);
         prefs = Preferences.getInstance();
 
@@ -79,6 +82,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledInit() {
+        teleopDrive.cancel();
+        
         driveSubsystem.drive(0, 0);
 		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
 		Scheduler.getInstance().removeAll();
@@ -102,8 +107,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		cvLight.set(Value.kForward);
-        //new ElevatorZero().start();
-        
+        new ElevatorZero().start();
+        teleopDrive = new TeleopDrive();
+        teleopDrive.start();
         // new StraightDrive(10, 0.2).start();
 	}
 
@@ -136,7 +142,8 @@ public class Robot extends TimedRobot {
             jetsonPort.updateVisionValues();
 		    jetsonPort.printVisionAngles();
         }
-		(new TeleopDrive()).start();
+        teleopDrive = new TeleopDrive();
+        teleopDrive.start();
 	}
 
 	/**

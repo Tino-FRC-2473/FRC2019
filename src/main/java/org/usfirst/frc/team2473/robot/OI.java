@@ -2,6 +2,7 @@ package org.usfirst.frc.team2473.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class OI {
 	private Joystick throttle;
@@ -28,7 +29,14 @@ public class OI {
         wheel = new Joystick(0);
         
 		cvButton = new JoystickButton(wheel, 6);
-		reverseDriveButton = new JoystickButton(wheel, 2);	
+        reverseDriveButton = new JoystickButton(wheel, 2);	
+        
+        reverseDriveButton.whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
+			}
+		});
 		
 		buttonPanel = new Joystick(3);
 

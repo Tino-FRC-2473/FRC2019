@@ -47,13 +47,6 @@ public class TeleopDrive extends Command {
 	@Override
 	protected void initialize() {
         prevAngle = Robot.jetsonPort.getVisionAngle();
-        
-        Robot.oi.getReverseDriveButton().whenPressed(new InstantCommand() {
-			@Override
-			protected void execute() {
-				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
-			}
-		});
 
 		/*
 		-------------------------------------
@@ -77,7 +70,7 @@ public class TeleopDrive extends Command {
 
 	@Override
 	protected void execute() {
-        Robot.elevator.printEncoders();
+        // Robot.elevator.printEncoders();
 		double throttleZ = Robot.oi.getThrottle().getZ();
 		double originalZ = throttleZ;
 		double wheelX = -Robot.oi.getWheel().getX();
