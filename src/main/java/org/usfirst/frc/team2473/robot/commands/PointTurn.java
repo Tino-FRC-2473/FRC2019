@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2473.robot.commands;
 
+import org.usfirst.frc.team2473.framework.Logging;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 
@@ -165,13 +166,13 @@ public class PointTurn extends Command {
 		
 		double angle = Robot.driveSubsystem.getGyroAngle();
 		
-		System.out.println("Absolute Angle: "+ angle);
+		Logger.getInstance().logInfo("Absolute Angle: "+ angle);
 				
 		Robot.driveSubsystem.stopMotors();
-		System.out.println("Relative Angle: " + Math.abs(initialAngle-angle));
+		Logger.getInstance().logInfo("Relative Angle: " + Math.abs(initialAngle-angle));
 				
-		System.out.println("Turn Speed: " + this.initialPower);
-		System.out.println("Current speed: " + this.leftPower);
+		Logger.getInstance().logInfo("Turn Speed: " + this.initialPower);
+		Logger.getInstance().logInfo("Current speed: " + this.leftPower);
 	}
 	
 	@Override

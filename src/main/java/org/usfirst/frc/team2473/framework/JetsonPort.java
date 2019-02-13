@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2473.framework;
 
+import org.usfirst.frc.team2473.framework.Logging;
 import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.SerialPort;
@@ -47,14 +48,14 @@ public class JetsonPort extends SerialPort {
                 }
             }
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getClass());
+            Logger.getInstance().logError(e.getClass());
             RobotMap.CV_RUNNING = false;
         }
         
     }
 
     public void printVisionAngles() {
-        System.out.println(String.format("FRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d", fVisionAngle, fVisionDistance, bVisionAngle, bVisionDistance));
+        Logger.getInstance().logInfo(String.format("FRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d", fVisionAngle, fVisionDistance, bVisionAngle, bVisionDistance));
     }
 
     public double getVisionAngle() {

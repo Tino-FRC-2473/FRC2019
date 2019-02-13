@@ -10,8 +10,10 @@ package org.usfirst.frc.team2473.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import org.usfirst.frc.team2473.framework.Devices;
+import org.usfirst.frc.team2473.framework.Logging;
 import org.usfirst.frc.team2473.framework.State;
 import org.usfirst.frc.team2473.robot.Robot;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -176,7 +178,7 @@ public class Cargo extends Subsystem {
 
 	public void setState(State state) {
 		this.state = state;
-		System.out.println("SWITCHING TO " + this.state);
+		Logger.getInstance().logInfo("SWITCHING TO " + this.state);
 		this.state.init();
 	}
 
