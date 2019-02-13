@@ -8,6 +8,7 @@
 package org.usfirst.frc.team2473.robot.subsystems;
 
 import org.usfirst.frc.team2473.framework.Devices;
+import org.usfirst.frc.team2473.framework.Logging;
 import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.robot.commands.ElevatorMove;
 
@@ -63,7 +64,7 @@ public class Elevator extends Subsystem {
 	}
     
     public void set(double speed) {
-        System.out.println("Setting " + speed);
+        Logger.getInstance().logInfo("Setting " + speed);
         talon.set(speed);
 
         if(Math.abs(speed) >= ElevatorMove.SLOW_POWER - 0.01)
@@ -91,7 +92,7 @@ public class Elevator extends Subsystem {
 	}
     
     public void printEncoders() {
-		System.out.println("Elevator: " + getEncoderTicks());
+		Logger.getInstance().logInfo("Elevator: " + getEncoderTicks());
     }
     
 	/**

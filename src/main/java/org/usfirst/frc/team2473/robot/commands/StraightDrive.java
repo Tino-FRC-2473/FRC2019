@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team2473.robot.commands;
 
+import org.usfirst.frc.team2473.framework.Logging;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 
@@ -72,7 +73,7 @@ public class StraightDrive extends Command {
 	 * Set the target distance
 	 */
 	private void setDistance(double inches) {
-		System.out.println("TICKSSSSS: " + Robot.driveSubsystem.getEncoderTicks(RobotMap.SPARK_R));
+		Logger.getInstance().logInfo("TICKSSSSS: " + Robot.driveSubsystem.getEncoderTicks(RobotMap.SPARK_R));
 		this.absoluteTickGoal = (Robot.driveSubsystem.getEncoderTicks(RobotMap.SPARK_R) + (inches * RobotMap.K_TICKS_PER_INCH));
 	}
 
@@ -83,9 +84,9 @@ public class StraightDrive extends Command {
 		setDistance(moveByInches);
 		prevTicks = Robot.driveSubsystem.getEncoderTicks(RobotMap.SPARK_R);
 		
-		System.out.println("ANGLE: " + Robot.driveSubsystem.getGyroAngle());
+		Logger.getInstance().logInfo("ANGLE: " + Robot.driveSubsystem.getGyroAngle());
 
-		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
+		Logger.getInstance().logInfo("REQUIRED TICKS: " + absoluteTickGoal);
 		Robot.driveSubsystem.drive(power, power);
 	}
 
@@ -118,13 +119,13 @@ public class StraightDrive extends Command {
 
 	@Override
 	protected void end() {
-		System.out.println(power);
-		System.out.println("----------------");
-		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
+		Logger.getInstance().logInfo(power);
+		Logger.getInstance().logInfo("----------------");
+		Logger.getInstance().logInfo("REQUIRED TICKS: " + absoluteTickGoal);
 		Robot.driveSubsystem.printEncoders();		
-		System.out.println("Difference: " + Robot.driveSubsystem.encoderDifference());
+		Logger.getInstance().logInfo("Difference: " + Robot.driveSubsystem.encoderDifference());
 		
-		System.out.println();
+		Logger.getInstance().logInfo();
 		
 		Robot.driveSubsystem.stopMotors();
 	}

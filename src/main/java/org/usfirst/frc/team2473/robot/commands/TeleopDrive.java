@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import java.util.Stack;
 
 import org.usfirst.frc.team2473.framework.JetsonPort;
+import org.usfirst.frc.team2473.framework.Logging;
 import org.usfirst.frc.team2473.framework.State;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
@@ -92,7 +93,7 @@ public class TeleopDrive extends Command {
 		double outputZ = 0;
 		double outputX = 0;
 
-		//System.out.println(throttleZ + " " + wheelX);
+		Logger.getInstance().logDebug(throttleZ + " " + wheelX);
 
 		/* Scale throttle values to:
 
@@ -103,7 +104,7 @@ public class TeleopDrive extends Command {
 
 		throttleZ = M*(throttleZ - RobotMap.DEADBAND_MINIMUM_POWER);
 
-		//System.out.println("scaled " + throttleZ + " " + wheelX);
+		Logger.getInstance().logDebug("scaled " + throttleZ + " " + wheelX);
 
 		// Align To Hatch
 		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get() && Math.abs(originalZ) < RobotMap.DEADBAND_MINIMUM_POWER && Math.abs(wheelX) < RobotMap.DEADBAND_MINIMUM_TURN) {
@@ -149,7 +150,7 @@ public class TeleopDrive extends Command {
 
 		if (lastCargoEvent != event) {
 			eventStack.add(event);
-			System.out.println("ADDING " + event + " TO STACK");
+			Logger.getInstance().logInfo("ADDING " + event + " TO STACK");
 			lastCargoEvent = event;
 		}
 
@@ -160,7 +161,7 @@ public class TeleopDrive extends Command {
 		while (!eventStack.isEmpty()) {
 			State newState = Robot.cargo.getState().handleEvent(eventStack.pop());
 			if (newState != null) {
-				System.out.println("CHANGING STATE TO " + newState + " ----------------------------------");
+				Logger.getInstance().logInfo("CHANGING STATE TO " + newState + " ----------------------------------");
 				Robot.cargo.setState(newState);
 			}
 		}

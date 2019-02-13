@@ -18,9 +18,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
-import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.framework.CHS_SparkMax;
 import org.usfirst.frc.team2473.framework.Devices;
+import org.usfirst.frc.team2473.framework.Logging;
+import org.usfirst.frc.team2473.robot.RobotMap;
 
 public class SparkDriveSubsystem extends Subsystem {
 	// Put methods for controlling this subsystem
@@ -93,8 +94,8 @@ public class SparkDriveSubsystem extends Subsystem {
 	}
 
 	public void printEncoders() {
-		System.out.println(String.format("LEFT:  Position: %15.3f   |   Velocity: %15.3f", leftSpark.getEncoderPosition(), leftSpark.getEncoderVelocity()));
-		System.out.println(String.format("RIGHT: Position: %15.3f   |   Velocity: %15.3f", rightSpark.getEncoderPosition(), rightSpark.getEncoderVelocity()));
+		Logger.getInstance().logInfo(String.format("LEFT:  Position: %15.3f   |   Velocity: %15.3f", leftSpark.getEncoderPosition(), leftSpark.getEncoderVelocity()));
+		Logger.getInstance().logInfo(String.format("RIGHT: Position: %15.3f   |   Velocity: %15.3f", rightSpark.getEncoderPosition(), rightSpark.getEncoderVelocity()));
 		
 	}
 

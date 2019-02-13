@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team2473.robot.commands;
 
+import org.usfirst.frc.team2473.framework.Logging;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
@@ -83,12 +84,12 @@ public class ElevatorMove extends Command {
 		}
 
 		this.absoluteTickGoal = Robot.elevator.getEncoderTicks() + this.initialTickDelta;
-		System.out.println("Absolute tick goal: " + absoluteTickGoal);
+		Logger.getInstance().logInfo("Absolute tick goal: " + absoluteTickGoal);
 		
 		prevTicks = Robot.elevator.getEncoderTicks();
 		Robot.elevator.set(power);
 
-		System.out.println("Power: " + power);
+		Logger.getInstance().logInfo("Power: " + power);
 		SmartDashboard.putBoolean("Elevator Status", true);
 	}
 
@@ -130,12 +131,12 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void end() {
-		System.out.println(power);
-		System.out.println("----------------");
-		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
+		Logger.getInstance().logInfo(power);
+		Logger.getInstance().logInfo("----------------");
+		Logger.getInstance().logInfo("REQUIRED TICKS: " + absoluteTickGoal);
 		Robot.elevator.printEncoders();		
 		
-		System.out.println();
+		Logger.getInstance().logInfo();
 		
 		Robot.elevator.stop();
 	}

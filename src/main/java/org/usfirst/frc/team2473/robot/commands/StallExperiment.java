@@ -5,7 +5,9 @@
 /*----------------------------------------------------------------------------*/
 
 package org.usfirst.frc.team2473.robot.commands;
+
 import org.usfirst.frc.team2473.framework.Devices;
+import org.usfirst.frc.team2473.framework.Logging;
 import org.usfirst.frc.team2473.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -68,7 +70,7 @@ public class StallExperiment extends Command {
         if (currAngle - prevAngle > 360) {
             power -= powerDecrement;
             prevAngle = currAngle;
-            System.out.println("New power: " + power);
+            Logger.getInstance().logInfo("New power: " + power);
         }
         
         Robot.driveSubsystem.drive(power, -power);
@@ -82,7 +84,7 @@ public class StallExperiment extends Command {
 
     @Override
     protected void end() {
-        System.out.println("FINAL POWER: " + power);
+        Logger.getInstance().logInfo("FINAL POWER: " + power);
         Robot.driveSubsystem.stopMotors();
         
     }

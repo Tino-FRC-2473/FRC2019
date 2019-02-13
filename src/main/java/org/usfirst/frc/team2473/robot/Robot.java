@@ -9,6 +9,7 @@ package org.usfirst.frc.team2473.robot;
 
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
+import org.usfirst.frc.team2473.framework.Logging;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.Cargo;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator;
@@ -53,7 +54,7 @@ public class Robot extends TimedRobot {
             jetsonPort = new JetsonPort(9600, Port.kUSB);
             RobotMap.CV_RUNNING = true;
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getClass());
+			Logger.getInstance().logError(e.getClass());
             RobotMap.CV_RUNNING = false;
         }
         
@@ -78,7 +79,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledInit() {
         driveSubsystem.drive(0, 0);
-		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
+		
+		Logger.getInstance().logInfo("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
 		Scheduler.getInstance().removeAll();
 		
 	}
@@ -114,7 +116,7 @@ public class Robot extends TimedRobot {
                 jetsonPort.printVisionAngles();
             }
         }
-		//System.out.println("Hello World!");
+		//Logger.getInstance().logDebug("Hello World!");
 		Scheduler.getInstance().run();
 	}
 
@@ -145,7 +147,7 @@ public class Robot extends TimedRobot {
             if (RobotMap.CV_RUNNING) {
                 jetsonPort.printVisionAngles();
             }
-            System.out.println("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
+            Logger.getInstance().logInfo("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
 		}
 
         
