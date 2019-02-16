@@ -34,8 +34,8 @@ public class Cargo extends Subsystem {
 	public static final double UNSAFE_VOLTAGE_MAX = 1.55;
 	public static final double CAPTURE_VOLTAGE = 1.8;
 
-	private static final double POWER_UP_FAST = -0.8;
-	private static final double POWER_DOWN_SLOW = 0.5;
+	private static final double POWER_UP_FAST = 0.8;
+	private static final double POWER_DOWN_SLOW = -0.5;
 
 	public final State RELEASING = new State("Releasing") {
 
@@ -142,13 +142,13 @@ public class Cargo extends Subsystem {
 		sharpDistanceLimitSide = new AnalogInput(2);
 	}
 
-	public boolean getFwdLimitSwitch() {
-		return !cargoTalon.getSensorCollection().isFwdLimitSwitchClosed();
-	}
+	// public boolean getFwdLimitSwitch() {
+	// 	return !cargoTalon.getSensorCollection().isFwdLimitSwitchClosed();
+	// }
 	
-	public boolean getRevLimitSwitch() {
-		return !cargoTalon.getSensorCollection().isRevLimitSwitchClosed();
-	}
+	// public boolean getRevLimitSwitch() {
+	// 	return !cargoTalon.getSensorCollection().isRevLimitSwitchClosed();
+	// }
 
 	public double getSharpVoltageMotorSide() {
 		// double inches = (26 / sharpDistance.getAverageVoltage()) / 2.54; // conversion factor from spec sheet
@@ -163,7 +163,8 @@ public class Cargo extends Subsystem {
 
 		// newVoltage = (1.11 * currentVoltage) - 0.107
 
-		return (1.11 * sharpDistanceLimitSide.getVoltage()) - 0.107;
+		// return (1.11 * sharpDistanceLimitSide.getVoltage()) - 0.107;
+		return (1.07 * sharpDistanceLimitSide.getVoltage()) - 0.0184;
 	}
 
 	public void setPower(double speed) {

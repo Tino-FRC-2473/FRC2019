@@ -46,7 +46,7 @@ public class TeleopDrive extends Command {
 
 	@Override
 	protected void initialize() {
-        prevAngle = Robot.jetsonPort.getVisionAngle();
+        prevAngle = Robot.jetsonPort.getVisionAngle1();
 
 		/*
 		-------------------------------------
@@ -92,10 +92,10 @@ public class TeleopDrive extends Command {
 		//System.out.println("scaled " + throttleZ + " " + wheelX);
 
 		// Align To Hatch
-		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get() && Math.abs(originalZ) < RobotMap.DEADBAND_MINIMUM_POWER && Math.abs(wheelX) < RobotMap.DEADBAND_MINIMUM_TURN) {
+		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get()) {
 			alignToHatch.move();
 		} else { // Move using controls, not CV
-
+			alignToHatch.reset();
 			// Deadband
 			if (Math.abs(throttleZ) > RobotMap.DEADBAND_MINIMUM_POWER) {
 				outputZ = throttleZ;
@@ -125,7 +125,7 @@ public class TeleopDrive extends Command {
 			event = Cargo.BallEvent.NONE;
 		} else if ((voltageMotorSide >= Cargo.UNSAFE_VOLTAGE_MIN && voltageMotorSide <= Cargo.UNSAFE_VOLTAGE_MAX)
 				|| (voltageLimitSide >= Cargo.UNSAFE_VOLTAGE_MIN && voltageLimitSide <= Cargo.UNSAFE_VOLTAGE_MAX)
-				|| (Math.abs(voltageMotorSide - voltageLimitSide) >= 0.1)) {
+				|| (Math.abs(voltageMotorSide - voltageLimitSide) >= 0.5)) {
 			event = Cargo.BallEvent.UNSAFE;
 		} else if (voltageMotorSide >= Cargo.CAPTURE_VOLTAGE) {
 			event = Cargo.BallEvent.CAPTURED;

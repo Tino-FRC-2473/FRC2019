@@ -77,7 +77,7 @@ public class Elevator extends Subsystem {
     }
     
     public void set(double speed) {
-        System.out.println("Setting " + speed);
+        //System.out.println("Setting " + speed);
         talon.set(speed);
 
         if(Math.abs(speed) >= ElevatorMove.SLOW_POWER - 0.01)

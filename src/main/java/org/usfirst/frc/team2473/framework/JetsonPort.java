@@ -9,10 +9,29 @@ public class JetsonPort extends SerialPort {
     private static final String START = "S";
     private static final String END = "E";
 
-    private int fVisionAngle = 0;
-    private int fVisionDistance = 0;
-    private int bVisionAngle = 0;
-    private int bVisionDistance = 0;
+    private int fVisionAngle1 = 0;
+    private int fVisionDistance1 = 0;
+    private int fVisionX1 = 0;
+
+    private int fVisionAngle2 = 0;
+    private int fVisionDistance2 = 0;
+    private int fVisionX2 = 0;
+
+    private int fVisionAngle3 = 0;
+    private int fVisionDistance3 = 0;
+    private int fVisionX3 = 0;
+
+    private int bVisionAngle1 = 0;
+    private int bVisionDistance1 = 0;
+    private int bVisionX1 = 0;
+
+    private int bVisionAngle2 = 0;
+    private int bVisionDistance2 = 0;
+    private int bVisionX2 = 0;
+
+    private int bVisionAngle3 = 0;
+    private int bVisionDistance3 = 0;
+    private int bVisionX3 = 0;
      
     private boolean firstStart = false;
     private String buffer = "";
@@ -20,6 +39,12 @@ public class JetsonPort extends SerialPort {
     public JetsonPort(int baudrate, Port port) {
         super(baudrate, port);
     }
+
+    /*
+
+    SAAADDDXXXAAADDDXXXAAADDDXXXAAADDDXXXAAADDDXXXAAADDDXXXE
+
+    */
 
     public void updateVisionValues() {
         try {
@@ -35,11 +60,30 @@ public class JetsonPort extends SerialPort {
                 buffer += receive; 
                 if (buffer.contains(END)) {
                     String data = buffer.substring(buffer.indexOf(START)+1, buffer.indexOf(END));
-                    if (data.length() == 12) {
-                        fVisionAngle = Integer.parseInt(data.substring(0, 3));
-                        fVisionDistance = Integer.parseInt(data.substring(3, 6));
-                        bVisionAngle = Integer.parseInt(data.substring(6, 9));
-                        bVisionDistance = Integer.parseInt(data.substring(9));
+                    if (data.length() == 54) {
+                        fVisionAngle1 = Integer.parseInt(data.substring(0, 3));
+                        fVisionDistance1 = Integer.parseInt(data.substring(3, 6));
+                        fVisionX1 = Integer.parseInt(data.substring(6, 9));
+
+                        fVisionAngle2 = Integer.parseInt(data.substring(9, 12));
+                        fVisionDistance2 = Integer.parseInt(data.substring(12, 15));
+                        fVisionX2 = Integer.parseInt(data.substring(15, 18));
+
+                        fVisionAngle3 = Integer.parseInt(data.substring(18, 21));
+                        fVisionDistance3 = Integer.parseInt(data.substring(21, 24));
+                        fVisionX3 = Integer.parseInt(data.substring(24, 27));
+
+                        bVisionAngle1 = Integer.parseInt(data.substring(27, 30));
+                        bVisionDistance1 = Integer.parseInt(data.substring(30, 33));
+                        bVisionX1 = Integer.parseInt(data.substring(33, 36));
+
+                        bVisionAngle2 = Integer.parseInt(data.substring(36, 39));
+                        bVisionDistance2 = Integer.parseInt(data.substring(39, 42));
+                        bVisionX2 = Integer.parseInt(data.substring(42, 45));
+
+                        bVisionAngle3 = Integer.parseInt(data.substring(45, 48));
+                        bVisionDistance3 = Integer.parseInt(data.substring(48, 51));
+                        bVisionX3 = Integer.parseInt(data.substring(51, 54));
 
                         buffer = buffer.substring(buffer.indexOf(END)+1);
                     }
@@ -54,14 +98,42 @@ public class JetsonPort extends SerialPort {
     }
 
     public void printVisionAngles() {
-        System.out.println(String.format("FRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d", fVisionAngle, fVisionDistance, bVisionAngle, bVisionDistance));
+        System.out.println(String.format("FRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d", fVisionAngle1, fVisionDistance1, bVisionAngle1, bVisionDistance1));
     }
 
-    public double getVisionAngle() {
-        return RobotMap.RUNNING_FORWARD ? fVisionAngle : bVisionAngle;
+    public int getVisionAngle1() {
+        return RobotMap.RUNNING_FORWARD ? fVisionAngle1 : bVisionAngle1;
     }
 
-    public double getVisionDistance() {
-        return RobotMap.RUNNING_FORWARD ? fVisionDistance : bVisionDistance;
+    public int getVisionAngle2() {
+        return RobotMap.RUNNING_FORWARD ? fVisionAngle2 : bVisionAngle2;
+    }
+
+    public int getVisionAngle3() {
+        return RobotMap.RUNNING_FORWARD ? fVisionAngle3 : bVisionAngle3;
+    }
+
+    public int getVisionDistance1() {
+        return RobotMap.RUNNING_FORWARD ? fVisionDistance1 : bVisionDistance1;
+    }
+
+    public int getVisionDistance2() {
+        return RobotMap.RUNNING_FORWARD ? fVisionDistance2 : bVisionDistance2;
+    }
+
+    public int getVisionDistance3() {
+        return RobotMap.RUNNING_FORWARD ? fVisionDistance3 : bVisionDistance3;
+    }
+
+    public int getVisionX1() {
+        return RobotMap.RUNNING_FORWARD ? fVisionX1 : bVisionX1;
+    }
+
+    public int getVisionX2() {
+        return RobotMap.RUNNING_FORWARD ? fVisionX2 : bVisionX2;
+    }
+
+    public int getVisionX3() {
+        return RobotMap.RUNNING_FORWARD ? fVisionX3 : bVisionX3;
     }
 }
