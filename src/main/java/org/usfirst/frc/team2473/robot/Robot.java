@@ -13,6 +13,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
+import org.usfirst.frc.team2473.robot.commands.AlignToHatch;
 import org.usfirst.frc.team2473.robot.commands.ElevatorZero;
 import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
@@ -78,7 +79,7 @@ public class Robot extends TimedRobot {
 		frontCam.setResolution(160, 120);
 
 		UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
-		backCam.setBrightness(75);
+		backCam.setBrightness(25);
 		backCam.setFPS(15);
 		backCam.setResolution(160, 120);
 
@@ -86,20 +87,53 @@ public class Robot extends TimedRobot {
 
 			// Get a CvSink. This will capture Mats from the camera
 			CvSink cvSinkFront = CameraServer.getInstance().getVideo(frontCam);
-			//CvSink cvSinkBack = CameraServer.getInstance().getVideo(backCam);
+			CvSink cvSinkBack = CameraServer.getInstance().getVideo(backCam);
 			// Setup a CvSource. This will send images back to the Dashboard
 			CvSource outputStreamFront = CameraServer.getInstance().putVideo("Front Camera", 160, 120);
-			//CvSource outputStreamBack = CameraServer.getInstance().putVideo("Back Camera", 160, 120);
+			CvSource outputStreamBack = CameraServer.getInstance().putVideo("Back Camera", 160, 120);
 
 			// Mats are very memory expensive. Lets reuse this Mat.
 			Mat matFront = new Mat();
-			//Mat matBack = new Mat();
+			Mat matBack = new Mat();
+
+			// Add a test point to each camera to get both feeds up
+			
+			// if (cvSinkFront.grabFrame(matFront) == 0) {
+			// 	// Send the output the error.
+			// 	outputStreamFront.notifyError(cvSinkFront.getError());
+			// }
+			// if (cvSinkBack.grabFrame(matBack) == 0) {
+			// 	// Send the output the error.
+			// 	outputStreamBack.notifyError(cvSinkBack.getError());
+			// }
+
+			// Imgproc.line(matFront, new Point(0,0), new Point(1,1), new Scalar(0, 0, 255));
+			// Imgproc.line(matBack, new Point(0,0), new Point(1,1), new Scalar(0, 0, 255));
+
+			// outputStreamFront.putFrame(matFront);
+			// outputStreamBack.putFrame(matBack);
 
 			// This cannot be 'true'. The program will never exit if it is. This
 			// lets the robot stop this thread when restarting robot code or
 			// deploying.
 			while (!Thread.interrupted()) {
 
+				double x1 = jetsonPort.getVisionX1()/2.0;
+				double x2 = jetsonPort.getVisionX2()/2.0;
+				double x3 = jetsonPort.getVisionX3()/2.0;
+
+				double alignX = AlignToHatch.x / 2.0;
+
+				Scalar alignColor;
+
+				if (AlignToHatch.isRunning) {
+					alignColor = new Scalar(0, 255, 0);
+				} else {
+					alignColor = new Scalar(59, 214, 214);
+				}
+
+				//System.out.println(x1 + " " + x2 + " " + x3 + " " + alignX);
+					
 				// ------------ FRONT ----------------
 
 				// Tell the CvSink to grab a frame from the camera and put it
@@ -108,46 +142,49 @@ public class Robot extends TimedRobot {
 					// Send the output the error.
 					outputStreamFront.notifyError(cvSinkFront.getError());
 				} else {
+					
+					// Put a rectangle on the image
 					if (RobotMap.RUNNING_FORWARD) {
-						double x1 = jetsonPort.getVisionX1()/2.0;
-						double x2 = jetsonPort.getVisionX2()/2.0;
-						double x3 = jetsonPort.getVisionX3()/2.0;
 
-						System.out.println(x1 + " " + x2 + " " + x3);
-						
-	
-						// Put a rectangle on the image
-						Imgproc.line(matFront, new Point(x1, 0), new Point(x1, 120), new Scalar(255, 0, 0), 3);
-						Imgproc.line(matFront, new Point(x2, 0), new Point(x2, 120), new Scalar(255, 0, 0), 3);
-						Imgproc.line(matFront, new Point(x3, 0), new Point(x3, 120), new Scalar(255, 0, 0), 3);
-						// Give the output stream a new image to display
-						outputStreamFront.putFrame(matFront);
+						double shift = 3;
+
+						Imgproc.line(matFront, new Point(x1 + shift, 0), new Point(x1 + shift, 120), new Scalar(255, 0, 0), 1);
+						Imgproc.line(matFront, new Point(x2 + shift, 0), new Point(x2 + shift, 120), new Scalar(255, 0, 0), 1);
+						Imgproc.line(matFront, new Point(x3 + shift, 0), new Point(x3 + shift, 120), new Scalar(255, 0, 0), 1);
+						Imgproc.line(matFront, new Point(alignX + shift, 0), new Point(alignX + shift, 120), alignColor, 1);
 					}
+					// Give the output stream a new image to display
+					
+					outputStreamFront.putFrame(matFront);
+					
 				}
-
+			
+			
 				// ----------------- BACK -----------------------
 
 				// Tell the CvSink to grab a frame from the camera and put it
 				// in the source mat. If there is an error notify the output.
 				
-				// if (cvSinkBack.grabFrame(matBack) == 0) {
-				// 	// Send the output the error.
-				// 	outputStreamBack.notifyError(cvSinkBack.getError());
-				// } else {
-				// 	if (!RobotMap.RUNNING_FORWARD) {
-				// 		double x1 = jetsonPort.getVisionX1()/12.0;
-				// 		double x2 = jetsonPort.getVisionX2()/12.0;
-				// 		double x3 = jetsonPort.getVisionX3()/12.0;
-						
-	
-				// 		// Put a rectangle on the image
-				// 		Imgproc.line(matBack, new Point(x1, 0), new Point(x1, 120), new Scalar(255, 0, 0), 3);
-				// 		Imgproc.line(matBack, new Point(x2, 0), new Point(x2, 120), new Scalar(255, 0, 0), 3);
-				// 		Imgproc.line(matBack, new Point(x3, 0), new Point(x3, 120), new Scalar(255, 0, 0), 3);
-				// 		// Give the output stream a new image to display
-				// 		outputStreamBack.putFrame(matBack);
-				// 	}
-				// }
+				if (cvSinkBack.grabFrame(matBack) == 0) {
+					// Send the output the error.
+					outputStreamBack.notifyError(cvSinkBack.getError());
+				} else {
+
+					if (!RobotMap.RUNNING_FORWARD) {
+
+						double shift = 10;
+
+						Imgproc.line(matBack, new Point(x1 + shift, 0), new Point(x1 + shift, 120), new Scalar(255, 0, 0), 1);
+						Imgproc.line(matBack, new Point(x2 + shift, 0), new Point(x2 + shift, 120), new Scalar(255, 0, 0), 1);
+						Imgproc.line(matBack, new Point(x3 + shift, 0), new Point(x3 + shift, 120), new Scalar(255, 0, 0), 1);
+						Imgproc.line(matBack, new Point(alignX + shift, 0), new Point(alignX + shift, 120), alignColor, 1);
+					}
+
+					// Give the output stream a new image to display
+					outputStreamBack.putFrame(matBack);
+					
+				}
+					
 				
 			}
 		});
@@ -213,6 +250,8 @@ public class Robot extends TimedRobot {
 				// jetsonPort.printVisionAngles();
 			}
 		}
+
+		System.out.println(jetsonPort.getVisionAngle1());
 
 		// driveSubsystem.printEncoders();
 

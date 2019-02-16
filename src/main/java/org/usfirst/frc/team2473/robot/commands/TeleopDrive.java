@@ -96,6 +96,7 @@ public class TeleopDrive extends Command {
 			alignToHatch.move();
 		} else { // Move using controls, not CV
 			alignToHatch.reset();
+			alignToHatch.calculateTarget(); // for x value
 			// Deadband
 			if (Math.abs(throttleZ) > RobotMap.DEADBAND_MINIMUM_POWER) {
 				outputZ = throttleZ;

@@ -28,11 +28,15 @@ public class AlignToHatch extends Command {
     double addedPower = 0.1;
     private int angle = 0;
     private int distance = 0;
+    public static int x = 0;
 
     private boolean hasMovedUp;
     private boolean hasMovedBase;
 
     private ElevatorMove move = null;
+    private boolean canSwitchTargets = true;
+
+    public static boolean isRunning = false;
 
     public AlignToHatch() {
         requires(Robot.driveSubsystem);
@@ -46,46 +50,92 @@ public class AlignToHatch extends Command {
     public void reset() {
         angle = -99;
         distance = -99;
+        isRunning = false;
     }
 
-    public void move() {
-        if (!RobotMap.CV_RUNNING) return;
-        
-        CVData target1 = new CVData(Robot.jetsonPort.getVisionAngle1(), Robot.jetsonPort.getVisionDistance1(), 1);
-        CVData target2 = new CVData(Robot.jetsonPort.getVisionAngle2(), Robot.jetsonPort.getVisionDistance2(), 2);
-        CVData target3 = new CVData(Robot.jetsonPort.getVisionAngle3(), Robot.jetsonPort.getVisionDistance3(), 3);
+    public void calculateTarget() {
+        CVData target1 = new CVData(Robot.jetsonPort.getVisionAngle1(), Robot.jetsonPort.getVisionDistance1(), Robot.jetsonPort.getVisionX1(), 1);
+        CVData target2 = new CVData(Robot.jetsonPort.getVisionAngle2(), Robot.jetsonPort.getVisionDistance2(), Robot.jetsonPort.getVisionX2(), 2);
+        CVData target3 = new CVData(Robot.jetsonPort.getVisionAngle3(), Robot.jetsonPort.getVisionDistance3(), Robot.jetsonPort.getVisionX3(), 3);
 
         CVData[] targets = new CVData[]{target1, target2, target3};
 
         System.out.println(Arrays.toString(targets));
 
+        if (Math.abs(Robot.oi.getWheel().getX()) < 0.2) {
+            canSwitchTargets = true;
+        }
+
         if (angle == -99 && distance == -99) {
             Arrays.sort(targets);
             //System.out.println("TARGET: " + targets[0]);
             int i = 0;
-            while (targets[i].angle == -99 && targets[i].distance == -99) i++;
+            while (i < 3 && targets[i].angle == -99 && targets[i].distance == -99) i++;
             
             if (i == 3) {
                 reset();
             } else {
                 angle = targets[i].angle;
                 distance = targets[i].distance;
+                x = targets[i].x;
             }
+        } else if (Robot.oi.getWheel().getX() > 0.4 && canSwitchTargets) {
+            CVData closestRightTarget = null;
+
+            for (CVData target : targets) {
+                if (target.x - x > 10) {
+                    if (closestRightTarget == null || target.x - x < closestRightTarget.x - x) {
+                        closestRightTarget = target;
+                    }
+                }
+            }
+
+            if (closestRightTarget == null) {
+                // there was no target to the right
+                
+            } else {
+                angle = closestRightTarget.angle;
+                distance = closestRightTarget.distance;
+                x = closestRightTarget.x;
+            }
+
+            canSwitchTargets = false;
+        } else if (Robot.oi.getWheel().getX() < -0.4 && canSwitchTargets) {
+            CVData closestLeftTarget = null;
+
+            for (CVData target : targets) {
+                if (target.x - x < -10) {
+                    if (closestLeftTarget == null || target.x - x > closestLeftTarget.x - x) {
+                        closestLeftTarget = target;
+                    }
+                }
+            }
+
+            if (closestLeftTarget == null) {
+                // there was no target to the left
+                
+            } else {
+                angle = closestLeftTarget.angle;
+                distance = closestLeftTarget.distance;
+                x = closestLeftTarget.x;
+            }
+
+            canSwitchTargets = false;
         } else {
             CVData delta1 = null;
             CVData delta2 = null;
             CVData delta3 = null;
             
             if (target1.angle != -99 && target1.distance != -99) {
-                delta1 = new CVData(target1.angle - angle, target1.distance - distance, target1.id);
+                delta1 = new CVData(target1.angle - angle, target1.distance - distance, target1.x, target1.id);
             }
 
             if (target2.angle != -99 && target2.distance != -99) {
-                delta2 = new CVData(target2.angle - angle, target2.distance - distance, target2.id);
+                delta2 = new CVData(target2.angle - angle, target2.distance - distance, target2.x, target2.id);
             }
 
             if (target3.angle != -99 && target3.distance != -99) {
-                delta3 = new CVData(target3.angle - angle, target3.distance - distance, target3.id);
+                delta3 = new CVData(target3.angle - angle, target3.distance - distance, target3.x, target3.id);
             }
 
 
@@ -118,13 +168,25 @@ public class AlignToHatch extends Command {
                 System.out.println("TARGET: " + closestTarget);
                 angle = closestTarget.angle;
                 distance = closestTarget.distance;
+                x = closestTarget.x;
             }
         }
+    }
+
+    public void move() {
+        if (!RobotMap.CV_RUNNING) return;
+        
+        isRunning = true;
+
+        calculateTarget();
 
 		double thresholdAngle = 3;
         // angle = Robot.jetsonPort.getVisionAngle();
         // distance = Robot.jetsonPort.getVisionDistance();
+
+        // temporarily negate angle for moving to targets
         if (!RobotMap.RUNNING_FORWARD) angle = -angle;
+
         if (distance == 0) {
             if (!hasMovedUp && RobotMap.RUNNING_FORWARD && Robot.elevator.getElevatorPosition() != ElevatorPosition.FIRST) {
                 move = new ElevatorMove(ElevatorPosition.FIRST, 0.8);
@@ -165,6 +227,9 @@ public class AlignToHatch extends Command {
                 }
             }
         }
+
+        // re-negate angle
+        if (!RobotMap.RUNNING_FORWARD) angle = -angle;
         
     }
 
@@ -186,11 +251,13 @@ public class AlignToHatch extends Command {
     private class CVData implements Comparable<CVData> {
         int angle;
         int distance;
+        int x;
         int id;
 
-        public CVData(int angle, int distance, int id) {
+        public CVData(int angle, int distance, int x, int id) {
             this.angle = angle;
             this.distance = distance;
+            this.x = x;
             this.id = id;
         }
 
@@ -205,7 +272,7 @@ public class AlignToHatch extends Command {
 
         @Override
         public String toString() {
-            return "CVData[" + angle + " " + distance + " " + id + "]";
+            return "CVData[" + angle + " " + distance + " " + x + " " + id + "]";
         }
 
 
