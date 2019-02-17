@@ -23,9 +23,9 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
  */
 public class AlignToHatch extends Command {
 
-    double normalPower = 0.2;
+    double normalPower = 0.3;
     double turnPower = 0.08;
-    double addedPower = 0.1;
+    double lowPower = 0.1;
     private int angle = 0;
     private int distance = 0;
     public static int x = 0;
@@ -201,9 +201,9 @@ public class AlignToHatch extends Command {
             }
         } else {
             if (angle > thresholdAngle) { // Robot is to the left of the target
-                Robot.driveSubsystem.drive(turnPower + addedPower, addedPower);
+                Robot.driveSubsystem.drive(turnPower + lowPower, lowPower);
             } else { // Robot is to the right of the target
-                Robot.driveSubsystem.drive(addedPower, turnPower + addedPower);
+                Robot.driveSubsystem.drive(lowPower, turnPower + lowPower);
             }
         }
 
