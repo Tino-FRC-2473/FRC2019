@@ -180,6 +180,8 @@ public class AlignToHatch extends Command {
 
         calculateTarget();
 
+        if (distance == 99) return;
+
         //System.out.println(distance);
 
         double thresholdAngle = 3;
@@ -209,7 +211,7 @@ public class AlignToHatch extends Command {
                 }
             }
 
-            if (!hasMovedBase && distance > liftElevatorDistance) {
+            if (!hasMovedBase && distance > liftElevatorDistance + 10) {
                 move = new ElevatorMove(ElevatorPosition.BASE, 0.8);
                 move.start();
                 hasMovedBase = true;
