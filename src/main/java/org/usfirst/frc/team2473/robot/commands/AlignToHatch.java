@@ -30,10 +30,10 @@ public class AlignToHatch extends Command {
     private int distance = 0;
     public static int x = 0;
 
-    private boolean hasMovedUp;
-    private boolean hasMovedBase;
+    // private boolean hasMovedUp;
+    // private boolean hasMovedBase;
 
-    private ElevatorMove move = null;
+    // private ElevatorMove move = null;
     private boolean canSwitchTargets = true;
 
     public static boolean isRunning = false;
@@ -192,44 +192,18 @@ public class AlignToHatch extends Command {
         // temporarily negate angle for moving to targets
         if (!RobotMap.RUNNING_FORWARD) angle = -angle;
 
-        if (distance < liftElevatorDistance && !hasMovedUp && RobotMap.RUNNING_FORWARD && Robot.elevator.getElevatorPosition() != ElevatorPosition.FIRST) {
-            move = new ElevatorMove(ElevatorPosition.FIRST, 0.8);
-            move.start();
-            hasMovedUp = true;
-            hasMovedBase = false;
-            //Robot.driveSubsystem.drive(0.1, 0.1);
-        } else {
-            if (hasMovedBase) {
-                // confirm we are actually at the base, instead of it being true from a previous run
-                
-                if (move == null) {
-                    // if we haven't moved the elevator yet, then check whether we are actally at base
-                    hasMovedBase = Robot.elevator.getElevatorPosition() == ElevatorPosition.BASE;
-                } else {
-                    // check that either a move command is running (this would take us to base) or if the elevator is at base
-                    hasMovedBase = move.isRunning() || Robot.elevator.getElevatorPosition() == ElevatorPosition.BASE;
-                }
-            }
-
-            if (!hasMovedBase && distance > liftElevatorDistance + 10) {
-                move = new ElevatorMove(ElevatorPosition.BASE, 0.8);
-                move.start();
-                hasMovedBase = true;
-                hasMovedUp = false;
-            }
-
-            if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
-                if (distance < liftElevatorDistance) {
-                    Robot.driveSubsystem.drive(0.1, 0.1);
-                } else {
-                    Robot.driveSubsystem.drive(normalPower, normalPower);
-                }
+        
+        if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
+            if (distance < liftElevatorDistance) {
+                Robot.driveSubsystem.drive(0.1, 0.1);
             } else {
-                if (angle > thresholdAngle) { // Robot is to the left of the target
-                    Robot.driveSubsystem.drive(turnPower + addedPower, addedPower);
-                } else { // Robot is to the right of the target
-                    Robot.driveSubsystem.drive(addedPower, turnPower + addedPower);
-                }
+                Robot.driveSubsystem.drive(normalPower, normalPower);
+            }
+        } else {
+            if (angle > thresholdAngle) { // Robot is to the left of the target
+                Robot.driveSubsystem.drive(turnPower + addedPower, addedPower);
+            } else { // Robot is to the right of the target
+                Robot.driveSubsystem.drive(addedPower, turnPower + addedPower);
             }
         }
 

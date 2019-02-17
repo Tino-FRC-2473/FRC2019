@@ -24,8 +24,9 @@ public class Elevator extends Subsystem {
     public enum ElevatorPosition {
         //Units are encoder ticks. 
         //TODO These are now just dummy values
-        ZERO(0), BASE(237), FIRST(513), SECOND(1600), THIRD(2800), INITIAL_STOW(2200);
+        ZERO(0), BASE(237), FIRST(460), SECOND(1600), THIRD(2800), INITIAL_STOW(2200);
 
+        // first: 513
         private final int value;
 
         /**

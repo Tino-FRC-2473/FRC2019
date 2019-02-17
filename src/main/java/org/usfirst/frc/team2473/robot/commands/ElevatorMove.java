@@ -24,7 +24,7 @@ public class ElevatorMove extends Command {
 	 * Lowest power elevator will run at towards the end of
 	 * the move.
 	 */
-	public static final double SLOW_POWER = 0.1;
+	public static final double SLOW_POWER = 0.15;
 	
 	/**
 	 * The number of ticks that the elevator should
@@ -41,7 +41,8 @@ public class ElevatorMove extends Command {
 	/**
 	 * Initial power to move the elevator at.
 	 */
-	private double power;
+    private double power;
+    private boolean releaseElement;
 	private double initialPower; //TODO may be useless
 
 	private int initialTickDelta;
@@ -53,13 +54,14 @@ public class ElevatorMove extends Command {
 	 * @param pos ElevatorPosition to move to
 	 * @param power initial power to move at
 	 */
-    public ElevatorMove(ElevatorPosition pos, double power) {
+    public ElevatorMove(ElevatorPosition pos, boolean releaseElement, double power) {
 		requires(Robot.elevator);
 		
-		this.power = power;
+        this.power = power;
+        this.releaseElement = releaseElement;
 		this.initialPower = power;
 		this.pos = pos;
-	}
+    }
 	
 	/**
 	 * Set the power to move the robot at.
@@ -71,7 +73,17 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void initialize() {
-		this.initialTickDelta = this.pos.getValue()-Robot.elevator.getEncoderTicks();
+		if (releaseElement) {
+            pos = Robot.elevator.getElevatorPosition();
+
+            if (Robot.elevator.getElevatorPosition() == ElevatorPosition.BASE) {
+                this.initialTickDelta = (this.pos.getValue() + 300) - Robot.elevator.getEncoderTicks();
+            } else if (Robot.elevator.getElevatorPosition() != ElevatorPosition.ZERO) {
+                this.initialTickDelta = (this.pos.getValue() - 300) - Robot.elevator.getEncoderTicks();
+            }
+        } else {
+            this.initialTickDelta = this.pos.getValue() - Robot.elevator.getEncoderTicks();
+        }
 
 		this.power = this.initialPower;
 
@@ -144,6 +156,7 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void interrupted() {
+		Robot.elevator.setElevatorPosition(pos);
 		Robot.elevator.stop();
 	}
 }

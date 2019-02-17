@@ -56,11 +56,19 @@ public class TeleopDrive extends Command {
 
 		Robot.oi.getElevatorZero().whenPressed(new ElevatorZero());
 
-		Robot.oi.getElevatorPos1().whenPressed(new ElevatorMove(ElevatorPosition.BASE, power));
-		Robot.oi.getElevatorPos2().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, power));
-		Robot.oi.getElevatorPos3().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, power));
-		Robot.oi.getElevatorPos4().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, power));
+		Robot.oi.getElevatorPos1().whenPressed(new ElevatorMove(ElevatorPosition.BASE, false, power));
+		Robot.oi.getElevatorPos2().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, false, power));
+		Robot.oi.getElevatorPos3().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, false, power));
+        Robot.oi.getElevatorPos4().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, false, power));
         
+        Robot.oi.getReleaseElementButton().whenPressed(new ElevatorMove(Robot.elevator.getElevatorPosition(), true, power));
+        Robot.oi.getReleaseElementButton().whenReleased(new InstantCommand() {
+            @Override
+            protected void execute() {
+                new ElevatorMove(Robot.elevator.getElevatorPosition(), false, power).start();
+            }
+        });
+
         Robot.oi.getElevatorInitialStow().whenPressed(new ElevatorMoveRaw(power/2));
         Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-power/2));
 
