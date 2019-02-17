@@ -31,7 +31,7 @@ public class Cargo extends Subsystem {
 	}
 
 	public static final double UNSAFE_VOLTAGE_MIN = 1.0;
-	public static final double UNSAFE_VOLTAGE_MAX = 1.55;
+	public static final double UNSAFE_VOLTAGE_MAX = 1.5;
 	public static final double CAPTURE_VOLTAGE = 1.8;
 
 	private static final double POWER_UP_FAST = 0.8;
@@ -161,9 +161,8 @@ public class Cargo extends Subsystem {
 	public double getSharpVoltageLimitSide() {
 		// Scale to values of sharpDistanceMotorSide. This conversion will be different for each distance sensor
 
-		// newVoltage = (1.11 * currentVoltage) - 0.107
+		// newVoltage = (1.07 * currentVoltage) - 0.0184
 
-		// return (1.11 * sharpDistanceLimitSide.getVoltage()) - 0.107;
 		return (1.07 * sharpDistanceLimitSide.getVoltage()) - 0.0184;
 	}
 
