@@ -251,7 +251,7 @@ public class Robot extends TimedRobot {
 			}
 		}
 
-		System.out.println(jetsonPort.getVisionAngle1());
+		System.out.println(jetsonPort.getVisionDistance1());
 
 		// driveSubsystem.printEncoders();
 

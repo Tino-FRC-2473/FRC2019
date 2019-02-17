@@ -23,7 +23,7 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
  */
 public class AlignToHatch extends Command {
 
-    double normalPower = 0.3;
+    double normalPower = 0.2;
     double turnPower = 0.08;
     double addedPower = 0.1;
     private int angle = 0;
@@ -60,7 +60,7 @@ public class AlignToHatch extends Command {
 
         CVData[] targets = new CVData[]{target1, target2, target3};
 
-        System.out.println(Arrays.toString(targets));
+        //System.out.println(Arrays.toString(targets));
 
         if (Math.abs(Robot.oi.getWheel().getX()) < 0.2) {
             canSwitchTargets = true;
@@ -146,7 +146,7 @@ public class AlignToHatch extends Command {
             if (delta3 != null) deltas.add(delta3);
 
             Collections.sort(deltas);
-            System.out.println("Deltas: " + deltas);
+            //System.out.println("Deltas: " + deltas);
 
             CVData closestTarget = null;
 
@@ -165,7 +165,7 @@ public class AlignToHatch extends Command {
                         break;
                 }
     
-                System.out.println("TARGET: " + closestTarget);
+                //System.out.println("TARGET: " + closestTarget);
                 angle = closestTarget.angle;
                 distance = closestTarget.distance;
                 x = closestTarget.x;
@@ -180,20 +180,22 @@ public class AlignToHatch extends Command {
 
         calculateTarget();
 
-		double thresholdAngle = 3;
+        //System.out.println(distance);
+
+        double thresholdAngle = 3;
+        int liftElevatorDistance = 50;
         // angle = Robot.jetsonPort.getVisionAngle();
         // distance = Robot.jetsonPort.getVisionDistance();
 
         // temporarily negate angle for moving to targets
         if (!RobotMap.RUNNING_FORWARD) angle = -angle;
 
-        if (distance == 0) {
-            if (!hasMovedUp && RobotMap.RUNNING_FORWARD && Robot.elevator.getElevatorPosition() != ElevatorPosition.FIRST) {
-                move = new ElevatorMove(ElevatorPosition.FIRST, 0.8);
-                move.start();
-                hasMovedUp = true;
-                hasMovedBase = false;
-            }
+        if (distance < liftElevatorDistance && !hasMovedUp && RobotMap.RUNNING_FORWARD && Robot.elevator.getElevatorPosition() != ElevatorPosition.FIRST) {
+            move = new ElevatorMove(ElevatorPosition.FIRST, 0.8);
+            move.start();
+            hasMovedUp = true;
+            hasMovedBase = false;
+            //Robot.driveSubsystem.drive(0.1, 0.1);
         } else {
             if (hasMovedBase) {
                 // confirm we are actually at the base, instead of it being true from a previous run
@@ -207,14 +209,15 @@ public class AlignToHatch extends Command {
                 }
             }
 
-            if (!hasMovedBase) {
+            if (!hasMovedBase && distance > liftElevatorDistance) {
                 move = new ElevatorMove(ElevatorPosition.BASE, 0.8);
                 move.start();
                 hasMovedBase = true;
+                hasMovedUp = false;
             }
 
             if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
-                if (distance == 0) {
+                if (distance < liftElevatorDistance) {
                     Robot.driveSubsystem.drive(0.1, 0.1);
                 } else {
                     Robot.driveSubsystem.drive(normalPower, normalPower);
