@@ -39,7 +39,7 @@ public class ElevatorZero extends Command {
 	protected void end() {
 		Robot.elevator.stop();
 		Robot.elevator.resetEncoders();
-		Robot.elevator.setElevatorPosition(Elevator.ElevatorPosition.ZERO);
+		Robot.elevator.setExecutingGoalPosition(Elevator.ElevatorPosition.ZERO);
 	}
 
 	@Override
