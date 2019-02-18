@@ -73,6 +73,8 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void initialize() {
+        Robot.elevator.setElevatorPosition(pos);
+
 		if (releaseElement) {
             pos = Robot.elevator.getElevatorPosition();
 
@@ -145,10 +147,8 @@ public class ElevatorMove extends Command {
 		System.out.println(power);
 		System.out.println("----------------");
 		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
-		Robot.elevator.printEncoders();		
-
-		Robot.elevator.setElevatorPosition(pos);
-		
+        Robot.elevator.printEncoders();		
+        		
 		System.out.println();
 		
 		Robot.elevator.stop();
@@ -156,7 +156,6 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void interrupted() {
-		Robot.elevator.setElevatorPosition(pos);
 		Robot.elevator.stop();
 	}
 }

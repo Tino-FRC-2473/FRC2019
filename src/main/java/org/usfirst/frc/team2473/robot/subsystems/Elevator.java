@@ -63,6 +63,7 @@ public class Elevator extends Subsystem {
 	
 	private Elevator() {
 		talon = Devices.getInstance().getTalon(RobotMap.TALON_ELEVATOR);
+        setElevatorPosition(ElevatorPosition.ZERO);
     }
 
     public ElevatorPosition getElevatorPosition() {
