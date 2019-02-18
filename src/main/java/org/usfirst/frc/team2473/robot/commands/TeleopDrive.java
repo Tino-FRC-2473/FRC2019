@@ -32,7 +32,9 @@ public class TeleopDrive extends Command {
 	double prevAngle;
 	double power = 0.8;
 	
-	private Enum lastCargoEvent = null;
+    private Enum lastCargoEvent = null;
+    
+    private boolean hasLoweredElevator = false;
 
 	Stack<Enum> eventStack;
 
@@ -100,19 +102,7 @@ public class TeleopDrive extends Command {
 			}
 		});
         
-        Robot.oi.getReleaseElementButton().whenPressed(new InstantCommand() {
-            @Override
-            protected void execute() {
-                if (RobotMap.RUNNING_FORWARD) new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, power).start();
-            }
-        });
         
-        Robot.oi.getReleaseElementButton().whenReleased(new InstantCommand() {
-            @Override
-            protected void execute() {
-                if (RobotMap.RUNNING_FORWARD) new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, power).start();
-            }
-        });
 
         Robot.oi.getElevatorInitialStowButton().whenPressed(new ElevatorMoveRaw(power/2));
         Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-power/2));
@@ -144,11 +134,26 @@ public class TeleopDrive extends Command {
 
 		//System.out.println("scaled " + throttleZ + " " + wheelX);
 
-		// Align To Hatch
+
+        // Align To Hatch
+        
+
+        boolean wasRunningCV = AlignToHatch.isRunning;
+
 		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get()) {
-			alignToHatch.move();
+            alignToHatch.move();
+            if (RobotMap.RUNNING_FORWARD && AlignToHatch.isRunning != wasRunningCV) {
+                // we are starting CV
+                new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, power).start();
+            }
 		} else { // Move using controls, not CV
-			alignToHatch.reset();
+            alignToHatch.reset();
+            
+            if (RobotMap.RUNNING_FORWARD && AlignToHatch.isRunning != wasRunningCV) {
+                // we are stopping CV
+                new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, power).start();
+            }
+
 			alignToHatch.calculateTarget(); // for x value
 			// Deadband
 			if (Math.abs(throttleZ) > RobotMap.DEADBAND_MINIMUM_POWER) {
