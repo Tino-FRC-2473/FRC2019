@@ -61,7 +61,13 @@ public class TeleopDrive extends Command {
 		Robot.oi.getElevatorPos3().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, false, power));
         Robot.oi.getElevatorPos4().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, false, power));
         
-        Robot.oi.getReleaseElementButton().whenPressed(new ElevatorMove(Robot.elevator.getElevatorPosition(), true, power));
+        Robot.oi.getReleaseElementButton().whenPressed(new InstantCommand() {
+            @Override
+            protected void execute() {
+                new ElevatorMove(Robot.elevator.getElevatorPosition(), true, power).start();
+            }
+        });
+        
         Robot.oi.getReleaseElementButton().whenReleased(new InstantCommand() {
             @Override
             protected void execute() {
