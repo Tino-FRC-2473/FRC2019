@@ -24,7 +24,7 @@ public class Elevator extends Subsystem {
     public enum ElevatorPosition {
         //Units are encoder ticks. 
         //TODO These are now just dummy values
-        ZERO(0), BASE(237), FIRST(460), SECOND(1600), THIRD(2800), INITIAL_STOW(2200);
+        ZERO(0), PICKUP(237), LOW(460), MID(1600), HIGH(2800), INITIAL_STOW(2200);
 
         // first: 513
         private final int value;
@@ -63,14 +63,14 @@ public class Elevator extends Subsystem {
 	
 	private Elevator() {
 		talon = Devices.getInstance().getTalon(RobotMap.TALON_ELEVATOR);
-        setElevatorPosition(ElevatorPosition.ZERO);
+        setExecutingGoalPosition(ElevatorPosition.ZERO);
     }
 
-    public ElevatorPosition getElevatorPosition() {
+    public ElevatorPosition getExecutingGoalPosition() {
         return executingGoalPosition;
     }
     
-    public void setElevatorPosition(ElevatorPosition newPosition) {
+    public void setExecutingGoalPosition(ElevatorPosition newPosition) {
         this.executingGoalPosition = newPosition;
     }
 

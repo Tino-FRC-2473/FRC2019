@@ -73,14 +73,14 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void initialize() {
-        Robot.elevator.setElevatorPosition(targetPos);
+        Robot.elevator.setExecutingGoalPosition(targetPos);
 
 		if (releaseElement) {
-            targetPos = Robot.elevator.getElevatorPosition();
+            targetPos = Robot.elevator.getExecutingGoalPosition();
 
-            if (Robot.elevator.getElevatorPosition() == ElevatorPosition.BASE) {
+            if (Robot.elevator.getExecutingGoalPosition() == ElevatorPosition.PICKUP) {
                 this.initialTickDelta = (this.targetPos.getValue() + 300) - Robot.elevator.getEncoderTicks();
-            } else if (Robot.elevator.getElevatorPosition() != ElevatorPosition.ZERO) {
+            } else if (Robot.elevator.getExecutingGoalPosition() != ElevatorPosition.ZERO) {
                 this.initialTickDelta = (this.targetPos.getValue() - 300) - Robot.elevator.getEncoderTicks();
             }
         } else {

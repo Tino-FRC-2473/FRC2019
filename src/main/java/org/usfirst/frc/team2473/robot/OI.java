@@ -14,17 +14,17 @@ public class OI {
 
 	private JoystickButton cargoButton;
 
-	private JoystickButton elevatorPos1;
-	private JoystickButton elevatorPos2;
-	private JoystickButton elevatorPos3;
-	private JoystickButton elevatorPos4;
+	private JoystickButton elevatorPickupButton;
+	private JoystickButton elevatorLowButton;
+	private JoystickButton elevatorMidButton;
+	private JoystickButton elevatorHighButton;
 	
-	private JoystickButton elevatorInitialStow;
+	private JoystickButton elevatorInitialStowButton;
     private JoystickButton elevatorDown;
     
     private JoystickButton releaseElementButton;
 
-	private JoystickButton elevatorZero;
+	private JoystickButton elevatorZeroButton;
 
 	public OI() {
         throttle = new Joystick(2);	
@@ -47,15 +47,15 @@ public class OI {
 
 		cargoButton = new JoystickButton(buttonPanel, 2);
 
-		elevatorPos1 = new JoystickButton(buttonPanel, 7);
-		elevatorPos2 = new JoystickButton(buttonPanel, 5);
-		elevatorPos3 = new JoystickButton(buttonPanel, 3);
-		elevatorPos4 = new JoystickButton(buttonPanel, 1);
+		elevatorPickupButton = new JoystickButton(buttonPanel, 7);
+		elevatorLowButton = new JoystickButton(buttonPanel, 5);
+		elevatorMidButton = new JoystickButton(buttonPanel, 3);
+		elevatorHighButton = new JoystickButton(buttonPanel, 1);
 
-		elevatorInitialStow = new JoystickButton(buttonPanel, 6);
+		elevatorInitialStowButton = new JoystickButton(buttonPanel, 6);
 		elevatorDown = new JoystickButton(buttonPanel, 8);
 
-        elevatorZero = new JoystickButton(buttonPanel, 4);
+        elevatorZeroButton = new JoystickButton(buttonPanel, 4);
 
 
 		/*
@@ -101,31 +101,31 @@ public class OI {
 		return cargoButton;
 	}
 
-	public JoystickButton getElevatorPos1() {
-		return elevatorPos1;
+	public JoystickButton getElevatorPickupButton() {
+		return elevatorPickupButton;
 	}
 
-	public JoystickButton getElevatorPos2() {
-		return elevatorPos2;
+	public JoystickButton getElevatorLowButton() {
+		return elevatorLowButton;
 	}
 
-	public JoystickButton getElevatorPos3() {
-		return elevatorPos3;
+	public JoystickButton getElevatorMidButton() {
+		return elevatorMidButton;
 	}
 
-	public JoystickButton getElevatorPos4() {
-		return elevatorPos4;
+	public JoystickButton getElevatorHighButton() {
+		return elevatorHighButton;
 	}
 
-	public JoystickButton getElevatorInitialStow() {
-		return elevatorInitialStow;
+	public JoystickButton getElevatorInitialStowButton() {
+		return elevatorInitialStowButton;
 	}
 
 	public JoystickButton getElevatorDown() {
 		return elevatorDown;
 	}
 
-	public JoystickButton getElevatorZero() {
-		return elevatorZero;
+	public JoystickButton getElevatorZeroButton() {
+		return elevatorZeroButton;
 	}
 }

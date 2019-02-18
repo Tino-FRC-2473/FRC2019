@@ -54,28 +54,28 @@ public class TeleopDrive extends Command {
 		-------------------------------------
 		*/
 
-		Robot.oi.getElevatorZero().whenPressed(new ElevatorZero());
+		Robot.oi.getElevatorZeroButton().whenPressed(new ElevatorZero());
 
-		Robot.oi.getElevatorPos1().whenPressed(new ElevatorMove(ElevatorPosition.BASE, false, power));
-		Robot.oi.getElevatorPos2().whenPressed(new ElevatorMove(ElevatorPosition.FIRST, false, power));
-		Robot.oi.getElevatorPos3().whenPressed(new ElevatorMove(ElevatorPosition.SECOND, false, power));
-        Robot.oi.getElevatorPos4().whenPressed(new ElevatorMove(ElevatorPosition.THIRD, false, power));
+		Robot.oi.getElevatorPickupButton().whenPressed(new ElevatorMove(ElevatorPosition.PICKUP, false, power));
+		Robot.oi.getElevatorLowButton().whenPressed(new ElevatorMove(ElevatorPosition.LOW, false, power));
+		Robot.oi.getElevatorMidButton().whenPressed(new ElevatorMove(ElevatorPosition.MID, false, power));
+        Robot.oi.getElevatorHighButton().whenPressed(new ElevatorMove(ElevatorPosition.HIGH, false, power));
         
         Robot.oi.getReleaseElementButton().whenPressed(new InstantCommand() {
             @Override
             protected void execute() {
-                new ElevatorMove(Robot.elevator.getElevatorPosition(), true, power).start();
+                new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, power).start();
             }
         });
         
         Robot.oi.getReleaseElementButton().whenReleased(new InstantCommand() {
             @Override
             protected void execute() {
-                new ElevatorMove(Robot.elevator.getElevatorPosition(), false, power).start();
+                new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, power).start();
             }
         });
 
-        Robot.oi.getElevatorInitialStow().whenPressed(new ElevatorMoveRaw(power/2));
+        Robot.oi.getElevatorInitialStowButton().whenPressed(new ElevatorMoveRaw(power/2));
         Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-power/2));
 
 
