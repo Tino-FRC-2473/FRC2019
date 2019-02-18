@@ -56,22 +56,61 @@ public class TeleopDrive extends Command {
 
 		Robot.oi.getElevatorZeroButton().whenPressed(new ElevatorZero());
 
-		Robot.oi.getElevatorPickupButton().whenPressed(new ElevatorMove(ElevatorPosition.PICKUP, false, power));
-		Robot.oi.getElevatorLowButton().whenPressed(new ElevatorMove(ElevatorPosition.LOW, false, power));
-		Robot.oi.getElevatorMidButton().whenPressed(new ElevatorMove(ElevatorPosition.MID, false, power));
-        Robot.oi.getElevatorHighButton().whenPressed(new ElevatorMove(ElevatorPosition.HIGH, false, power));
+		Robot.oi.getElevatorPickupButton().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				if (RobotMap.RUNNING_FORWARD) {
+					new ElevatorMove(ElevatorPosition.HATCH_PICKUP, false, power).start();
+				} else {
+					new ElevatorMove(ElevatorPosition.CARGO_PICKUP, false, power).start();
+				}
+			}
+		});
+
+		Robot.oi.getElevatorLowButton().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				if (RobotMap.RUNNING_FORWARD) {
+					new ElevatorMove(ElevatorPosition.HATCH_LOW, false, power).start();
+				} else {
+					new ElevatorMove(ElevatorPosition.CARGO_LOW, false, power).start();
+				}
+			}
+		});
+
+		Robot.oi.getElevatorMidButton().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				if (RobotMap.RUNNING_FORWARD) {
+					new ElevatorMove(ElevatorPosition.HATCH_MID, false, power).start();
+				} else {
+					new ElevatorMove(ElevatorPosition.CARGO_MID, false, power).start();
+				}
+			}
+		});
+
+        Robot.oi.getElevatorHighButton().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				if (RobotMap.RUNNING_FORWARD) {
+					new ElevatorMove(ElevatorPosition.HATCH_HIGH, false, power).start();
+				} else {
+					new ElevatorMove(ElevatorPosition.CARGO_HIGH, false, power).start();
+				}
+			}
+		});
         
         Robot.oi.getReleaseElementButton().whenPressed(new InstantCommand() {
             @Override
             protected void execute() {
-                new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, power).start();
+                if (RobotMap.RUNNING_FORWARD) new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, power).start();
             }
         });
         
         Robot.oi.getReleaseElementButton().whenReleased(new InstantCommand() {
             @Override
             protected void execute() {
-                new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, power).start();
+                if (RobotMap.RUNNING_FORWARD) new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, power).start();
             }
         });
 
