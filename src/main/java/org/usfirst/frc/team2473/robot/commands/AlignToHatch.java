@@ -27,7 +27,7 @@ public class AlignToHatch extends Command {
     double turnPower = 0.08;
     double lowPower = 0.1;
     private int angle = 0;
-    private int distance = 0;
+    public int distance = 0;
     public static int x = 0;
 
     // private boolean hasMovedUp;
@@ -185,6 +185,7 @@ public class AlignToHatch extends Command {
         //System.out.println(distance);
 
         double thresholdAngle = 3;
+        double thresholdDistance = 25;
         int liftElevatorDistance = 50;
         // angle = Robot.jetsonPort.getVisionAngle();
         // distance = Robot.jetsonPort.getVisionDistance();
@@ -193,7 +194,7 @@ public class AlignToHatch extends Command {
         if (!RobotMap.RUNNING_FORWARD) angle = -angle;
 
         
-        if (Math.abs(angle) < thresholdAngle) { // keep going in this direction
+        if (Math.abs(angle) < thresholdAngle || distance < thresholdDistance) { // keep going in this direction
             if (distance < liftElevatorDistance) {
                 Robot.driveSubsystem.drive(0.1, 0.1);
             } else {
