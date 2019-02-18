@@ -47,7 +47,7 @@ public class ElevatorMove extends Command {
 
 	private int initialTickDelta;
 
-	private ElevatorPosition pos;
+	private ElevatorPosition targetPos;
 	
 	/**
 	 * Create a ElevatorMove object with given inch goal and power.
@@ -60,7 +60,7 @@ public class ElevatorMove extends Command {
         this.power = power;
         this.releaseElement = releaseElement;
 		this.initialPower = power;
-		this.pos = pos;
+		this.targetPos = pos;
     }
 	
 	/**
@@ -73,18 +73,18 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void initialize() {
-        Robot.elevator.setElevatorPosition(pos);
+        Robot.elevator.setElevatorPosition(targetPos);
 
 		if (releaseElement) {
-            pos = Robot.elevator.getElevatorPosition();
+            targetPos = Robot.elevator.getElevatorPosition();
 
             if (Robot.elevator.getElevatorPosition() == ElevatorPosition.BASE) {
-                this.initialTickDelta = (this.pos.getValue() + 300) - Robot.elevator.getEncoderTicks();
+                this.initialTickDelta = (this.targetPos.getValue() + 300) - Robot.elevator.getEncoderTicks();
             } else if (Robot.elevator.getElevatorPosition() != ElevatorPosition.ZERO) {
-                this.initialTickDelta = (this.pos.getValue() - 300) - Robot.elevator.getEncoderTicks();
+                this.initialTickDelta = (this.targetPos.getValue() - 300) - Robot.elevator.getEncoderTicks();
             }
         } else {
-            this.initialTickDelta = this.pos.getValue() - Robot.elevator.getEncoderTicks();
+            this.initialTickDelta = this.targetPos.getValue() - Robot.elevator.getEncoderTicks();
         }
 
 		this.power = this.initialPower;

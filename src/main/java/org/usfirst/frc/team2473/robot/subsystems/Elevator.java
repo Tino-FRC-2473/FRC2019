@@ -41,7 +41,7 @@ public class Elevator extends Subsystem {
         }
     }
 
-    private ElevatorPosition currentPosition;
+    private ElevatorPosition executingGoalPosition;
 
 	private static Elevator instance;
 	
@@ -67,11 +67,11 @@ public class Elevator extends Subsystem {
     }
 
     public ElevatorPosition getElevatorPosition() {
-        return currentPosition;
+        return executingGoalPosition;
     }
     
     public void setElevatorPosition(ElevatorPosition newPosition) {
-        this.currentPosition = newPosition;
+        this.executingGoalPosition = newPosition;
     }
 
     public boolean isLowerLimitSwitchPressed() {
