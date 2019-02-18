@@ -103,7 +103,7 @@ public class ElevatorMove extends Command {
 		Robot.elevator.set(power);
 
 		System.out.println("Power: " + power);
-		SmartDashboard.putBoolean("Elevator Status", true);
+		// SmartDashboard.putBoolean("Elevator Status", true);
 	}
 
 	@Override
@@ -125,11 +125,11 @@ public class ElevatorMove extends Command {
 				
 		prevTicks = currTicks;
 		//Checks if while executing, elevator move is moving by a minimum number of ticks per cycle.
-		if(delta < RobotMap.ELEVATOR_MIN_TICKS){
-			SmartDashboard.putBoolean("Elevator Status", false);
-		} else if (!SmartDashboard.getBoolean("Elevator Status", true) && delta > RobotMap.ELEVATOR_MIN_TICKS){
-			SmartDashboard.putBoolean("Elevator Status", true);
-		}
+		// if(delta < RobotMap.ELEVATOR_MIN_TICKS){
+		// 	SmartDashboard.putBoolean("Elevator Status", false);
+		// } else if (!SmartDashboard.getBoolean("Elevator Status", true) && delta > RobotMap.ELEVATOR_MIN_TICKS){
+		// 	SmartDashboard.putBoolean("Elevator Status", true);
+		// }
 		
 	}
 

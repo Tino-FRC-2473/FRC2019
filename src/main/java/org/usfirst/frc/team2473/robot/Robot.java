@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
 
@@ -214,6 +215,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void disabledPeriodic() {
+        updateShuffleboardVisualizations();
 		if (RobotMap.CV_RUNNING) {
 			jetsonPort.updateVisionValues();
 		}
@@ -237,6 +239,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+        updateShuffleboardVisualizations();
 		//System.out.println(jetsonPort.getVisionX1() + " " + jetsonPort.getVisionX2() + " " + jetsonPort.getVisionX3());
 		// serialPort.writeString("Hello World!");
 
@@ -278,6 +281,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+        updateShuffleboardVisualizations();
 
 		if (RobotMap.CV_RUNNING) {
 			jetsonPort.updateVisionValues();
@@ -295,6 +299,20 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void testPeriodic() {
-	}
+    }
+    
+    public void updateShuffleboardVisualizations() {
+        SmartDashboard.putString("Elevator Position", Robot.elevator.getExecutingGoalPosition().toString());
+        
+        if (Robot.cargo.getState() == null) {
+            SmartDashboard.putString("Cargo State", "Rearming");
+        } else {
+            SmartDashboard.putString("Cargo State", Robot.cargo.getState().toString());
+        }
+
+        SmartDashboard.putBoolean("Cargo Secured", Robot.cargo.getState() == Robot.cargo.CAPTURING);
+        
+        SmartDashboard.updateValues();
+    }
 
 }
