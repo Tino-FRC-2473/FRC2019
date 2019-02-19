@@ -24,7 +24,7 @@ public class ElevatorMove extends Command {
 	 * Lowest power elevator will run at towards the end of
 	 * the move.
 	 */
-	public static final double SLOW_POWER = 0.15;
+	public static final double SLOW_POWER = 0.3;
 	
 	/**
 	 * The number of ticks that the elevator should
@@ -79,9 +79,9 @@ public class ElevatorMove extends Command {
             targetPos = Robot.elevator.getExecutingGoalPosition();
 
             if (Robot.elevator.getExecutingGoalPosition() == ElevatorPosition.HATCH_PICKUP) {
-                this.initialTickDelta = (this.targetPos.getValue() + 3) - Robot.elevator.getEncoderTicks();
+                this.initialTickDelta = (this.targetPos.getValue() + 7) - Robot.elevator.getEncoderTicks();
             } else if (Robot.elevator.getExecutingGoalPosition() != ElevatorPosition.ZERO) {
-                this.initialTickDelta = (this.targetPos.getValue() - 3) - Robot.elevator.getEncoderTicks();
+                this.initialTickDelta = (this.targetPos.getValue() - 7) - Robot.elevator.getEncoderTicks();
             }
         } else {
             this.initialTickDelta = this.targetPos.getValue() - Robot.elevator.getEncoderTicks();
@@ -93,7 +93,7 @@ public class ElevatorMove extends Command {
 
 		// Half the speed if going down because the elevator is going with the direction of gravity
 		if (this.initialTickDelta < 0) {
-			power /= 2;
+			power *= 0.75;
 		}
 
 		this.absoluteTickGoal = Robot.elevator.getEncoderTicks() + this.initialTickDelta;

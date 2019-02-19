@@ -98,7 +98,7 @@ public class JetsonPort extends SerialPort {
     }
 
     public void printVisionAngles() {
-        System.out.println(String.format("FRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d", fVisionAngle1, fVisionDistance1, bVisionAngle1, bVisionDistance1));
+        System.out.println(String.format("FRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d\nFRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d\nFRONT: Angle %3d Distance %3d        BACK:  Angle %3d Distance %3d\n", fVisionAngle1, fVisionDistance1, bVisionAngle1, bVisionDistance1, fVisionAngle2, fVisionDistance2, bVisionAngle2, bVisionDistance2, fVisionAngle3, fVisionDistance3, bVisionAngle3, bVisionDistance3));
     }
 
     public int getVisionAngle1() {

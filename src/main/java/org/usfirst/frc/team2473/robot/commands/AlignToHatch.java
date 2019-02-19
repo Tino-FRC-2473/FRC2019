@@ -35,6 +35,7 @@ public class AlignToHatch extends Command {
 
     // private ElevatorMove move = null;
     private boolean canSwitchTargets = true;
+    private boolean hasBeenInThresholdDistance = false;
 
     public static boolean isRunning = false;
 
@@ -51,6 +52,7 @@ public class AlignToHatch extends Command {
         angle = -99;
         distance = -99;
         isRunning = false;
+        hasBeenInThresholdDistance = false;
     }
 
     public void calculateTarget() {
@@ -185,21 +187,20 @@ public class AlignToHatch extends Command {
         //System.out.println(distance);
 
         double thresholdAngle = 3;
-        double thresholdDistance = 25;
-        int liftElevatorDistance = 50;
+        double thresholdDistance = 30;
         // angle = Robot.jetsonPort.getVisionAngle();
         // distance = Robot.jetsonPort.getVisionDistance();
 
         // temporarily negate angle for moving to targets
         if (!RobotMap.RUNNING_FORWARD) angle = -angle;
 
-        
-        if (Math.abs(angle) < thresholdAngle || distance < thresholdDistance || angle == -99) { // keep going in this direction
-            if (distance < liftElevatorDistance) {
-                Robot.driveSubsystem.drive(0.1, 0.1);
-            } else {
-                Robot.driveSubsystem.drive(normalPower, normalPower);
-            }
+        System.out.println(distance);
+
+        if (hasBeenInThresholdDistance || distance < thresholdDistance || angle == -99) { // keep going in this direction
+            hasBeenInThresholdDistance = true;
+            Robot.driveSubsystem.drive(0.1, 0.1);
+        } else if (Math.abs(angle) < thresholdAngle) {
+            Robot.driveSubsystem.drive(normalPower, normalPower);
         } else {
             if (angle > thresholdAngle) { // Robot is to the left of the target
                 Robot.driveSubsystem.drive(turnPower + lowPower, lowPower);
