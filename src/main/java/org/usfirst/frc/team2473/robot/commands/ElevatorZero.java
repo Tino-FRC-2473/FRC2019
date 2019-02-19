@@ -37,6 +37,7 @@ public class ElevatorZero extends Command {
 
 	@Override
 	protected void end() {
+        System.out.println("limit switch pressed");
 		Robot.elevator.stop();
 		Robot.elevator.resetEncoders();
 		Robot.elevator.setExecutingGoalPosition(Elevator.ElevatorPosition.ZERO);

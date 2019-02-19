@@ -30,13 +30,13 @@ public class ElevatorMove extends Command {
 	 * The number of ticks that the elevator should
 	 * be at if it has reached its goal.
 	 */
-	private int absoluteTickGoal;
+	private double absoluteTickGoal;
 	
 	/**
 	 * The absolute number of ticks that the elevator
 	 * was at after the last call of execute.
 	 */
-	private int prevTicks;
+	private double prevTicks;
 	
 	/**
 	 * Initial power to move the elevator at.
@@ -45,7 +45,7 @@ public class ElevatorMove extends Command {
     private boolean releaseElement;
 	private double initialPower; //TODO may be useless
 
-	private int initialTickDelta;
+	private double initialTickDelta;
 
 	private ElevatorPosition targetPos;
 	
@@ -79,9 +79,9 @@ public class ElevatorMove extends Command {
             targetPos = Robot.elevator.getExecutingGoalPosition();
 
             if (Robot.elevator.getExecutingGoalPosition() == ElevatorPosition.HATCH_PICKUP) {
-                this.initialTickDelta = (this.targetPos.getValue() + 300) - Robot.elevator.getEncoderTicks();
+                this.initialTickDelta = (this.targetPos.getValue() + 3) - Robot.elevator.getEncoderTicks();
             } else if (Robot.elevator.getExecutingGoalPosition() != ElevatorPosition.ZERO) {
-                this.initialTickDelta = (this.targetPos.getValue() - 300) - Robot.elevator.getEncoderTicks();
+                this.initialTickDelta = (this.targetPos.getValue() - 3) - Robot.elevator.getEncoderTicks();
             }
         } else {
             this.initialTickDelta = this.targetPos.getValue() - Robot.elevator.getEncoderTicks();
@@ -109,9 +109,9 @@ public class ElevatorMove extends Command {
 	@Override
 	protected void execute() {
 		double tempPower = power;
-		int currTicks = Robot.elevator.getEncoderTicks();
+		double currTicks = Robot.elevator.getEncoderTicks();
 		
-		int delta = currTicks - prevTicks;
+		double delta = currTicks - prevTicks;
 		
 		/* If the elevator has exceeded the threshold below, it will move at a slower power */
 		if (Math.abs(absoluteTickGoal - (currTicks + delta)) < RobotMap.K_ENCODER_ELEVATOR_THRESHOLD) { // Math.abs() allows this to work regardless of moving direction (forwards or backwards)
@@ -135,7 +135,7 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		int currTicks = Robot.elevator.getEncoderTicks();
+		double currTicks = Robot.elevator.getEncoderTicks();
 		if (this.initialTickDelta > 0) 
 			return (absoluteTickGoal < currTicks);
 		else 

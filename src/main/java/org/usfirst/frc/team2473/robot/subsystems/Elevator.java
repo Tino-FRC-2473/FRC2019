@@ -7,11 +7,14 @@
 
 package org.usfirst.frc.team2473.robot.subsystems;
 
+import org.usfirst.frc.team2473.framework.CHS_SparkMax;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.robot.commands.ElevatorMove;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANDigitalInput.LimitSwitchPolarity;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -24,19 +27,19 @@ public class Elevator extends Subsystem {
     public enum ElevatorPosition {
         //Units are encoder ticks. 
         //TODO These are now just dummy values
-        ZERO(0), HATCH_PICKUP(237), HATCH_LOW(460), HATCH_MID(1600), HATCH_HIGH(2800), CARGO_PICKUP(123), CARGO_LOW(456), CARGO_MID(789), CARGO_HIGH(1023), INITIAL_STOW(2200);
+        ZERO(0), HATCH_PICKUP(11), HATCH_LOW(13.976), HATCH_MID(111.334), HATCH_HIGH(203.87), CARGO_PICKUP(48.07), CARGO_LOW(4.071), CARGO_MID(105.550), CARGO_HIGH(199.537), INITIAL_STOW(2200);
 
         // first: 513
-        private final int value;
+        private final double value;
 
         /**
          * @param value refers to the number of encoder ticks of a certain position
          */
-        private ElevatorPosition(int value) {
+        private ElevatorPosition(double value) {
             this.value = value;
         }
 
-        public int getValue() {
+        public double getValue() {
             return value;
         }
     }
@@ -49,7 +52,7 @@ public class Elevator extends Subsystem {
 		instance = new Elevator();
 	}
     
-    private WPI_TalonSRX talon; 
+    private CHS_SparkMax spark; 
 
     private boolean encoderResetComplete;
 
@@ -62,7 +65,7 @@ public class Elevator extends Subsystem {
 	}
 	
 	private Elevator() {
-		talon = Devices.getInstance().getTalon(RobotMap.TALON_ELEVATOR);
+		spark = new CHS_SparkMax(RobotMap.TALON_ELEVATOR, MotorType.kBrushless);
         setExecutingGoalPosition(ElevatorPosition.ZERO);
     }
 
@@ -75,27 +78,29 @@ public class Elevator extends Subsystem {
     }
 
     public boolean isLowerLimitSwitchPressed() {
-        return !talon.getSensorCollection().isRevLimitSwitchClosed();
+
+        // is reverse closed
+        return spark.getSparkMaxObject().getReverseLimitSwitch(LimitSwitchPolarity.kNormallyClosed).get();
     }
     
     public void set(double speed) {
         //System.out.println("Setting " + speed);
-        talon.set(speed);
+        spark.set(speed);
 
         if(Math.abs(speed) >= ElevatorMove.SLOW_POWER - 0.01)
             encoderResetComplete = false;
     }
 
     public void stop() {
-        talon.set(0);
+        spark.set(0);
     }
 
-    public int getEncoderTicks() {
-        return talon.getSelectedSensorPosition(0);
+    public double getEncoderTicks() {
+        return spark.getEncoderPosition();
     }
 
     public synchronized void resetEncoders() {
-        talon.setSelectedSensorPosition(0, 0, 0);
+        spark.getSparkMaxObject().getEncoder().setPosition(0);
         encoderResetComplete = true;
     }
 
