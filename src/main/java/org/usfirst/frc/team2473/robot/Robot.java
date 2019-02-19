@@ -247,6 +247,8 @@ public class Robot extends TimedRobot {
 		// double voltageLimitSide = Robot.cargo.getSharpVoltageLimitSide();
 		// System.out.println(voltageMotorSide - voltageLimitSide);
 
+        System.out.println("Encoder Ticks: " + Robot.elevator.getEncoderTicks());
+
 		if (RobotMap.CV_RUNNING) {
 			jetsonPort.updateVisionValues();
 			if (++i % 4 == 0) {
