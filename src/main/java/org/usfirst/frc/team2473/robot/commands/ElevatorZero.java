@@ -23,7 +23,7 @@ public class ElevatorZero extends Command {
 
 	@Override
 	protected void initialize() {
-		Robot.elevator.set(-0.2);
+		Robot.elevator.set(-0.4);
 	}
 
 	@Override

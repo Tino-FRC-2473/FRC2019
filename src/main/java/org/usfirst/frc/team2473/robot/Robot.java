@@ -173,7 +173,7 @@ public class Robot extends TimedRobot {
 
 					if (!RobotMap.RUNNING_FORWARD) {
 
-						double shift = 10;
+						double shift = 0;
 
 						Imgproc.line(matBack, new Point(x1 + shift, 0), new Point(x1 + shift, 120), new Scalar(255, 0, 0), 1);
 						Imgproc.line(matBack, new Point(x2 + shift, 0), new Point(x2 + shift, 120), new Scalar(255, 0, 0), 1);
@@ -289,11 +289,14 @@ public class Robot extends TimedRobot {
 			jetsonPort.updateVisionValues();
 		}
 
+		//System.out.println(elevator.getEncoderTicks());
+
+
 		if (++i % 4 == 0) {
 			if (RobotMap.CV_RUNNING) {
 				//jetsonPort.printVisionAngles();
 			}
-			System.out.println("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
+			//System.out.println("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
 		}
 
 		Scheduler.getInstance().run();
@@ -313,7 +316,8 @@ public class Robot extends TimedRobot {
         }
 
         SmartDashboard.putBoolean("Cargo Secured", Robot.cargo.getState() == Robot.cargo.CAPTURING);
-        
+		
+		SmartDashboard.putString("Last Pressed", TeleopDrive.lastPressedPosition.toString());
         SmartDashboard.updateValues();
     }
 

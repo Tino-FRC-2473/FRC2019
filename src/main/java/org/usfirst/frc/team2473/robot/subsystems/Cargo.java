@@ -30,9 +30,9 @@ public class Cargo extends Subsystem {
 		RELEASE
 	}
 
-	public static final double UNSAFE_VOLTAGE_MIN = 1.0;
-	public static final double UNSAFE_VOLTAGE_MAX = 1.5;
-	public static final double CAPTURE_VOLTAGE = 1.8;
+	public static double UNSAFE_VOLTAGE_MIN = 1.2;
+	public static double UNSAFE_VOLTAGE_MAX = 1.5;
+	public static double CAPTURE_VOLTAGE = 1.8;
 
 	private static final double POWER_UP_FAST = 0.8;
 	private static final double POWER_DOWN_SLOW = -0.5;

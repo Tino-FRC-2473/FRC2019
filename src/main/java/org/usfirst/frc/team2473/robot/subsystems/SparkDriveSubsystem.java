@@ -18,6 +18,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.framework.CHS_SparkMax;
 import org.usfirst.frc.team2473.framework.Devices;
@@ -57,9 +58,23 @@ public class SparkDriveSubsystem extends Subsystem {
 	
 	public static SparkDriveSubsystem getInstance() {
 		return theInstance;
-    }
+	}
+	
+	public double convertPower(double speed) {
+		double elevatorTicks = Robot.elevator.getEncoderTicks();
+		double minPower = 0.2;
+		double maxEncoderTicks = 200;
+
+		if (Math.abs(speed) < minPower) return speed;
+
+		double newSpeed = elevatorTicks * ((minPower - Math.abs(speed)) / maxEncoderTicks) + Math.abs(speed);
+		return (speed < 0) ? -newSpeed : newSpeed;
+	} 
 	
 	public void teleopDrive(double speed, double rotation) {
+
+		speed = convertPower(speed);
+		
 		if (RobotMap.RUNNING_FORWARD) {
 			drive.arcadeDrive(speed, rotation);
 		} else {
@@ -68,6 +83,10 @@ public class SparkDriveSubsystem extends Subsystem {
 	}
 
 	public void drive(double left, double right) {
+
+		left = convertPower(left);
+		right = convertPower(right);
+
 		if (RobotMap.RUNNING_FORWARD) {
 			leftSpark.set(-left);
 			rightSpark.set(right);
