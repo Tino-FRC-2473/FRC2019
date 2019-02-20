@@ -30,7 +30,7 @@ public class TeleopDrive extends Command {
 	private final double M = (1 - RobotMap.K_START_STALL_POWER) / (1 - RobotMap.DEADBAND_MINIMUM_POWER);
 
 	double prevAngle;
-	double power = 1;
+	double power = 0.6;
 	
 	private Enum lastCargoEvent = null;
 	public static ElevatorPosition lastPressedPosition = ElevatorPosition.ZERO;
@@ -62,106 +62,39 @@ public class TeleopDrive extends Command {
 		Robot.oi.getElevatorPickupButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (RobotMap.RUNNING_FORWARD) {
-					if (RobotMap.CV_RUNNING) {
-						lastPressedPosition = ElevatorPosition.HATCH_PICKUP;
-					} else {
-						new ElevatorMove(ElevatorPosition.HATCH_PICKUP, false, power).start();
-					}
-				} else {
-					if (RobotMap.CV_RUNNING) {
-						lastPressedPosition = ElevatorPosition.CARGO_PICKUP;
-					} else {
-						new ElevatorMove(ElevatorPosition.CARGO_PICKUP, false, power).start();
-					}
-				}
+                lastPressedPosition = RobotMap.RUNNING_FORWARD ? ElevatorPosition.HATCH_PICKUP : ElevatorPosition.CARGO_PICKUP;
+				new ElevatorMove(lastPressedPosition, false, power).start();
 			}
 		});
 
 		Robot.oi.getElevatorLowButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (RobotMap.RUNNING_FORWARD) {
-					if (RobotMap.CV_RUNNING) {
-						lastPressedPosition = ElevatorPosition.HATCH_LOW;
-					} else {
-						new ElevatorMove(ElevatorPosition.HATCH_LOW, false, power).start();
-					}
-				} else {
-					if (RobotMap.CV_RUNNING) {
-						lastPressedPosition = ElevatorPosition.CARGO_LOW;
-					} else {
-						new ElevatorMove(ElevatorPosition.CARGO_LOW, false, power).start();
-					}
-				}
+				lastPressedPosition = RobotMap.RUNNING_FORWARD ? ElevatorPosition.HATCH_LOW : ElevatorPosition.CARGO_LOW;
+				new ElevatorMove(lastPressedPosition, false, power).start();
 			}
 		});
 
 		Robot.oi.getElevatorMidButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (RobotMap.RUNNING_FORWARD) {
-					if (RobotMap.CV_RUNNING) {
-						lastPressedPosition = ElevatorPosition.HATCH_MID;
-					} else {
-						new ElevatorMove(ElevatorPosition.HATCH_MID, false, power).start();
-					}
-				} else {
-					if (RobotMap.CV_RUNNING) {
-						lastPressedPosition = ElevatorPosition.CARGO_MID;
-					} else {
-						new ElevatorMove(ElevatorPosition.CARGO_MID, false, power).start();
-					}
-				}
+				lastPressedPosition = RobotMap.RUNNING_FORWARD ? ElevatorPosition.HATCH_MID : ElevatorPosition.CARGO_MID;
+				new ElevatorMove(lastPressedPosition, false, power).start();
 			}
 		});
 
         Robot.oi.getElevatorHighButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (RobotMap.RUNNING_FORWARD) {
-					if (RobotMap.CV_RUNNING) {
-						lastPressedPosition = ElevatorPosition.HATCH_HIGH;
-					} else {
-						new ElevatorMove(ElevatorPosition.HATCH_HIGH, false, power).start();
-					}
-				} else {
-					if (RobotMap.CV_RUNNING) {
-						lastPressedPosition = ElevatorPosition.CARGO_HIGH;
-					} else {
-						new ElevatorMove(ElevatorPosition.CARGO_HIGH, false, power).start();
-					}
-				}
-			}
-		});
-
-		Robot.oi.getCVButton().whenPressed(new InstantCommand() {
-			@Override
-			protected void execute() {
-				if (RobotMap.RUNNING_FORWARD) {
-					new ElevatorMove(ElevatorPosition.ZERO, false, power).start();
-				} else {
-					new ElevatorMove(ElevatorPosition.CARGO_PICKUP, false, power).start();
-				}
-			}
-		});
-
-		Robot.oi.getCVButton().whenReleased(new InstantCommand() {
-			@Override
-			protected void execute() {
-				if (RobotMap.RUNNING_FORWARD) {
-					new ElevatorMove(lastPressedPosition, true, power).start();
-				} else {
-					new ElevatorMove(ElevatorPosition.ZERO, false, power).start();
-				}
-				hasIncreasedElevatorHeight = false;
+				lastPressedPosition = RobotMap.RUNNING_FORWARD ? ElevatorPosition.HATCH_HIGH : ElevatorPosition.CARGO_HIGH;
+				new ElevatorMove(lastPressedPosition, false, power).start();
 			}
 		});
 
 		Robot.oi.getReleaseElementButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (!RobotMap.CV_RUNNING && RobotMap.RUNNING_FORWARD) {
+				if (RobotMap.CV_RUNNING && RobotMap.RUNNING_FORWARD) {
 					new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, power).start();
 				}
 			}
@@ -170,16 +103,14 @@ public class TeleopDrive extends Command {
 		Robot.oi.getReleaseElementButton().whenReleased(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (!RobotMap.CV_RUNNING && RobotMap.RUNNING_FORWARD) {
+				if (RobotMap.CV_RUNNING && RobotMap.RUNNING_FORWARD) {
 					new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, power).start();
 				}
 			}
 		});
         
-        
-
-        Robot.oi.getElevatorInitialStowButton().whenPressed(new ElevatorMoveRaw(power/2));
-        Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-power/2));
+        Robot.oi.getElevatorInitialStowButton().whenPressed(new ElevatorMoveRaw(0.5));
+        Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-0.5));
 
 
 		Robot.cargo.setState(Robot.cargo.RELEASING);
@@ -222,9 +153,15 @@ public class TeleopDrive extends Command {
             //     // we are starting CV
             //     new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, power).start();
 			// }
-			
-			if (!hasIncreasedElevatorHeight && AlignToHatch.isRunning && alignToHatch.distance < 70) {
-				new ElevatorMove(lastPressedPosition, false, power).start();
+            int raiseDist = 90;
+            if (lastPressedPosition == ElevatorPosition.CARGO_HIGH || lastPressedPosition == ElevatorPosition.HATCH_HIGH) {
+                raiseDist = 140;
+            } else if (lastPressedPosition == ElevatorPosition.CARGO_MID || lastPressedPosition == ElevatorPosition.HATCH_MID) {
+                raiseDist = 120;
+            }
+            
+			if (!hasIncreasedElevatorHeight && AlignToHatch.isRunning && alignToHatch.distance < raiseDist) {
+				//new ElevatorMove(lastPressedPosition, false, power).start();
 				hasIncreasedElevatorHeight = true;
 			}
 		} else { // Move using controls, not CV

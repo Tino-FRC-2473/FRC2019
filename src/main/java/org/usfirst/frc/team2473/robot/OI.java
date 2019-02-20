@@ -47,10 +47,10 @@ public class OI {
 
 		cargoButton = new JoystickButton(buttonPanel, 2);
 
-		elevatorPickupButton = new JoystickButton(buttonPanel, 7);
-		elevatorLowButton = new JoystickButton(buttonPanel, 5);
-		elevatorMidButton = new JoystickButton(buttonPanel, 3);
-		elevatorHighButton = new JoystickButton(buttonPanel, 1);
+		elevatorPickupButton = new JoystickButton(buttonPanel, 1);
+		elevatorLowButton = new JoystickButton(buttonPanel, 3);
+		elevatorMidButton = new JoystickButton(buttonPanel, 5);
+		elevatorHighButton = new JoystickButton(buttonPanel, 7);
 
 		elevatorInitialStowButton = new JoystickButton(buttonPanel, 6);
 		elevatorDown = new JoystickButton(buttonPanel, 8);
