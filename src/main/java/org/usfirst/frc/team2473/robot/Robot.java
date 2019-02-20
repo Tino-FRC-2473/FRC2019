@@ -228,7 +228,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		cvLight.set(Value.kForward);
-		new ElevatorZero().start();
+		// new ElevatorZero().start();
 		teleopDrive = new TeleopDrive();
 		teleopDrive.start();
 		// new StraightDrive(10, 0.2).start();
@@ -247,12 +247,12 @@ public class Robot extends TimedRobot {
 		// double voltageLimitSide = Robot.cargo.getSharpVoltageLimitSide();
 		// System.out.println(voltageMotorSide - voltageLimitSide);
 
-        System.out.println("Encoder Ticks: " + Robot.elevator.getEncoderTicks());
+        // System.out.println("Encoder Ticks: " + Robot.elevator.getEncoderTicks());
 
 		if (RobotMap.CV_RUNNING) {
 			jetsonPort.updateVisionValues();
 			if (++i % 4 == 0) {
-				// jetsonPort.printVisionAngles();
+				jetsonPort.printVisionAngles();
 			}
 		}
 

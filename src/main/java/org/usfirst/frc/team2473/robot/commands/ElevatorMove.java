@@ -120,7 +120,16 @@ public class ElevatorMove extends Command {
 			} else {
 				tempPower = -SLOW_POWER;
 			}
-		}
+        }
+        
+        if (currTicks > ElevatorPosition.HATCH_MID.getValue()) {
+            if (initialTickDelta > 0) {
+                tempPower = 0.3;
+            } else {
+                tempPower = -0.3;
+            }
+            
+        }
 		Robot.elevator.set(tempPower);
 				
 		prevTicks = currTicks;

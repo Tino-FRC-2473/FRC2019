@@ -9,6 +9,7 @@ package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 /**
  * A class that aligns the robot to the hatch based on the angle provided by CV
@@ -30,6 +31,16 @@ public class ElevatorMoveRaw extends Command {
 
 	@Override
 	protected void execute() {
+        double tempPower = power;
+        if (Robot.elevator.getEncoderTicks() > ElevatorPosition.HATCH_MID.getValue()) {
+            if (power > 0) {
+                tempPower = 0.3;
+            } else {
+                tempPower = -0.3;
+            }
+            
+        }
+        Robot.elevator.set(tempPower);
 	}
 
 	@Override
