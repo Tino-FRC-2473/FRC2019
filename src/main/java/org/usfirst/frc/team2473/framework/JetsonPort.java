@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2473.framework;
 
+import java.awt.Robot;
+
 import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.SerialPort;
@@ -33,8 +35,9 @@ public class JetsonPort extends SerialPort {
     private int bVisionDistance3 = 0;
     private int bVisionX3 = 0;
      
-    private boolean firstStart = false;
+    private boolean firstStart = true;
     private String buffer = "";
+    private int blankCount = 0;
     
     public JetsonPort(int baudrate, Port port) {
         super(baudrate, port);
@@ -49,14 +52,25 @@ public class JetsonPort extends SerialPort {
     public void updateVisionValues() {
         try {
             String receive = readString();
-            if (!firstStart) {
+            if (receive.length() == 0) {
+                blankCount++;
+            } else {
+                blankCount = 0;
+            }
+            if (blankCount > 20) {
+                System.out.println("CV STOPPED");
+                RobotMap.CV_RUNNING = false;
+                return;
+            }
+            // System.out.println(blankCount);
+            if (firstStart) {
                 if (receive.contains(START)) {
-                    firstStart = true;
+                    firstStart = false;
                     receive = receive.substring(receive.indexOf(START));
                 }
             }
 
-            if (firstStart) {
+            if (!firstStart) {
                 buffer += receive; 
                 if (buffer.contains(END)) {
                     String data = buffer.substring(buffer.indexOf(START)+1, buffer.indexOf(END));
