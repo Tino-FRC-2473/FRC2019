@@ -49,21 +49,45 @@ public class TeleopDrive extends Command {
 
 	@Override
 	protected void initialize() {
-        prevAngle = Robot.jetsonPort.getVisionAngle1();
+        initializeElevatorButtons();
 
-		/*
+        Robot.oi.getCVButton().whenPressed(new InstantCommand() {
+            @Override
+            protected void execute() {
+                if (!isLastPressedHighPosition()) {
+                    new ElevatorMove(lastPressedPosition, false, power).start();
+                }
+            }
+        });
+
+
+		Robot.cargo.setState(Robot.cargo.RELEASING);
+	}
+
+	@Override
+	protected void execute() {
+		
+        driveAndAlign();
+		// updateCargo();
+
+    }
+
+    public void initializeElevatorButtons() {
+
+        /*
 		-------------------------------------
 		 E L E V A T O R   M E C H A N I S M 
 		-------------------------------------
 		*/
 
-		Robot.oi.getElevatorZeroButton().whenPressed(new ElevatorZero());
+
+        Robot.oi.getElevatorZeroButton().whenPressed(new ElevatorZero());
 
 		Robot.oi.getElevatorPickupButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
                 lastPressedPosition = RobotMap.RUNNING_FORWARD ? ElevatorPosition.HATCH_PICKUP : ElevatorPosition.CARGO_PICKUP;
-				new ElevatorMove(lastPressedPosition, false, power).start();
+				//new ElevatorMove(lastPressedPosition, false, power).start();
 			}
 		});
 
@@ -71,7 +95,7 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
 				lastPressedPosition = RobotMap.RUNNING_FORWARD ? ElevatorPosition.HATCH_LOW : ElevatorPosition.CARGO_LOW;
-				new ElevatorMove(lastPressedPosition, false, power).start();
+				//new ElevatorMove(lastPressedPosition, false, power).start();
 			}
 		});
 
@@ -79,7 +103,7 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
 				lastPressedPosition = RobotMap.RUNNING_FORWARD ? ElevatorPosition.HATCH_MID : ElevatorPosition.CARGO_MID;
-				new ElevatorMove(lastPressedPosition, false, power).start();
+				//new ElevatorMove(lastPressedPosition, false, power).start();
 			}
 		});
 
@@ -87,7 +111,7 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
 				lastPressedPosition = RobotMap.RUNNING_FORWARD ? ElevatorPosition.HATCH_HIGH : ElevatorPosition.CARGO_HIGH;
-				new ElevatorMove(lastPressedPosition, false, power).start();
+				//new ElevatorMove(lastPressedPosition, false, power).start();
 			}
 		});
 
@@ -111,15 +135,10 @@ public class TeleopDrive extends Command {
         
         Robot.oi.getElevatorInitialStowButton().whenPressed(new ElevatorMoveRaw(0.5));
         Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-0.5));
-
-
-		Robot.cargo.setState(Robot.cargo.RELEASING);
-	}
-
-	@Override
-	protected void execute() {
-        // Robot.elevator.printEncoders();
-		double throttleZ = Robot.oi.getThrottle().getZ();
+    }
+    
+    public void driveAndAlign() {
+        double throttleZ = Robot.oi.getThrottle().getZ();
 		double originalZ = throttleZ;
 		double wheelX = -Robot.oi.getWheel().getX();
 
@@ -141,27 +160,14 @@ public class TeleopDrive extends Command {
 
 
         // Align To Hatch
-        
-
-		//boolean wasRunningCV = AlignToHatch.isRunning;
-
-		//System.out.println("LAST PRESSED POSITION: " + lastPressedPosition);		
 
 		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get()) {
             alignToHatch.move();
-            // if (RobotMap.RUNNING_FORWARD && AlignToHatch.isRunning != wasRunningCV) {
-            //     // we are starting CV
-            //     new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, power).start();
-			// }
-            int raiseDist = 90;
-            if (lastPressedPosition == ElevatorPosition.CARGO_HIGH || lastPressedPosition == ElevatorPosition.HATCH_HIGH) {
-                raiseDist = 140;
-            } else if (lastPressedPosition == ElevatorPosition.CARGO_MID || lastPressedPosition == ElevatorPosition.HATCH_MID) {
-                raiseDist = 120;
-            }
+
+            int highRaiseDist = 30;
             
-			if (!hasIncreasedElevatorHeight && AlignToHatch.isRunning && alignToHatch.distance < raiseDist) {
-				//new ElevatorMove(lastPressedPosition, false, power).start();
+			if (isLastPressedHighPosition() && !hasIncreasedElevatorHeight && AlignToHatch.isRunning && alignToHatch.distance < highRaiseDist) {
+				new ElevatorMove(lastPressedPosition, false, power).start();
 				hasIncreasedElevatorHeight = true;
 			}
 		} else { // Move using controls, not CV
@@ -183,8 +189,10 @@ public class TeleopDrive extends Command {
 
 			Robot.driveSubsystem.teleopDrive(outputZ, outputX);
 		}
+    }
 
-		/*
+    public void updateCargo() {
+        /*
 		-------------------------------
 		 C A R G O   M E C H A N I S M 
 		-------------------------------
@@ -226,11 +234,14 @@ public class TeleopDrive extends Command {
 				Robot.cargo.setState(newState);
 			}
 		}
-
-	}
+    }
 
 	@Override
 	protected boolean isFinished() {
 		return false;
-	}
+    }
+    
+    public boolean isLastPressedHighPosition() {
+        return lastPressedPosition == ElevatorPosition.CARGO_HIGH || lastPressedPosition == ElevatorPosition.HATCH_HIGH;
+    }
 }
