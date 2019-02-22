@@ -110,6 +110,10 @@ public class Elevator extends Subsystem {
     public void printEncoders() {
 		System.out.println("Elevator: " + getEncoderTicks());
     }
+
+    public boolean isMoving() {
+        return spark.getSparkMaxObject().get() != 0;
+    }
     
 	/**
 	 * {@inheritDoc}

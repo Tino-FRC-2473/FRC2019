@@ -195,8 +195,9 @@ public class AlignToHatch extends Command {
         if (!RobotMap.RUNNING_FORWARD) angle = -angle;
 
         System.out.println(distance);
-
-        if (hasBeenInThresholdDistance || distance < thresholdDistance || angle == -99) { // keep going in this direction
+        if (Robot.elevator.isMoving()) {
+            Robot.driveSubsystem.stopMotors();
+        } else if (hasBeenInThresholdDistance || distance < thresholdDistance || angle == -99) { // keep going in this direction
             hasBeenInThresholdDistance = true;
             Robot.driveSubsystem.drive(0.1, 0.1);
         } else if (Math.abs(angle) < thresholdAngle) {
