@@ -25,6 +25,7 @@ import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -32,6 +33,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
@@ -50,8 +52,16 @@ public class Robot extends TimedRobot {
 	private int i = 0;
 
 	Preferences prefs;
-	Thread m_visionThread;
+    Thread m_visionThread;
+    
+    NetworkTableEntry switchedCameras = Shuffleboard.getTab("Drive").add("Cameras Switched", false).getEntry();
 
+    NetworkTableEntry angle1 = Shuffleboard.getTab("Drive").add("Angle 1", 0).getEntry();
+    NetworkTableEntry angle2 = Shuffleboard.getTab("Drive").add("Angle 2", 0).getEntry();
+    NetworkTableEntry angle3 = Shuffleboard.getTab("Drive").add("Angle 3", 0).getEntry();
+    NetworkTableEntry distance1 = Shuffleboard.getTab("Drive").add("Distance 1", 0).getEntry();
+    NetworkTableEntry distance2 = Shuffleboard.getTab("Drive").add("Distance 2", 0).getEntry();
+    NetworkTableEntry distance3 = Shuffleboard.getTab("Drive").add("Distance 3", 0).getEntry();
 	/**
 	 * Runs once when the robot turns on
 	 */
@@ -82,7 +92,9 @@ public class Robot extends TimedRobot {
 		UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
 		backCam.setBrightness(25);
 		backCam.setFPS(15);
-		backCam.setResolution(160, 120);
+        backCam.setResolution(160, 120);
+        
+        //SmartDashboard.putBoolean("Cameras Switched", false);
 
 		m_visionThread = new Thread(() -> {
 
@@ -145,7 +157,7 @@ public class Robot extends TimedRobot {
 				} else {
 					
 					// Put a rectangle on the image
-					if (RobotMap.RUNNING_FORWARD) {
+					if ((RobotMap.RUNNING_FORWARD && !RobotMap.CAMERAS_SWITCHED) || (!RobotMap.RUNNING_FORWARD && RobotMap.CAMERAS_SWITCHED)) {
 
 						double shift = 3;
 
@@ -171,7 +183,7 @@ public class Robot extends TimedRobot {
 					outputStreamBack.notifyError(cvSinkBack.getError());
 				} else {
 
-					if (!RobotMap.RUNNING_FORWARD) {
+					if ((!RobotMap.RUNNING_FORWARD && !RobotMap.CAMERAS_SWITCHED) || (RobotMap.RUNNING_FORWARD && RobotMap.CAMERAS_SWITCHED)) {
 
 						double shift = 0;
 
@@ -307,6 +319,18 @@ public class Robot extends TimedRobot {
     }
     
     public void updateShuffleboardVisualizations() {
+
+        // RobotMap.CAMERAS_SWITCHED = switchedCameras.getBoolean(false);
+        RobotMap.CAMERAS_SWITCHED = SmartDashboard.getBoolean("Cameras Switched", false);
+        // System.out.println(RobotMap.CAMERAS_SWITCHED);
+
+        angle1.setDouble(jetsonPort.getVisionAngle1());
+        angle2.setDouble(jetsonPort.getVisionAngle2());
+        angle3.setDouble(jetsonPort.getVisionAngle3());
+        distance1.setDouble(jetsonPort.getVisionDistance1());
+        distance2.setDouble(jetsonPort.getVisionDistance2());
+        distance3.setDouble(jetsonPort.getVisionDistance3());
+
         SmartDashboard.putString("Elevator Position", Robot.elevator.getExecutingGoalPosition().toString());
         
         if (Robot.cargo.getState() == null) {
