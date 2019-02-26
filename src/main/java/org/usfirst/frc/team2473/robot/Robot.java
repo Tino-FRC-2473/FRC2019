@@ -20,6 +20,7 @@ import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.Cargo;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
@@ -33,7 +34,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
@@ -54,7 +57,7 @@ public class Robot extends TimedRobot {
 	Preferences prefs;
     Thread m_visionThread;
     
-    NetworkTableEntry switchedCameras = Shuffleboard.getTab("Drive").add("Cameras Switched", false).getEntry();
+    NetworkTableEntry switchedCameras = Shuffleboard.getTab("Drive").add("Cameras Switched", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
 
     NetworkTableEntry angle1 = Shuffleboard.getTab("Drive").add("Angle 1", 0).getEntry();
     NetworkTableEntry angle2 = Shuffleboard.getTab("Drive").add("Angle 2", 0).getEntry();
@@ -62,7 +65,13 @@ public class Robot extends TimedRobot {
     NetworkTableEntry distance1 = Shuffleboard.getTab("Drive").add("Distance 1", 0).getEntry();
     NetworkTableEntry distance2 = Shuffleboard.getTab("Drive").add("Distance 2", 0).getEntry();
     NetworkTableEntry distance3 = Shuffleboard.getTab("Drive").add("Distance 3", 0).getEntry();
-	/**
+    
+    NetworkTableEntry elevatorPosition = Shuffleboard.getTab("Drive").add("Elevator Position", ElevatorPosition.ZERO.toString()).getEntry();
+    NetworkTableEntry cargoState = Shuffleboard.getTab("Drive").add("Cargo State", "Rearming").getEntry();
+    NetworkTableEntry cargoSecured = Shuffleboard.getTab("Drive").add("Cargo Secured", false).getEntry();
+    NetworkTableEntry lastPressedEntry = Shuffleboard.getTab("Drive").add("Last Pressed", ElevatorPosition.ZERO.toString()).getEntry();
+
+    /**
 	 * Runs once when the robot turns on
 	 */
 	@Override
@@ -327,8 +336,8 @@ public class Robot extends TimedRobot {
     
     public void updateShuffleboardVisualizations() {
 
-        // RobotMap.CAMERAS_SWITCHED = switchedCameras.getBoolean(false);
-        RobotMap.CAMERAS_SWITCHED = SmartDashboard.getBoolean("Cameras Switched", false);
+        RobotMap.CAMERAS_SWITCHED = switchedCameras.getBoolean(false);
+        // RobotMap.CAMERAS_SWITCHED = SmartDashboard.getBoolean("Cameras Switched", false);
         // System.out.println(RobotMap.CAMERAS_SWITCHED);
 
         angle1.setDouble(jetsonPort.getVisionAngle1());
@@ -338,17 +347,17 @@ public class Robot extends TimedRobot {
         distance2.setDouble(jetsonPort.getVisionDistance2());
         distance3.setDouble(jetsonPort.getVisionDistance3());
 
-        SmartDashboard.putString("Elevator Position", Robot.elevator.getExecutingGoalPosition().toString());
+        elevatorPosition.setString(elevator.getExecutingGoalPosition().toString());
         
         if (Robot.cargo.getState() == null) {
-            SmartDashboard.putString("Cargo State", "Rearming");
+            cargoState.setString("Rearming");
         } else {
-            SmartDashboard.putString("Cargo State", Robot.cargo.getState().toString());
+            cargoState.setString(Robot.cargo.getState().toString());
         }
 
-        SmartDashboard.putBoolean("Cargo Secured", Robot.cargo.getState() == Robot.cargo.CAPTURING);
+        cargoSecured.setBoolean(Robot.cargo.getState() == Robot.cargo.CAPTURING);
 		
-		SmartDashboard.putString("Last Pressed", TeleopDrive.lastPressedPosition.toString());
+		lastPressedEntry.setString(TeleopDrive.lastPressedPosition.toString());
         SmartDashboard.updateValues();
     }
 
