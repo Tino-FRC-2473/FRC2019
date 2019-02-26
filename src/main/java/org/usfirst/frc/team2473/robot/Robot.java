@@ -131,9 +131,16 @@ public class Robot extends TimedRobot {
 			// deploying.
 			while (!Thread.interrupted()) {
 
-				double x1 = jetsonPort.getVisionX1()/2.0;
-				double x2 = jetsonPort.getVisionX2()/2.0;
-				double x3 = jetsonPort.getVisionX3()/2.0;
+                double x1 = -99;
+                double x2 = -99;
+                double x3 = -99;
+
+                if (RobotMap.CV_RUNNING) {
+                    x1 = jetsonPort.getVisionX1()/2.0;
+                    x2 = jetsonPort.getVisionX2()/2.0;
+                    x3 = jetsonPort.getVisionX3()/2.0;
+                }
+				
 
 				double alignX = AlignToHatch.x / 2.0;
 
