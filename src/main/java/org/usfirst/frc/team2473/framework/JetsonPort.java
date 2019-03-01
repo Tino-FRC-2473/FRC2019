@@ -56,9 +56,13 @@ public class JetsonPort extends SerialPort {
                 blankCount++;
             } else {
                 blankCount = 0;
+                if (!RobotMap.CV_RUNNING) {
+                    RobotMap.CV_RUNNING = true;
+                    System.out.println("---CV RESTARTED---");
+                }
             }
             if (blankCount > 20) {
-                System.out.println("CV STOPPED");
+                System.out.println("---CV STOPPED---");
                 RobotMap.CV_RUNNING = false;
                 return;
             }
