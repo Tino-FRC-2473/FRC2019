@@ -144,7 +144,7 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected boolean isFinished() {
-        if (Robot.elevator.isUpperLimitSwitchPressed()) return true;
+        if (this.initialTickDelta > 0 && Robot.elevator.isUpperLimitSwitchPressed()) return true;
 
         double threshold = 2;
 		double currTicks = Robot.elevator.getEncoderTicks();
