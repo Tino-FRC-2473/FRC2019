@@ -71,6 +71,9 @@ public class Robot extends TimedRobot {
     NetworkTableEntry cargoSecured = Shuffleboard.getTab("Drive").add("Cargo Secured", false).getEntry();
     NetworkTableEntry lastPressedEntry = Shuffleboard.getTab("Drive").add("Last Pressed", ElevatorPosition.ZERO.toString()).getEntry();
 
+    NetworkTableEntry cvRunning = Shuffleboard.getTab("Drive").add("CV Running", RobotMap.CV_RUNNING).getEntry();
+    NetworkTableEntry elevatorMoving = Shuffleboard.getTab("Drive").add("Elevator Moving", Robot.elevator.isMoving()).getEntry();
+
     /**
 	 * Runs once when the robot turns on
 	 */
@@ -244,9 +247,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
         updateShuffleboardVisualizations();
-		if (RobotMap.CV_RUNNING) {
-			jetsonPort.updateVisionValues();
-		}
+        jetsonPort.updateVisionValues();
 		Scheduler.getInstance().run();
 	}
 
@@ -256,7 +257,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		cvLight.set(Value.kForward);
-		// new ElevatorZero().start();
+		new ElevatorZero().start();
 		teleopDrive = new TeleopDrive();
 		teleopDrive.start();
 		// new StraightDrive(10, 0.2).start();
@@ -276,13 +277,11 @@ public class Robot extends TimedRobot {
 		// System.out.println(voltageMotorSide - voltageLimitSide);
 
         // System.out.println("Encoder Ticks: " + Robot.elevator.getEncoderTicks());
+        jetsonPort.updateVisionValues();
 
-		if (RobotMap.CV_RUNNING) {
-			jetsonPort.updateVisionValues();
-			if (++i % 4 == 0) {
-				jetsonPort.printVisionAngles();
-			}
-		}
+		if (++i % 4 == 0) {
+            // jetsonPort.printVisionAngles();
+        }
 
 		//System.out.println(jetsonPort.getVisionDistance1());
 
@@ -298,10 +297,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
 		cvLight.set(Value.kForward);
-		if (RobotMap.CV_RUNNING) {
-			jetsonPort.updateVisionValues();
-			jetsonPort.printVisionAngles();
-		}
+		jetsonPort.updateVisionValues();
+		jetsonPort.printVisionAngles();
 		teleopDrive = new TeleopDrive();
 		teleopDrive.start();
 	}
@@ -313,9 +310,7 @@ public class Robot extends TimedRobot {
 	public void teleopPeriodic() {
         updateShuffleboardVisualizations();
 
-		if (RobotMap.CV_RUNNING) {
-			jetsonPort.updateVisionValues();
-		}
+		jetsonPort.updateVisionValues();
 
 		//System.out.println(elevator.getEncoderTicks());
 
@@ -357,7 +352,10 @@ public class Robot extends TimedRobot {
 
         cargoSecured.setBoolean(Robot.cargo.getState() == Robot.cargo.CAPTURING);
 		
-		lastPressedEntry.setString(TeleopDrive.lastPressedPosition.toString());
+        lastPressedEntry.setString(TeleopDrive.lastPressedPosition.toString());
+        
+        cvRunning.setBoolean(RobotMap.CV_RUNNING);
+        elevatorMoving.setBoolean(elevator.isMoving());
         SmartDashboard.updateValues();
     }
 
