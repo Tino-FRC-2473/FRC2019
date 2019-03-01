@@ -62,7 +62,7 @@ public class SparkDriveSubsystem extends Subsystem {
 	
 	public double convertPower(double speed) {
 		double elevatorTicks = Robot.elevator.getEncoderTicks();
-		double minPower = 0.2;
+		double minPower = 0.3;
 		double maxEncoderTicks = 200;
 
 		if (Math.abs(speed) < minPower) return speed;
@@ -74,7 +74,7 @@ public class SparkDriveSubsystem extends Subsystem {
 	public void teleopDrive(double speed, double rotation) {
 
 		speed = convertPower(speed);
-		
+
 		if (RobotMap.RUNNING_FORWARD) {
 			drive.arcadeDrive(speed, rotation);
 		} else {

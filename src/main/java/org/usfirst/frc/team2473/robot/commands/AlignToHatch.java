@@ -24,7 +24,7 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
 public class AlignToHatch extends Command {
 
     double normalPower = 0.3;
-    double turnPower = 0.1;
+    double turnPower = 0.08;
     double lowPower = 0.1;
     private int angle = 0;
     public int distance = 0;
@@ -186,7 +186,7 @@ public class AlignToHatch extends Command {
 
         //System.out.println(distance);
 
-        double thresholdAngle = 3;
+        double thresholdAngle = 2;
         double thresholdDistance = 30;
         // angle = Robot.jetsonPort.getVisionAngle();
         // distance = Robot.jetsonPort.getVisionDistance();
