@@ -17,6 +17,7 @@ import org.usfirst.frc.team2473.framework.State;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.robot.subsystems.Cargo;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 /**
@@ -54,9 +55,19 @@ public class TeleopDrive extends Command {
         Robot.oi.getCVButton().whenPressed(new InstantCommand() {
             @Override
             protected void execute() {
-                if (!isLastPressedHighPosition()) {
+                if (!isLastPressedCargo() && !(lastPressedPosition == ElevatorPosition.HATCH_HIGH)) {
                     new ElevatorMove(lastPressedPosition, false, power).start();
+                } else if (isLastPressedCargo()) {
+                    new ElevatorMove(ElevatorPosition.CARGO_PICKUP, false, power).start();
+                } else {
+                    if (Robot.elevator.getExecutingGoalPosition() != ElevatorPosition.HATCH_HIGH) {
+                        new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, power).start();
+                    }
+                    else {
+                        new ElevatorMove(ElevatorPosition.HATCH_LOW, false, power).start();
+                    }
                 }
+                hasIncreasedElevatorHeight = false;
             }
         });
 
@@ -165,8 +176,7 @@ public class TeleopDrive extends Command {
             alignToHatch.move();
 
             int highRaiseDist = 30;
-            
-			if (isLastPressedHighPosition() && !hasIncreasedElevatorHeight && AlignToHatch.isRunning && alignToHatch.distance < highRaiseDist) {
+			if ((isLastPressedCargo() || lastPressedPosition == ElevatorPosition.HATCH_HIGH) && !hasIncreasedElevatorHeight && AlignToHatch.isRunning && alignToHatch.distance < highRaiseDist) {
 				new ElevatorMove(lastPressedPosition, false, power).start();
 				hasIncreasedElevatorHeight = true;
 			}
@@ -240,8 +250,8 @@ public class TeleopDrive extends Command {
 	protected boolean isFinished() {
 		return false;
     }
-    
-    public boolean isLastPressedHighPosition() {
-        return lastPressedPosition == ElevatorPosition.CARGO_HIGH || lastPressedPosition == ElevatorPosition.HATCH_HIGH;
+
+    public boolean isLastPressedCargo() {
+        return lastPressedPosition == ElevatorPosition.CARGO_PICKUP || lastPressedPosition == ElevatorPosition.CARGO_LOW || lastPressedPosition == ElevatorPosition.CARGO_MID || lastPressedPosition == ElevatorPosition.CARGO_HIGH;
     }
 }

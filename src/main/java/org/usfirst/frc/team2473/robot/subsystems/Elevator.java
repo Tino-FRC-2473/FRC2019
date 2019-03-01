@@ -26,7 +26,8 @@ public class Elevator extends Subsystem {
     
     public enum ElevatorPosition {
         //Units are encoder ticks. 
-        ZERO(0), HATCH_PICKUP(3.9), HATCH_LOW(11), HATCH_MID(111.334), HATCH_HIGH(203.87), CARGO_PICKUP(48.07), CARGO_LOW(4.071), CARGO_MID(105.550), CARGO_HIGH(199.537), INITIAL_STOW(2200);
+        ZERO(0), HATCH_PICKUP(3.9), HATCH_LOW(11), HATCH_MID(111.334), HATCH_HIGH(193.87), CARGO_PICKUP(48.07), CARGO_LOW(4.071), CARGO_MID(105.550), CARGO_HIGH(199.537);
+        //ZERO(0), HATCH_PICKUP(3.9), HATCH_LOW(11), HATCH_MID(111.334), HATCH_HIGH(203.87), CARGO_PICKUP(48.07), CARGO_LOW(4.071), CARGO_MID(105.550), CARGO_HIGH(199.537);
 
         // first: 513
         private final double value;
@@ -81,6 +82,12 @@ public class Elevator extends Subsystem {
         // is reverse closed
         return spark.getSparkMaxObject().getReverseLimitSwitch(LimitSwitchPolarity.kNormallyClosed).get();
     }
+
+    public boolean isUpperLimitSwitchPressed() {
+
+        // is reverse closed
+        return spark.getSparkMaxObject().getForwardLimitSwitch(LimitSwitchPolarity.kNormallyClosed).get();
+    }
     
     public void set(double speed) {
         //System.out.println("Setting " + speed);
@@ -112,7 +119,8 @@ public class Elevator extends Subsystem {
     }
 
     public boolean isMoving() {
-        return spark.getSparkMaxObject().get() != 0;
+        // System.out.println(spark.getSparkMaxObject().get());
+        return Math.abs(spark.getSparkMaxObject().get()) != 0;
     }
     
 	/**
