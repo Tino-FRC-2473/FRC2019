@@ -1,15 +1,13 @@
 package org.usfirst.frc.team2473.robot.subsystems;
 
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import org.usfirst.frc.team2473.framework.CHS_SparkMax;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class Roller extends Subsystem {
 
-    private CHS_SparkMax spark; 
+    private WPI_TalonSRX talon; 
 
     private static Roller instance;
 	
@@ -23,12 +21,12 @@ public class Roller extends Subsystem {
     
     
 	private Roller() {
-		spark = new CHS_SparkMax(RobotMap.TALON_ROLLER, MotorType.kBrushless);
+		talon = new WPI_TalonSRX(RobotMap.TALON_ROLLER);
         
     }
 
     public void set(double speed) {
-        spark.set(speed);
+        talon.set(speed);
     }
 
     @Override
