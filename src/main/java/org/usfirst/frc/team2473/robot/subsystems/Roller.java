@@ -28,7 +28,9 @@ public class Roller extends Subsystem {
     }
 
     public void set(double speed) {
-        if (Robot.arm.distanceSensor.getVoltage() < 1.9) {
+        boolean hasCargo = Robot.arm.distanceSensor.getVoltage() > 1.9;
+        boolean intaking = speed < 0;
+        if ((!hasCargo && intaking) || (hasCargo && !intaking)) {
             talon.set(speed);
         } else {
             talon.set(0);

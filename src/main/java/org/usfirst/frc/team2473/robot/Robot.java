@@ -72,8 +72,9 @@ public class Robot extends TimedRobot {
     
     NetworkTableEntry elevatorPosition = Shuffleboard.getTab("Drive").add("Elevator Position", ElevatorPosition.ZERO.toString()).getEntry();
     NetworkTableEntry cargoState = Shuffleboard.getTab("Drive").add("Cargo State", "Rearming").getEntry();
-    NetworkTableEntry cargoSecured = Shuffleboard.getTab("Drive").add("Cargo Secured", false).getEntry();
+    NetworkTableEntry scoringHatch = Shuffleboard.getTab("Drive").add("Scoring Hatch", false).getEntry();
     NetworkTableEntry lastPressedEntry = Shuffleboard.getTab("Drive").add("Last Pressed", ElevatorPosition.ZERO.toString()).getEntry();
+	NetworkTableEntry hasCargo = Shuffleboard.getTab("Drive").add("Has Cargo", false).getEntry();
 
     NetworkTableEntry cvRunning = Shuffleboard.getTab("Drive").add("CV Running", RobotMap.CV_RUNNING).getEntry();
     NetworkTableEntry elevatorMoving = Shuffleboard.getTab("Drive").add("Elevator Moving", Robot.elevator.isMoving()).getEntry();
@@ -354,12 +355,13 @@ public class Robot extends TimedRobot {
             cargoState.setString(Robot.cargo.getState().toString());
         }
 
-        cargoSecured.setBoolean(Robot.cargo.getState() == Robot.cargo.CAPTURING);
+        scoringHatch.setBoolean(RobotMap.SCORING_HATCH);
 		
         lastPressedEntry.setString(TeleopDrive.lastPressedPosition.toString());
         
         cvRunning.setBoolean(RobotMap.CV_RUNNING);
-        elevatorMoving.setBoolean(elevator.isMoving());
+		elevatorMoving.setBoolean(elevator.isMoving());
+		hasCargo.setBoolean(Arm.distanceSensor.getVoltage() > 1.9);
         SmartDashboard.updateValues();
     }
 
