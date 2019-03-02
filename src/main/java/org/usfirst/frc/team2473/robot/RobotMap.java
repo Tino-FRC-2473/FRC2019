@@ -33,7 +33,7 @@ public class RobotMap {
 	public static double K_OPPOSITE_POWER = 0.2;
 	public static double K_TURN = 0.95;
 
-    public static boolean RUNNING_FORWARD = true;
+    public static boolean SCORING_HATCH = true;
     public static boolean CAMERAS_SWITCHED = false;
     public static boolean CV_RUNNING = false;
 	

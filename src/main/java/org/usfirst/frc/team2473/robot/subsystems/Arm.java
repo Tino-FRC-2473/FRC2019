@@ -16,6 +16,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANDigitalInput.LimitSwitchPolarity;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -24,6 +25,9 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Arm extends Subsystem {
     
+    
+	public static AnalogInput distanceSensor;
+
     public enum ArmPosition {
         //Units are encoder ticks. 
         ZERO(0), HATCH_PICKUP(0), HATCH_LOW(0), HATCH_MID(0), HATCH_HIGH(0), CARGO_PICKUP(0), CARGO_LOW(0), CARGO_MID(0), CARGO_HIGH(0);
@@ -47,7 +51,8 @@ public class Arm extends Subsystem {
 	private static Arm instance;
 	
 	static {
-		instance = new Arm();
+        instance = new Arm();
+		distanceSensor = new AnalogInput(0);
 	}
     
     private CHS_SparkMax spark; 

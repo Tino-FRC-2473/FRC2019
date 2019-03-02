@@ -1,6 +1,8 @@
 package org.usfirst.frc.team2473.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
+import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -26,7 +28,11 @@ public class Roller extends Subsystem {
     }
 
     public void set(double speed) {
-        talon.set(speed);
+        if (Robot.arm.distanceSensor.getVoltage() < 1.9) {
+            talon.set(speed);
+        } else {
+            talon.set(0);
+        }
     }
 
     @Override

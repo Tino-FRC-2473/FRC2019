@@ -180,7 +180,7 @@ public class Robot extends TimedRobot {
 				} else {
 					
 					// Put a rectangle on the image
-					if ((RobotMap.RUNNING_FORWARD && !RobotMap.CAMERAS_SWITCHED) || (!RobotMap.RUNNING_FORWARD && RobotMap.CAMERAS_SWITCHED)) {
+					if ((RobotMap.SCORING_HATCH && !RobotMap.CAMERAS_SWITCHED) || (!RobotMap.SCORING_HATCH && RobotMap.CAMERAS_SWITCHED)) {
 
 						double shift = 3;
 
@@ -206,7 +206,7 @@ public class Robot extends TimedRobot {
 					outputStreamBack.notifyError(cvSinkBack.getError());
 				} else {
 
-					if ((!RobotMap.RUNNING_FORWARD && !RobotMap.CAMERAS_SWITCHED) || (RobotMap.RUNNING_FORWARD && RobotMap.CAMERAS_SWITCHED)) {
+					if ((!RobotMap.SCORING_HATCH && !RobotMap.CAMERAS_SWITCHED) || (RobotMap.SCORING_HATCH && RobotMap.CAMERAS_SWITCHED)) {
 
 						double shift = 0;
 

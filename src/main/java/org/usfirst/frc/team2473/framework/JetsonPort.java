@@ -120,38 +120,38 @@ public class JetsonPort extends SerialPort {
     }
 
     public int getVisionAngle1() {
-        return RobotMap.RUNNING_FORWARD ? fVisionAngle1 : bVisionAngle1;
+        return RobotMap.SCORING_HATCH ? fVisionAngle1 : bVisionAngle1;
     }
 
     public int getVisionAngle2() {
-        return RobotMap.RUNNING_FORWARD ? fVisionAngle2 : bVisionAngle2;
+        return RobotMap.SCORING_HATCH ? fVisionAngle2 : bVisionAngle2;
     }
 
     public int getVisionAngle3() {
-        return RobotMap.RUNNING_FORWARD ? fVisionAngle3 : bVisionAngle3;
+        return RobotMap.SCORING_HATCH ? fVisionAngle3 : bVisionAngle3;
     }
 
     public int getVisionDistance1() {
-        return RobotMap.RUNNING_FORWARD ? fVisionDistance1 : bVisionDistance1;
+        return RobotMap.SCORING_HATCH ? fVisionDistance1 : bVisionDistance1;
     }
 
     public int getVisionDistance2() {
-        return RobotMap.RUNNING_FORWARD ? fVisionDistance2 : bVisionDistance2;
+        return RobotMap.SCORING_HATCH ? fVisionDistance2 : bVisionDistance2;
     }
 
     public int getVisionDistance3() {
-        return RobotMap.RUNNING_FORWARD ? fVisionDistance3 : bVisionDistance3;
+        return RobotMap.SCORING_HATCH ? fVisionDistance3 : bVisionDistance3;
     }
 
     public int getVisionX1() {
-        return RobotMap.RUNNING_FORWARD ? fVisionX1 : bVisionX1;
+        return RobotMap.SCORING_HATCH ? fVisionX1 : bVisionX1;
     }
 
     public int getVisionX2() {
-        return RobotMap.RUNNING_FORWARD ? fVisionX2 : bVisionX2;
+        return RobotMap.SCORING_HATCH ? fVisionX2 : bVisionX2;
     }
 
     public int getVisionX3() {
-        return RobotMap.RUNNING_FORWARD ? fVisionX3 : bVisionX3;
+        return RobotMap.SCORING_HATCH ? fVisionX3 : bVisionX3;
     }
 }

@@ -8,56 +8,59 @@ public class OI {
 	private Joystick throttle;
 	private Joystick wheel;
 
-    private JoystickButton cvButton;
-    private JoystickButton reverseDriveButton;
-	private Joystick buttonPanel;
+	private JoystickButton elevatorUp;
+	private JoystickButton elevatorDown;
+	private JoystickButton armUp;
+	private JoystickButton armDown;
 
-	private JoystickButton cargoButton;
+    private JoystickButton cvButton;
+	private Joystick buttonPanel;
+	
+    private JoystickButton shiftElevatorButton;
 
 	private JoystickButton elevatorPickupButton;
 	private JoystickButton elevatorLowButton;
 	private JoystickButton elevatorMidButton;
 	private JoystickButton elevatorHighButton;
 	
-	private JoystickButton elevatorUpButton;
-    private JoystickButton elevatorDown;
-    
-    private JoystickButton releaseElementButton;
-
-    private JoystickButton armUpButton;
-    private JoystickButton armDownButton;
+	private JoystickButton groundIntakeButton;
+	private JoystickButton stowArmButton;
+    private JoystickButton releaseCargoButton;
+    private JoystickButton cargoHatchToggleButton;
 
 	public OI() {
         throttle = new Joystick(2);	
-        releaseElementButton = new JoystickButton(throttle, 7);
+        shiftElevatorButton = new JoystickButton(throttle, 7);
         
 
-        wheel = new Joystick(0);
+		wheel = new Joystick(0);
+		
+		elevatorUp = new JoystickButton(wheel, 1);
+		elevatorDown = new JoystickButton(wheel, 2);
+		armUp = new JoystickButton(wheel, 4);
+		armDown = new JoystickButton(wheel, 3);
         
 		cvButton = new JoystickButton(wheel, 6);
-        reverseDriveButton = new JoystickButton(wheel, 2);	
-        
-        reverseDriveButton.whenPressed(new InstantCommand() {
-			@Override
-			protected void execute() {
-				RobotMap.RUNNING_FORWARD = !RobotMap.RUNNING_FORWARD;
-			}
-		});
 		
 		buttonPanel = new Joystick(3);
 
-		cargoButton = new JoystickButton(buttonPanel, 2);
 
 		elevatorPickupButton = new JoystickButton(buttonPanel, 1);
 		elevatorLowButton = new JoystickButton(buttonPanel, 3);
 		elevatorMidButton = new JoystickButton(buttonPanel, 5);
 		elevatorHighButton = new JoystickButton(buttonPanel, 7);
 
-		elevatorUpButton = new JoystickButton(buttonPanel, 6);
-		elevatorDown = new JoystickButton(buttonPanel, 8);
-
-        armUpButton = new JoystickButton(buttonPanel, 4);
-        armDownButton = new JoystickButton(buttonPanel, 10); // temp change this
+		groundIntakeButton = new JoystickButton(buttonPanel, 2);
+		stowArmButton = new JoystickButton(buttonPanel, 4);
+		releaseCargoButton = new JoystickButton(buttonPanel, 6);
+		cargoHatchToggleButton = new JoystickButton(buttonPanel, 8);
+		
+		cargoHatchToggleButton.whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				RobotMap.SCORING_HATCH = !RobotMap.SCORING_HATCH;
+			}
+		});
 
 
 		/*
@@ -84,7 +87,7 @@ public class OI {
     }
     
     public JoystickButton getReleaseElementButton() {
-        return releaseElementButton;
+        return shiftElevatorButton;
     }
 
 	public Joystick getWheel() {
@@ -94,14 +97,6 @@ public class OI {
 	public JoystickButton getCVButton() {
 		return cvButton;
     }
-    
-	public JoystickButton getReverseDriveButton() {
-		return reverseDriveButton;
-	}
-
-	public JoystickButton getCargoButton() {
-		return cargoButton;
-	}
 
 	public JoystickButton getElevatorPickupButton() {
 		return elevatorPickupButton;
@@ -118,20 +113,36 @@ public class OI {
 	public JoystickButton getElevatorHighButton() {
 		return elevatorHighButton;
 	}
-
-	public JoystickButton getElevatorUpButton() {
-		return elevatorUpButton;
+	
+	public JoystickButton getGroundIntakeButton() {
+		return groundIntakeButton;
 	}
 
-	public JoystickButton getElevatorDown() {
+	public JoystickButton getStowArmButton() {
+		return stowArmButton;
+	}
+
+	public JoystickButton getReleaseCargoButton() {
+		return releaseCargoButton;
+	}
+
+	public JoystickButton getCargoHatchToggleButton() {
+		return cargoHatchToggleButton;
+	}
+	
+	public JoystickButton getElevatorUpButton() {
+		return elevatorUp;
+	}
+
+	public JoystickButton getElevatorDownButton() {
 		return elevatorDown;
 	}
 
 	public JoystickButton getArmUpButton() {
-		return armUpButton;
-    }
-    
-    public JoystickButton getArmDownButton() {
-		return armDownButton;
+		return armUp;
+	}
+
+	public JoystickButton getArmDownButton() {
+		return armDown;
 	}
 }

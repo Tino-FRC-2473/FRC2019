@@ -192,7 +192,7 @@ public class AlignToHatch extends Command {
         // distance = Robot.jetsonPort.getVisionDistance();
 
         // temporarily negate angle for moving to targets
-        if (!RobotMap.RUNNING_FORWARD) angle = -angle;
+        if (!RobotMap.SCORING_HATCH) angle = -angle;
 
         System.out.println(distance);
         if (Robot.elevator.isMoving()) {
@@ -211,7 +211,7 @@ public class AlignToHatch extends Command {
         }
 
         // re-negate angle
-        if (!RobotMap.RUNNING_FORWARD) angle = -angle;
+        if (!RobotMap.SCORING_HATCH) angle = -angle;
         
     }
 

@@ -26,13 +26,13 @@ public class ArmMoveRaw extends Command {
 
 	@Override
 	protected void initialize() {
-		Robot.elevator.set(power);
+		Robot.arm.set(power);
 	}
 
 	@Override
 	protected void execute() {
         double tempPower = power;
-        Robot.elevator.set(tempPower);
+        Robot.arm.set(tempPower);
 	}
 
 	@Override

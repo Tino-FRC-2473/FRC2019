@@ -46,7 +46,7 @@ public class ElevatorMoveRaw extends Command {
 	@Override
 	protected boolean isFinished() {
 		if (power < 0) {
-			return !Robot.oi.getElevatorDown().get();
+			return !Robot.oi.getElevatorDownButton().get();
 		} else {
             //return true;
 			return !Robot.oi.getElevatorUpButton().get();

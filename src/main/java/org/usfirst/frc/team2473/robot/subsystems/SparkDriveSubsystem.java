@@ -75,7 +75,7 @@ public class SparkDriveSubsystem extends Subsystem {
 
 		speed = convertPower(speed);
 
-		if (RobotMap.RUNNING_FORWARD) {
+		if (RobotMap.SCORING_HATCH) {
 			drive.arcadeDrive(speed, rotation);
 		} else {
 			drive.arcadeDrive(-speed, rotation);
@@ -87,7 +87,7 @@ public class SparkDriveSubsystem extends Subsystem {
 		left = convertPower(left);
 		right = convertPower(right);
 
-		if (RobotMap.RUNNING_FORWARD) {
+		if (RobotMap.SCORING_HATCH) {
 			leftSpark.set(-left);
 			rightSpark.set(right);
 		} else {
