@@ -82,7 +82,7 @@ public class TeleopDrive extends Command {
 		// updateCargo();
 
     }
-
+    
     public void initializeElevatorButtons() {
 
         /*
@@ -90,9 +90,6 @@ public class TeleopDrive extends Command {
 		 E L E V A T O R   M E C H A N I S M 
 		-------------------------------------
 		*/
-
-
-        Robot.oi.getElevatorZeroButton().whenPressed(new ElevatorZero());
 
 		Robot.oi.getElevatorPickupButton().whenPressed(new InstantCommand() {
 			@Override
@@ -152,8 +149,11 @@ public class TeleopDrive extends Command {
 			}
 		});
         
-        Robot.oi.getElevatorInitialStowButton().whenPressed(new ElevatorMoveRaw(0.5));
+        Robot.oi.getElevatorUpButton().whenPressed(new ElevatorMoveRaw(0.5));
         Robot.oi.getElevatorDown().whenPressed(new ElevatorMoveRaw(-0.5));
+
+        Robot.oi.getArmUpButton().whenPressed(new ArmMoveRaw(0.5));
+        Robot.oi.getArmDownButton().whenPressed(new ArmMoveRaw(-0.5));
     }
     
     public void driveAndAlign() {

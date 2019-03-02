@@ -14,12 +14,12 @@ import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 /**
  * A class that aligns the robot to the hatch based on the angle provided by CV
  */
-public class ElevatorMoveRaw extends Command {
+public class ArmMoveRaw extends Command {
 
 	private double power;
 
-	public ElevatorMoveRaw(double power) {
-		requires(Robot.elevator);
+	public ArmMoveRaw(double power) {
+		requires(Robot.arm);
 
 		this.power = power;
 	}
@@ -32,34 +32,26 @@ public class ElevatorMoveRaw extends Command {
 	@Override
 	protected void execute() {
         double tempPower = power;
-        if (Robot.elevator.getEncoderTicks() > ElevatorPosition.HATCH_MID.getValue()) {
-            if (power > 0) {
-                tempPower = 0.3;
-            } else {
-                tempPower = -0.3;
-            }
-            
-        }
         Robot.elevator.set(tempPower);
 	}
 
 	@Override
 	protected boolean isFinished() {
 		if (power < 0) {
-			return !Robot.oi.getElevatorDown().get();
+			return !Robot.oi.getArmDownButton().get();
 		} else {
             //return true;
-			return !Robot.oi.getElevatorUpButton().get();
+			return !Robot.oi.getArmUpButton().get();
 		}
 	}
 
 	@Override
 	protected void end() {
-		Robot.elevator.stop();
+		Robot.arm.stop();
 	}
 
 	@Override
 	protected void interrupted() {
-		Robot.elevator.stop();
+		Robot.arm.stop();
 	}
 }

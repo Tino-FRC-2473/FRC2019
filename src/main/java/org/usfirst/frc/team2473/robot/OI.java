@@ -19,12 +19,13 @@ public class OI {
 	private JoystickButton elevatorMidButton;
 	private JoystickButton elevatorHighButton;
 	
-	private JoystickButton elevatorInitialStowButton;
+	private JoystickButton elevatorUpButton;
     private JoystickButton elevatorDown;
     
     private JoystickButton releaseElementButton;
 
-	private JoystickButton elevatorZeroButton;
+    private JoystickButton armUpButton;
+    private JoystickButton armDownButton;
 
 	public OI() {
         throttle = new Joystick(2);	
@@ -52,10 +53,11 @@ public class OI {
 		elevatorMidButton = new JoystickButton(buttonPanel, 5);
 		elevatorHighButton = new JoystickButton(buttonPanel, 7);
 
-		elevatorInitialStowButton = new JoystickButton(buttonPanel, 6);
+		elevatorUpButton = new JoystickButton(buttonPanel, 6);
 		elevatorDown = new JoystickButton(buttonPanel, 8);
 
-        elevatorZeroButton = new JoystickButton(buttonPanel, 4);
+        armUpButton = new JoystickButton(buttonPanel, 4);
+        armDownButton = new JoystickButton(buttonPanel, 10); // temp change this
 
 
 		/*
@@ -117,15 +119,19 @@ public class OI {
 		return elevatorHighButton;
 	}
 
-	public JoystickButton getElevatorInitialStowButton() {
-		return elevatorInitialStowButton;
+	public JoystickButton getElevatorUpButton() {
+		return elevatorUpButton;
 	}
 
 	public JoystickButton getElevatorDown() {
 		return elevatorDown;
 	}
 
-	public JoystickButton getElevatorZeroButton() {
-		return elevatorZeroButton;
+	public JoystickButton getArmUpButton() {
+		return armUpButton;
+    }
+    
+    public JoystickButton getArmDownButton() {
+		return armDownButton;
 	}
 }
