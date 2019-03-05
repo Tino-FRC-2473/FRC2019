@@ -14,16 +14,16 @@ import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 /**
  * A class that aligns the robot to the hatch based on the angle provided by CV
  */
-public class ElevatorZero extends Command {
+public class ArmZero extends Command {
 
-	public ElevatorZero() {
-		requires(Robot.elevator);
+	public ArmZero() {
+		requires(Robot.arm);
 		setInterruptible(false);
 	}
 
 	@Override
 	protected void initialize() {
-		Robot.elevator.set(-0.1);
+		Robot.arm.set(0.1);
 	}
 
 	@Override
@@ -32,15 +32,14 @@ public class ElevatorZero extends Command {
 
 	@Override
 	protected boolean isFinished() {
-		return Robot.elevator.isLowerLimitSwitchPressed();
+		return Robot.arm.isUpperLimitSwitchPressed();
 	}
 
 	@Override
 	protected void end() {
         System.out.println("limit switch pressed");
-		Robot.elevator.stop();
-		Robot.elevator.resetEncoders();
-		Robot.elevator.setExecutingGoalPosition(Elevator.ElevatorPosition.ZERO);
+		Robot.arm.stop();
+		Robot.arm.resetEncoders();
 	}
 
 	@Override

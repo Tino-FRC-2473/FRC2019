@@ -25,7 +25,7 @@ public class ArmMove extends Command {
 	 * Lowest power elevator will run at towards the end of
 	 * the move.
 	 */
-	public static final double SLOW_POWER = 0.3;
+	public static final double SLOW_POWER = 0.1;
 	
 	/**
 	 * The number of ticks that the elevator should
@@ -55,7 +55,7 @@ public class ArmMove extends Command {
 	 * @param power initial power to move at
 	 */
     public ArmMove(ArmPosition pos, double power) {
-		requires(Robot.elevator);
+		requires(Robot.arm);
 		
         this.power = power;
 		this.initialPower = power;
@@ -74,7 +74,7 @@ public class ArmMove extends Command {
 	protected void initialize() {
         Robot.arm.setExecutingGoalPosition(targetPos);
 
-		this.initialTickDelta = this.targetPos.getValue() - Robot.elevator.getEncoderTicks();
+		this.initialTickDelta = this.targetPos.getValue() - Robot.arm.getEncoderTicks();
 
 		this.power = this.initialPower;
 
@@ -85,11 +85,11 @@ public class ArmMove extends Command {
 			power *= 0.75;
 		}
 
-		this.absoluteTickGoal = Robot.elevator.getEncoderTicks() + this.initialTickDelta;
+		this.absoluteTickGoal = Robot.arm.getEncoderTicks() + this.initialTickDelta;
 		System.out.println("Absolute tick goal: " + absoluteTickGoal);
 		
-		prevTicks = Robot.elevator.getEncoderTicks();
-		Robot.elevator.set(power);
+		prevTicks = Robot.arm.getEncoderTicks();
+		Robot.arm.set(power);
 
 		System.out.println("Power: " + power);
 		// SmartDashboard.putBoolean("Elevator Status", true);
@@ -98,20 +98,26 @@ public class ArmMove extends Command {
 	@Override
 	protected void execute() {
 		double tempPower = power;
-		double currTicks = Robot.elevator.getEncoderTicks();
+        double currTicks = Robot.arm.getEncoderTicks();
+    
 		
 		double delta = currTicks - prevTicks;
 		
-		/* If the elevator has exceeded the threshold below, it will move at a slower power */
+        /* If the elevator has exceeded the threshold below, it will move at a slower power */
+        double P = Math.abs(absoluteTickGoal - currTicks)/RobotMap.K_ENCODER_ARM_THRESHOLD;
+        double dampenPower = SLOW_POWER + (P *(Math.abs(power) - SLOW_POWER));
+
 		if (Math.abs(absoluteTickGoal - (currTicks + delta)) < RobotMap.K_ENCODER_ARM_THRESHOLD) { // Math.abs() allows this to work regardless of moving direction (forwards or backwards)
-			if (initialTickDelta > 0) {
-				tempPower = SLOW_POWER;
+            System.out.println(currTicks + " " + dampenPower);
+            
+            if (initialTickDelta > 0) {
+				tempPower = dampenPower;
 			} else {
-				tempPower = -SLOW_POWER;
+				tempPower = -dampenPower;
 			}
         }
 
-		Robot.elevator.set(tempPower);
+		Robot.arm.set(tempPower);
 				
 		prevTicks = currTicks;
 		//Checks if while executing, elevator move is moving by a minimum number of ticks per cycle.
@@ -125,10 +131,10 @@ public class ArmMove extends Command {
 
 	@Override
 	protected boolean isFinished() {
-        if (this.initialTickDelta > 0 && Robot.elevator.isUpperLimitSwitchPressed()) return true;
+        if (this.initialTickDelta > 0 && Robot.arm.isUpperLimitSwitchPressed()) return true;
 
         double threshold = 2;
-		double currTicks = Robot.elevator.getEncoderTicks();
+		double currTicks = Robot.arm.getEncoderTicks();
 		if (this.initialTickDelta > 0) 
 			return (absoluteTickGoal - threshold < currTicks);
 		else 
@@ -140,15 +146,15 @@ public class ArmMove extends Command {
 		System.out.println(power);
 		System.out.println("----------------");
 		System.out.println("REQUIRED TICKS: " + absoluteTickGoal);
-        Robot.elevator.printEncoders();		
+        Robot.arm.printEncoders();		
         		
 		System.out.println();
 		
-		Robot.elevator.stop();
+		Robot.arm.stop();
 	}
 
 	@Override
 	protected void interrupted() {
-		Robot.elevator.stop();
+		Robot.arm.stop();
 	}
 }

@@ -81,7 +81,7 @@ public class TeleopDrive extends Command {
 
 	@Override
 	protected void execute() {
-		System.out.printf("%8.4f     %8.4f\n", Robot.elevator.getEncoderTicks(), Robot.arm.getEncoderTicks());
+		System.out.printf("Elevator: %8.4f     Arm: %8.4f\n", Robot.elevator.getEncoderTicks(), Robot.arm.getEncoderTicks());
         driveAndAlign();
 		// updateCargo();
 
@@ -101,7 +101,7 @@ public class TeleopDrive extends Command {
 			protected void execute() {
 				if (RobotMap.SCORING_HATCH) return;
 
-				// new ElevatorArmMove(ElevatorPosition.CARGO_PICKUP, ArmPosition.CARGO_PICKUP, elevatorPower, armPower).start();
+				new ElevatorArmMove(ElevatorPosition.CARGO_GROUND, ArmPosition.CARGO_GROUND, elevatorPower, armPower).start();
 				Robot.roller.set(-1);
 			}
 		});
@@ -111,11 +111,11 @@ public class TeleopDrive extends Command {
 			protected void execute() {
 				if (RobotMap.SCORING_HATCH) return;
 
-				// if (lastPressedPosition == ElevatorPosition.HATCH_HIGH || lastPressedPosition == ElevatorPosition.CARGO_HIGH) {
-				// 	new ElevatorArmMove(ElevatorPosition.ZERO, getArmPositionFromElevator(), elevatorPower, armPower).start();
-				// } else {
-				// 	new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
-				// }
+				if (lastPressedPosition == ElevatorPosition.HATCH_HIGH || lastPressedPosition == ElevatorPosition.CARGO_HIGH) {
+					new ElevatorArmMove(ElevatorPosition.ZERO, getArmPositionFromElevator(), elevatorPower, armPower).start();
+				} else {
+					new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, 0.3).start();
+				}
 				Robot.roller.set(0);
 			}
 		});
@@ -124,7 +124,7 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
 				if (Robot.arm.getExecutingGoalPosition() != ArmPosition.ZERO) {
-					new ArmMove(ArmPosition.ZERO, armPower).start();
+					new ArmMove(ArmPosition.STOW, armPower).start();
 				} else {
 					new ArmMove(getArmPositionFromElevator(), armPower).start();
 				}

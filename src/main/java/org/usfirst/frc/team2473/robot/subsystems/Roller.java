@@ -28,10 +28,10 @@ public class Roller extends Subsystem {
     }
 
     public void set(double speed) {
-        if (Robot.arm.distanceSensor.getVoltage() < 1.9) {
-            talon.set(speed);
-        } else {
+        if (Robot.arm.distanceSensor.getVoltage() > 1.9 && speed < 0) {
             talon.set(0);
+        } else {
+            talon.set(speed);
         }
     }
 

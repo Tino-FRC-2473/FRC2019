@@ -30,7 +30,7 @@ public class Arm extends Subsystem {
 
     public enum ArmPosition {
         //Units are encoder ticks. 
-        ZERO(0), HATCH_PICKUP(0), HATCH_LOW(0), HATCH_MID(0), HATCH_HIGH(0), CARGO_PICKUP(0), CARGO_LOW(0), CARGO_MID(0), CARGO_HIGH(0);
+        ZERO(0), STOW(-5), CARGO_LOW(-19.6904), CARGO_MID(-19.6904), CARGO_HIGH(-19.6904), CARGO_PICKUP(-5), CARGO_GROUND(-48.8), HATCH_LOW(-44.69), HATCH_MID(-44.69), HATCH_HIGH(-39.4), HATCH_PICKUP(0);
 
         private final double value;
 
@@ -95,9 +95,6 @@ public class Arm extends Subsystem {
     public void set(double speed) {
         //System.out.println("Setting " + speed);
         spark.set(speed);
-
-        if(Math.abs(speed) >= ElevatorMove.SLOW_POWER - 0.01)
-            encoderResetComplete = false;
     }
 
     public void stop() {
@@ -118,7 +115,7 @@ public class Arm extends Subsystem {
 	}
     
     public void printEncoders() {
-		System.out.println("Elevator: " + getEncoderTicks());
+		System.out.println("Arm: " + getEncoderTicks());
     }
 
     public boolean isMoving() {

@@ -14,6 +14,9 @@ import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.AlignToHatch;
+import org.usfirst.frc.team2473.robot.commands.ArmMove;
+import org.usfirst.frc.team2473.robot.commands.ArmZero;
+import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
 import org.usfirst.frc.team2473.robot.commands.ElevatorZero;
 import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
@@ -22,6 +25,7 @@ import org.usfirst.frc.team2473.robot.subsystems.Cargo;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 import org.usfirst.frc.team2473.robot.subsystems.Roller;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
+import org.usfirst.frc.team2473.robot.subsystems.Arm.ArmPosition;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import edu.wpi.cscore.CvSink;
@@ -36,6 +40,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
@@ -76,6 +81,7 @@ public class Robot extends TimedRobot {
     NetworkTableEntry lastPressedEntry = Shuffleboard.getTab("Drive").add("Last Pressed", ElevatorPosition.ZERO.toString()).getEntry();
 
     NetworkTableEntry cvRunning = Shuffleboard.getTab("Drive").add("CV Running", RobotMap.CV_RUNNING).getEntry();
+    NetworkTableEntry scoringHatch = Shuffleboard.getTab("Drive").add("Scoring Hatch", RobotMap.SCORING_HATCH).getEntry();
     NetworkTableEntry elevatorMoving = Shuffleboard.getTab("Drive").add("Elevator Moving", Robot.elevator.isMoving()).getEntry();
 
     /**
@@ -261,9 +267,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		cvLight.set(Value.kForward);
-		new ElevatorZero().start();
+        new ElevatorZero().start();
+
+        new ArmZero().start();
 		teleopDrive = new TeleopDrive();
-		teleopDrive.start();
+        teleopDrive.start();
+        // new ArmMove(ArmPosition.CARGO_PICKUP, 0.1).start();
+        // AutonomousTester tester = new AutonomousTester();
+        // tester.addArmTester(0.5);
+        // tester.start();
 		// new StraightDrive(10, 0.2).start();
 	}
 
@@ -358,6 +370,7 @@ public class Robot extends TimedRobot {
 		
         lastPressedEntry.setString(TeleopDrive.lastPressedPosition.toString());
         
+        scoringHatch.setBoolean(RobotMap.SCORING_HATCH);
         cvRunning.setBoolean(RobotMap.CV_RUNNING);
         elevatorMoving.setBoolean(elevator.isMoving());
         SmartDashboard.updateValues();

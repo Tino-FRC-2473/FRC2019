@@ -75,11 +75,7 @@ public class SparkDriveSubsystem extends Subsystem {
 
 		speed = convertPower(speed);
 
-		if (RobotMap.SCORING_HATCH) {
-			drive.arcadeDrive(speed, rotation);
-		} else {
-			drive.arcadeDrive(-speed, rotation);
-		}
+		drive.arcadeDrive(speed, rotation);
 	}
 
 	public void drive(double left, double right) {
@@ -87,13 +83,8 @@ public class SparkDriveSubsystem extends Subsystem {
 		left = convertPower(left);
 		right = convertPower(right);
 
-		if (RobotMap.SCORING_HATCH) {
-			leftSpark.set(-left);
-			rightSpark.set(right);
-		} else {
-			leftSpark.set(left);
-			rightSpark.set(-right);
-		}
+		leftSpark.set(-left);
+		rightSpark.set(right);
 	}
 
 	public void stopMotors() {
