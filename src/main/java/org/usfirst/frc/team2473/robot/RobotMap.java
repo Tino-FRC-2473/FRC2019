@@ -20,7 +20,8 @@ public class RobotMap {
     public static final int TALON_ARM = 12;
     public static final int TALON_ROLLER = 13;
     
-    public static final int K_ENCODER_ARM_THRESHOLD = 18;
+    public static final int K_ARM_RAMP_DOWN = 18;
+    public static final int K_ARM_RAMP_UP = 8;
     
     public static final int K_ENCODER_ELEVATOR_THRESHOLD = 12;
     public static final int ELEVATOR_MIN_TICKS = 50;

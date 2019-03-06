@@ -26,11 +26,13 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Arm extends Subsystem {
     
     
-	public static AnalogInput distanceSensor;
+    public static AnalogInput distanceSensor;
+    public static boolean allowZero = false;
+    public double lastNonZeroPower = 0;
 
     public enum ArmPosition {
-        //Units are encoder ticks. 
-        ZERO(0), STOW(-5), CARGO_LOW(-19.6904), CARGO_MID(-19.6904), CARGO_HIGH(-19.6904), CARGO_PICKUP(-5), CARGO_GROUND(-48.8), HATCH_LOW(-44.69), HATCH_MID(-44.69), HATCH_HIGH(-39.4), HATCH_PICKUP(0);
+        //Units are encoder ticks. ground: -48.8
+        ZERO(0), STOW(-5), CARGO_LOW(-19.6904), CARGO_MID(-19.6904), CARGO_HIGH(-19.6904), CARGO_PICKUP(-5), CARGO_GROUND(-47.3), HATCH_LOW(-44.69), HATCH_MID(-44.69), HATCH_HIGH(-39.4), HATCH_PICKUP(-5);
 
         private final double value;
 
@@ -91,10 +93,24 @@ public class Arm extends Subsystem {
         // is reverse closed
         return spark.getSparkMaxObject().getForwardLimitSwitch(LimitSwitchPolarity.kNormallyClosed).get();
     }
+
+    public double getPower() {
+        return spark.getSparkMaxObject().get();
+    }
     
     public void set(double speed) {
         //System.out.println("Setting " + speed);
-        spark.set(speed);
+        if (!allowZero && speed > 0 && getEncoderTicks() > -5) {
+            stop();
+        } else if (!allowZero && speed < 0 && getEncoderTicks() < -49) {
+            stop();
+        } else {
+            if (speed != 0) {
+                lastNonZeroPower = speed;
+                System.out.println("NON_ZERO: " + lastNonZeroPower);
+            }
+            spark.set(speed);
+        }
     }
 
     public void stop() {

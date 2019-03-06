@@ -15,6 +15,7 @@ import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.AlignToHatch;
 import org.usfirst.frc.team2473.robot.commands.ArmMove;
+import org.usfirst.frc.team2473.robot.commands.ArmRampDown;
 import org.usfirst.frc.team2473.robot.commands.ArmZero;
 import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
 import org.usfirst.frc.team2473.robot.commands.ElevatorZero;
@@ -111,10 +112,10 @@ public class Robot extends TimedRobot {
 		frontCam.setFPS(15);
 		frontCam.setResolution(160, 120);
 
-		UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
-		backCam.setBrightness(25);
-		backCam.setFPS(15);
-        backCam.setResolution(160, 120);
+		// UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
+		// backCam.setBrightness(25);
+		// backCam.setFPS(15);
+        // backCam.setResolution(160, 120);
         
         //SmartDashboard.putBoolean("Cameras Switched", false);
 
@@ -122,14 +123,14 @@ public class Robot extends TimedRobot {
 
 			// Get a CvSink. This will capture Mats from the camera
 			CvSink cvSinkFront = CameraServer.getInstance().getVideo(frontCam);
-			CvSink cvSinkBack = CameraServer.getInstance().getVideo(backCam);
+			// CvSink cvSinkBack = CameraServer.getInstance().getVideo(backCam);
 			// Setup a CvSource. This will send images back to the Dashboard
 			CvSource outputStreamFront = CameraServer.getInstance().putVideo("Front Camera", 160, 120);
-			CvSource outputStreamBack = CameraServer.getInstance().putVideo("Back Camera", 160, 120);
+			// CvSource outputStreamBack = CameraServer.getInstance().putVideo("Back Camera", 160, 120);
 
 			// Mats are very memory expensive. Lets reuse this Mat.
 			Mat matFront = new Mat();
-			Mat matBack = new Mat();
+			// Mat matBack = new Mat();
 
 			// Add a test point to each camera to get both feeds up
 			
@@ -207,25 +208,25 @@ public class Robot extends TimedRobot {
 				// Tell the CvSink to grab a frame from the camera and put it
 				// in the source mat. If there is an error notify the output.
 				
-				if (cvSinkBack.grabFrame(matBack) == 0) {
-					// Send the output the error.
-					outputStreamBack.notifyError(cvSinkBack.getError());
-				} else {
+				// if (cvSinkBack.grabFrame(matBack) == 0) {
+				// 	// Send the output the error.
+				// 	outputStreamBack.notifyError(cvSinkBack.getError());
+				// } else {
 
-					if ((!RobotMap.SCORING_HATCH && !RobotMap.CAMERAS_SWITCHED) || (RobotMap.SCORING_HATCH && RobotMap.CAMERAS_SWITCHED)) {
+				// 	if ((!RobotMap.SCORING_HATCH && !RobotMap.CAMERAS_SWITCHED) || (RobotMap.SCORING_HATCH && RobotMap.CAMERAS_SWITCHED)) {
 
-						double shift = 0;
+				// 		double shift = 0;
 
-						Imgproc.line(matBack, new Point(x1 + shift, 0), new Point(x1 + shift, 120), new Scalar(255, 0, 0), 1);
-						Imgproc.line(matBack, new Point(x2 + shift, 0), new Point(x2 + shift, 120), new Scalar(255, 0, 0), 1);
-						Imgproc.line(matBack, new Point(x3 + shift, 0), new Point(x3 + shift, 120), new Scalar(255, 0, 0), 1);
-						Imgproc.line(matBack, new Point(alignX + shift, 0), new Point(alignX + shift, 120), alignColor, 1);
-					}
+				// 		Imgproc.line(matBack, new Point(x1 + shift, 0), new Point(x1 + shift, 120), new Scalar(255, 0, 0), 1);
+				// 		Imgproc.line(matBack, new Point(x2 + shift, 0), new Point(x2 + shift, 120), new Scalar(255, 0, 0), 1);
+				// 		Imgproc.line(matBack, new Point(x3 + shift, 0), new Point(x3 + shift, 120), new Scalar(255, 0, 0), 1);
+				// 		Imgproc.line(matBack, new Point(alignX + shift, 0), new Point(alignX + shift, 120), alignColor, 1);
+				// 	}
 
-					// Give the output stream a new image to display
-					outputStreamBack.putFrame(matBack);
+				// 	// Give the output stream a new image to display
+				// 	outputStreamBack.putFrame(matBack);
 					
-				}
+				// }
 					
 				
 			}
@@ -268,13 +269,13 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		cvLight.set(Value.kForward);
         new ElevatorZero().start();
-
+        // new ArmRampDown(0.5).start();
         new ArmZero().start();
 		teleopDrive = new TeleopDrive();
         teleopDrive.start();
         // new ArmMove(ArmPosition.CARGO_PICKUP, 0.1).start();
         // AutonomousTester tester = new AutonomousTester();
-        // tester.addArmTester(0.5);
+        // tester.addArmRampTests(0.4);
         // tester.start();
 		// new StraightDrive(10, 0.2).start();
 	}
@@ -285,6 +286,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
         updateShuffleboardVisualizations();
+        System.out.println("POW: " + Robot.arm.lastNonZeroPower);
 		//System.out.println(jetsonPort.getVisionX1() + " " + jetsonPort.getVisionX2() + " " + jetsonPort.getVisionX3());
 		// serialPort.writeString("Hello World!");
 

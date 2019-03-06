@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2473.robot.commands;
 
+import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.subsystems.Arm.ArmPosition;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
@@ -19,6 +20,15 @@ public class AutonomousTester extends CommandGroup {
 	 * Constructs an empty tester.
 	 */
 	public AutonomousTester() {
+    }
+
+    public void addArmRampTests(double power) {
+        addSequential(new ArmZero());
+        addSequential(new WaitCommand(3));
+        addSequential(new ArmMove(ArmPosition.CARGO_GROUND, power, 1));
+        addSequential(new ArmRampDown());
+        // addSequential(new WaitCommand(1));
+        addSequential(new ArmMove(ArmPosition.STOW, power));
     }
 
     public void addArmTester(double power) {

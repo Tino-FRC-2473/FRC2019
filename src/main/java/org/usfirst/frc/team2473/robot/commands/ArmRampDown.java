@@ -9,43 +9,46 @@ package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
-import org.usfirst.frc.team2473.robot.subsystems.Elevator;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 /**
  * A class that aligns the robot to the hatch based on the angle provided by CV
  */
-public class ArmZero extends Command {
+public class ArmRampDown extends Command {
 
-	public ArmZero() {
+	public ArmRampDown() {
 		requires(Robot.arm);
-		setInterruptible(false);
 	}
 
 	@Override
 	protected void initialize() {
-        Robot.arm.allowZero = true;
-        Robot.arm.set(0.1);
+        Robot.arm.set(Robot.arm.lastNonZeroPower);
+        System.out.println("RAMP: "+Robot.arm.getPower());
+
 	}
 
 	@Override
 	protected void execute() {
+        System.out.println("RAMP: "+Robot.arm.getPower());
+        if (Robot.arm.getPower() < 0) {
+            Robot.arm.set(Math.min(0, Robot.arm.getPower() + 0.02));
+        } else {
+            Robot.arm.set(Math.max(0, Robot.arm.getPower() - 0.02));
+        }
 	}
 
 	@Override
 	protected boolean isFinished() {
-		return Robot.arm.isUpperLimitSwitchPressed();
+        return Robot.arm.getPower() == 0;
 	}
 
 	@Override
 	protected void end() {
-        System.out.println("limit switch pressed");
 		Robot.arm.stop();
-        Robot.arm.resetEncoders();
-        Robot.arm.allowZero = false;
 	}
 
 	@Override
 	protected void interrupted() {
-		Robot.elevator.stop();
+		Robot.arm.stop();
 	}
 }

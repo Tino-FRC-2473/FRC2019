@@ -45,7 +45,8 @@ public class ArmMove extends Command {
     private double power;
 	private double initialPower; //TODO may be useless
 
-	private double initialTickDelta;
+    private double initialTickDelta;
+    private double initialTicks;
 
 	private ArmPosition targetPos;
 	
@@ -59,7 +60,17 @@ public class ArmMove extends Command {
 		
         this.power = power;
 		this.initialPower = power;
-		this.targetPos = pos;
+        this.targetPos = pos;
+    }
+
+    public ArmMove(ArmPosition pos, double power, double end) {
+        super(end);
+		requires(Robot.arm);
+		
+        this.power = power;
+		this.initialPower = power;
+        this.targetPos = pos;
+
     }
 	
 	/**
@@ -84,7 +95,7 @@ public class ArmMove extends Command {
 		if (this.initialTickDelta < 0) {
 			power *= 0.75;
 		}
-
+        this.initialTicks = Robot.arm.getEncoderTicks();
 		this.absoluteTickGoal = Robot.arm.getEncoderTicks() + this.initialTickDelta;
 		System.out.println("Absolute tick goal: " + absoluteTickGoal);
 		
@@ -99,17 +110,24 @@ public class ArmMove extends Command {
 	protected void execute() {
 		double tempPower = power;
         double currTicks = Robot.arm.getEncoderTicks();
-    
-		
+        
+        double P = Math.abs(initialTicks - currTicks)/RobotMap.K_ARM_RAMP_UP;
+        double dampenPower = SLOW_POWER + (P *(Math.abs(power) - SLOW_POWER));
+
+		if (Math.abs(currTicks - initialTicks) < RobotMap.K_ARM_RAMP_UP) {
+            if (initialTickDelta > 0) {
+				tempPower = dampenPower;
+			} else {
+				tempPower = -dampenPower;
+			}
+        }
 		double delta = currTicks - prevTicks;
 		
         /* If the elevator has exceeded the threshold below, it will move at a slower power */
-        double P = Math.abs(absoluteTickGoal - currTicks)/RobotMap.K_ENCODER_ARM_THRESHOLD;
-        double dampenPower = SLOW_POWER + (P *(Math.abs(power) - SLOW_POWER));
+        P = Math.abs(absoluteTickGoal - currTicks)/RobotMap.K_ARM_RAMP_DOWN;
+        dampenPower = SLOW_POWER + (P *(Math.abs(power) - SLOW_POWER));
 
-		if (Math.abs(absoluteTickGoal - (currTicks + delta)) < RobotMap.K_ENCODER_ARM_THRESHOLD) { // Math.abs() allows this to work regardless of moving direction (forwards or backwards)
-            System.out.println(currTicks + " " + dampenPower);
-            
+		if (Math.abs(absoluteTickGoal - (currTicks + delta)) < RobotMap.K_ARM_RAMP_DOWN) { // Math.abs() allows this to work regardless of moving direction (forwards or backwards)            
             if (initialTickDelta > 0) {
 				tempPower = dampenPower;
 			} else {
@@ -131,6 +149,8 @@ public class ArmMove extends Command {
 
 	@Override
 	protected boolean isFinished() {
+        if (isTimedOut()) return true;
+
         if (this.initialTickDelta > 0 && Robot.arm.isUpperLimitSwitchPressed()) return true;
 
         double threshold = 2;
