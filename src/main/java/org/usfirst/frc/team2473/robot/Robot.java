@@ -67,23 +67,23 @@ public class Robot extends TimedRobot {
 	Preferences prefs;
     Thread m_visionThread;
     
-    NetworkTableEntry switchedCameras = Shuffleboard.getTab("Drive").add("Cameras Switched", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
+    // NetworkTableEntry switchedCameras = Shuffleboard.getTab("Drive").add("Cameras Switched", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
 
-    NetworkTableEntry angle1 = Shuffleboard.getTab("Drive").add("Angle 1", 0).getEntry();
-    NetworkTableEntry angle2 = Shuffleboard.getTab("Drive").add("Angle 2", 0).getEntry();
-    NetworkTableEntry angle3 = Shuffleboard.getTab("Drive").add("Angle 3", 0).getEntry();
-    NetworkTableEntry distance1 = Shuffleboard.getTab("Drive").add("Distance 1", 0).getEntry();
-    NetworkTableEntry distance2 = Shuffleboard.getTab("Drive").add("Distance 2", 0).getEntry();
-    NetworkTableEntry distance3 = Shuffleboard.getTab("Drive").add("Distance 3", 0).getEntry();
+    // NetworkTableEntry angle1 = Shuffleboard.getTab("Drive").add("Angle 1", 0).getEntry();
+    // NetworkTableEntry angle2 = Shuffleboard.getTab("Drive").add("Angle 2", 0).getEntry();
+    // NetworkTableEntry angle3 = Shuffleboard.getTab("Drive").add("Angle 3", 0).getEntry();
+    // NetworkTableEntry distance1 = Shuffleboard.getTab("Drive").add("Distance 1", 0).getEntry();
+    // NetworkTableEntry distance2 = Shuffleboard.getTab("Drive").add("Distance 2", 0).getEntry();
+    // NetworkTableEntry distance3 = Shuffleboard.getTab("Drive").add("Distance 3", 0).getEntry();
     
-    NetworkTableEntry elevatorPosition = Shuffleboard.getTab("Drive").add("Elevator Position", ElevatorPosition.ZERO.toString()).getEntry();
-    NetworkTableEntry cargoState = Shuffleboard.getTab("Drive").add("Cargo State", "Rearming").getEntry();
-    NetworkTableEntry cargoSecured = Shuffleboard.getTab("Drive").add("Cargo Secured", false).getEntry();
-    NetworkTableEntry lastPressedEntry = Shuffleboard.getTab("Drive").add("Last Pressed", ElevatorPosition.ZERO.toString()).getEntry();
+    NetworkTableEntry currentPositionEntry = Shuffleboard.getTab("Drive").add("Current Position", ElevatorPosition.ZERO.toString()).getEntry();
+    NetworkTableEntry lastPressedEntry = Shuffleboard.getTab("Drive").add("Last Pressed Position", getLastPressedPositionString()).getEntry();
+    // NetworkTableEntry cargoState = Shuffleboard.getTab("Drive").add("Cargo State", "Rearming").getEntry();
+    NetworkTableEntry cargoSecuredEntry = Shuffleboard.getTab("Drive").add("Cargo Secured", false).getEntry();
 
-    NetworkTableEntry cvRunning = Shuffleboard.getTab("Drive").add("CV Running", RobotMap.CV_RUNNING).getEntry();
-    NetworkTableEntry scoringHatch = Shuffleboard.getTab("Drive").add("Scoring Hatch", RobotMap.SCORING_HATCH).getEntry();
-    NetworkTableEntry elevatorMoving = Shuffleboard.getTab("Drive").add("Elevator Moving", Robot.elevator.isMoving()).getEntry();
+    NetworkTableEntry cvRunningEntry = Shuffleboard.getTab("Drive").add("CV Running", RobotMap.CV_RUNNING).getEntry();
+    NetworkTableEntry scoringHatchEntry = Shuffleboard.getTab("Drive").add("Scoring Hatch", RobotMap.SCORING_HATCH).getEntry();
+    // NetworkTableEntry elevatorMoving = Shuffleboard.getTab("Drive").add("Elevator Moving", Robot.elevator.isMoving()).getEntry();
 
     /**
 	 * Runs once when the robot turns on
@@ -299,6 +299,7 @@ public class Robot extends TimedRobot {
 
 		if (++i % 4 == 0) {
             // jetsonPort.printVisionAngles();
+            arm.printEncoders();
         }
 
 		//System.out.println(jetsonPort.getVisionDistance1());
@@ -346,35 +347,45 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
     }
+
+    private String getLastPressedPositionString() {
+        return "Elevator: " + TeleopDrive.lastPressedPosition.toString() + "\n"
+                + "Arm: " + TeleopDrive.getArmPositionFromElevator();
+    }
+
+    private String getCurrentPositionString() {
+        return "Elevator: " + elevator.getExecutingGoalPosition().toString() + "\n"
+                + "Arm: " + arm.getExecutingGoalPosition().toString();
+    }
     
     public void updateShuffleboardVisualizations() {
 
-        RobotMap.CAMERAS_SWITCHED = switchedCameras.getBoolean(false);
+        // RobotMap.CAMERAS_SWITCHED = switchedCameras.getBoolean(false);
         // RobotMap.CAMERAS_SWITCHED = SmartDashboard.getBoolean("Cameras Switched", false);
         // System.out.println(RobotMap.CAMERAS_SWITCHED);
 
-        angle1.setDouble(jetsonPort.getVisionAngle1());
-        angle2.setDouble(jetsonPort.getVisionAngle2());
-        angle3.setDouble(jetsonPort.getVisionAngle3());
-        distance1.setDouble(jetsonPort.getVisionDistance1());
-        distance2.setDouble(jetsonPort.getVisionDistance2());
-        distance3.setDouble(jetsonPort.getVisionDistance3());
+        // angle1.setDouble(jetsonPort.getVisionAngle1());
+        // angle2.setDouble(jetsonPort.getVisionAngle2());
+        // angle3.setDouble(jetsonPort.getVisionAngle3());
+        // distance1.setDouble(jetsonPort.getVisionDistance1());
+        // distance2.setDouble(jetsonPort.getVisionDistance2());
+        // distance3.setDouble(jetsonPort.getVisionDistance3());
 
-        elevatorPosition.setString(elevator.getExecutingGoalPosition().toString());
+        currentPositionEntry.setString(getCurrentPositionString());
         
-        if (Robot.cargo.getState() == null) {
-            cargoState.setString("Rearming");
-        } else {
-            cargoState.setString(Robot.cargo.getState().toString());
-        }
+        // if (Robot.cargo.getState() == null) {
+        //     cargoState.setString("Rearming");
+        // } else {
+        //     cargoState.setString(Robot.cargo.getState().toString());
+        // }
 
-        cargoSecured.setBoolean(Robot.cargo.getState() == Robot.cargo.CAPTURING);
+        cargoSecuredEntry.setBoolean(Robot.cargo.getState() == Robot.cargo.CAPTURING);
 		
-        lastPressedEntry.setString(TeleopDrive.lastPressedPosition.toString());
+        lastPressedEntry.setString(getLastPressedPositionString());
         
-        scoringHatch.setBoolean(RobotMap.SCORING_HATCH);
-        cvRunning.setBoolean(RobotMap.CV_RUNNING);
-        elevatorMoving.setBoolean(elevator.isMoving());
+        scoringHatchEntry.setBoolean(RobotMap.SCORING_HATCH);
+        cvRunningEntry.setBoolean(RobotMap.CV_RUNNING);
+        // elevatorMoving.setBoolean(elevator.isMoving());
         SmartDashboard.updateValues();
     }
 

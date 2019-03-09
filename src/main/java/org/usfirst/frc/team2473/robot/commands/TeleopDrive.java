@@ -157,7 +157,7 @@ public class TeleopDrive extends Command {
 		});
 	}
 
-	public ArmPosition getArmPositionFromElevator() {
+	public static ArmPosition getArmPositionFromElevator() {
 		ArmPosition armPos = null;
 		switch (lastPressedPosition) {
 			case ZERO:
