@@ -121,12 +121,12 @@ public class Arm extends Subsystem {
         return spark.getEncoderPosition();
     }
 
-    public synchronized void resetEncoders() {
+    public void resetEncoders() {
         spark.getSparkMaxObject().getEncoder().setPosition(0);
         encoderResetComplete = true;
     }
 
-    public synchronized boolean isEncoderResetComplete() {
+    public boolean isEncoderResetComplete() {
 		return encoderResetComplete;
 	}
     
