@@ -79,9 +79,9 @@ public class ElevatorMove extends Command {
             targetPos = Robot.elevator.getExecutingGoalPosition();
 
             if (Robot.elevator.getExecutingGoalPosition() == ElevatorPosition.HATCH_PICKUP) {
-                this.initialTickDelta = (this.targetPos.getValue() + 7) - Robot.elevator.getEncoderTicks();
+                this.initialTickDelta = (this.targetPos.getValue() + 10) - Robot.elevator.getEncoderTicks();
             } else if (Robot.elevator.getExecutingGoalPosition() != ElevatorPosition.ZERO) {
-                this.initialTickDelta = (this.targetPos.getValue() - 7) - Robot.elevator.getEncoderTicks();
+                this.initialTickDelta = (this.targetPos.getValue() - 10) - Robot.elevator.getEncoderTicks();
             }
         } else {
             this.initialTickDelta = this.targetPos.getValue() - Robot.elevator.getEncoderTicks();

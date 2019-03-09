@@ -23,7 +23,7 @@ import org.usfirst.frc.team2473.framework.JetsonPort;
  */
 public class AlignToHatch extends Command {
 
-    double normalPower = 0.3;
+    double normalPower = 0.2;
     double turnPower = 0.08;
     double lowPower = 0.1;
     private int angle = 0;
@@ -187,7 +187,7 @@ public class AlignToHatch extends Command {
         //System.out.println(distance);
 
         double thresholdAngle = 2;
-        double thresholdDistance = 30;
+        double thresholdDistance = 50;
         // angle = Robot.jetsonPort.getVisionAngle();
         // distance = Robot.jetsonPort.getVisionDistance();
 
@@ -195,7 +195,7 @@ public class AlignToHatch extends Command {
         if (!RobotMap.SCORING_HATCH) angle = -angle;
 
         System.out.println(distance);
-        if (Robot.elevator.isMoving()) {
+        if (Robot.elevator.isMoving() || Robot.arm.isMoving()) {
             Robot.driveSubsystem.stopMotors();
         } else if (hasBeenInThresholdDistance || distance < thresholdDistance || angle == -99) { // keep going in this direction
             hasBeenInThresholdDistance = true;

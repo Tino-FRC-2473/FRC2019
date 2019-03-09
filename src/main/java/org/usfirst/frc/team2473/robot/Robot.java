@@ -286,7 +286,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
         updateShuffleboardVisualizations();
-        System.out.println("POW: " + Robot.arm.lastNonZeroPower);
+        // System.out.println("POW: " + Robot.arm.lastNonZeroPower);
 		//System.out.println(jetsonPort.getVisionX1() + " " + jetsonPort.getVisionX2() + " " + jetsonPort.getVisionX3());
 		// serialPort.writeString("Hello World!");
 
