@@ -14,19 +14,15 @@ import org.opencv.imgproc.Imgproc;
 import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.robot.commands.AlignToHatch;
-import org.usfirst.frc.team2473.robot.commands.ArmMove;
-import org.usfirst.frc.team2473.robot.commands.ArmRampDown;
 import org.usfirst.frc.team2473.robot.commands.ArmZero;
 import org.usfirst.frc.team2473.robot.commands.AutonomousTester;
 import org.usfirst.frc.team2473.robot.commands.ElevatorZero;
-import org.usfirst.frc.team2473.robot.commands.StraightDrive;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.Arm;
 import org.usfirst.frc.team2473.robot.subsystems.Cargo;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 import org.usfirst.frc.team2473.robot.subsystems.Roller;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
-import org.usfirst.frc.team2473.robot.subsystems.Arm.ArmPosition;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import edu.wpi.cscore.CvSink;
@@ -36,15 +32,12 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
@@ -77,18 +70,12 @@ public class Robot extends TimedRobot {
     NetworkTableEntry manualControlEntry = Shuffleboard.getTab("Drive").add("Manual Control", RobotMap.MANUAL_CONTROL).getEntry();
     NetworkTableEntry currentPositionEntry = Shuffleboard.getTab("Drive").add("Current Position", ElevatorPosition.ZERO.toString()).getEntry();
     NetworkTableEntry lastPressedEntry = Shuffleboard.getTab("Drive").add("Last Pressed Position", getLastPressedPositionString()).getEntry();
-    // NetworkTableEntry cargoState = Shuffleboard.getTab("Drive").add("Cargo State", "Rearming").getEntry();
     NetworkTableEntry cargoSecuredEntry = Shuffleboard.getTab("Drive").add("Cargo Secured", false).getEntry();
 
     NetworkTableEntry cvRunningEntry = Shuffleboard.getTab("Drive").add("CV Running", RobotMap.CV_RUNNING).getEntry();
     NetworkTableEntry scoringHatchEntry = Shuffleboard.getTab("Drive").add("Scoring Hatch", RobotMap.SCORING_HATCH).getEntry();
-    // NetworkTableEntry elevatorMoving = Shuffleboard.getTab("Drive").add("Elevator Moving", Robot.elevator.isMoving()).getEntry();
-
     NetworkTableEntry elevatorOutputCurrentEntry = Shuffleboard.getTab("Drive").add("Elevator Output Current", elevator.spark.getSparkMaxObject().getOutputCurrent()).withWidget(BuiltInWidgets.kGraph).getEntry();
 
-    /**
-	 * Runs once when the robot turns on
-	 */
 	@Override
 	public void robotInit() {
 		oi = new OI();
@@ -113,46 +100,12 @@ public class Robot extends TimedRobot {
 		frontCam.setFPS(15);
 		frontCam.setResolution(160, 120);
 
-		// UsbCamera backCam = CameraServer.getInstance().startAutomaticCapture("Back Camera", 1);
-		// backCam.setBrightness(25);
-		// backCam.setFPS(15);
-        // backCam.setResolution(160, 120);
-        
-        //SmartDashboard.putBoolean("Cameras Switched", false);
-
 		m_visionThread = new Thread(() -> {
 
-			// Get a CvSink. This will capture Mats from the camera
 			CvSink cvSinkFront = CameraServer.getInstance().getVideo(frontCam);
-			// CvSink cvSinkBack = CameraServer.getInstance().getVideo(backCam);
-			// Setup a CvSource. This will send images back to the Dashboard
 			CvSource outputStreamFront = CameraServer.getInstance().putVideo("Front Camera", 160, 120);
-			// CvSource outputStreamBack = CameraServer.getInstance().putVideo("Back Camera", 160, 120);
-
-			// Mats are very memory expensive. Lets reuse this Mat.
 			Mat matFront = new Mat();
-			// Mat matBack = new Mat();
 
-			// Add a test point to each camera to get both feeds up
-			
-			// if (cvSinkFront.grabFrame(matFront) == 0) {
-			// 	// Send the output the error.
-			// 	outputStreamFront.notifyError(cvSinkFront.getError());
-			// }
-			// if (cvSinkBack.grabFrame(matBack) == 0) {
-			// 	// Send the output the error.
-			// 	outputStreamBack.notifyError(cvSinkBack.getError());
-			// }
-
-			// Imgproc.line(matFront, new Point(0,0), new Point(1,1), new Scalar(0, 0, 255));
-			// Imgproc.line(matBack, new Point(0,0), new Point(1,1), new Scalar(0, 0, 255));
-
-			// outputStreamFront.putFrame(matFront);
-			// outputStreamBack.putFrame(matBack);
-
-			// This cannot be 'true'. The program will never exit if it is. This
-			// lets the robot stop this thread when restarting robot code or
-			// deploying.
 			while (!Thread.interrupted()) {
 
                 double x1 = -99;
@@ -176,83 +129,37 @@ public class Robot extends TimedRobot {
 					alignColor = new Scalar(59, 214, 214);
 				}
 
-				//System.out.println(x1 + " " + x2 + " " + x3 + " " + alignX);
-					
-				// ------------ FRONT ----------------
-
-				// Tell the CvSink to grab a frame from the camera and put it
-				// in the source mat. If there is an error notify the output.
 				if (cvSinkFront.grabFrame(matFront) == 0) {
-					// Send the output the error.
 					outputStreamFront.notifyError(cvSinkFront.getError());
 				} else {
 					
-					// Put a rectangle on the image
 					double shift = 3;
 
 					Imgproc.line(matFront, new Point(x1 + shift, 0), new Point(x1 + shift, 120), new Scalar(255, 0, 0), 1);
 					Imgproc.line(matFront, new Point(x2 + shift, 0), new Point(x2 + shift, 120), new Scalar(255, 0, 0), 1);
 					Imgproc.line(matFront, new Point(x3 + shift, 0), new Point(x3 + shift, 120), new Scalar(255, 0, 0), 1);
 					Imgproc.line(matFront, new Point(alignX + shift, 0), new Point(alignX + shift, 120), alignColor, 1);
-					// Give the output stream a new image to display
 					
 					outputStreamFront.putFrame(matFront);
 					
-				}
-			
-			
-				// ----------------- BACK -----------------------
-
-				// Tell the CvSink to grab a frame from the camera and put it
-				// in the source mat. If there is an error notify the output.
-				
-				// if (cvSinkBack.grabFrame(matBack) == 0) {
-				// 	// Send the output the error.
-				// 	outputStreamBack.notifyError(cvSinkBack.getError());
-				// } else {
-
-				// 	if ((!RobotMap.SCORING_HATCH && !RobotMap.CAMERAS_SWITCHED) || (RobotMap.SCORING_HATCH && RobotMap.CAMERAS_SWITCHED)) {
-
-				// 		double shift = 0;
-
-				// 		Imgproc.line(matBack, new Point(x1 + shift, 0), new Point(x1 + shift, 120), new Scalar(255, 0, 0), 1);
-				// 		Imgproc.line(matBack, new Point(x2 + shift, 0), new Point(x2 + shift, 120), new Scalar(255, 0, 0), 1);
-				// 		Imgproc.line(matBack, new Point(x3 + shift, 0), new Point(x3 + shift, 120), new Scalar(255, 0, 0), 1);
-				// 		Imgproc.line(matBack, new Point(alignX + shift, 0), new Point(alignX + shift, 120), alignColor, 1);
-				// 	}
-
-				// 	// Give the output stream a new image to display
-				// 	outputStreamBack.putFrame(matBack);
-					
-				// }
-					
+				}	
 				
 			}
 		});
 		m_visionThread.setDaemon(true);
 		m_visionThread.start();
-
 		
-
-		// serialPort = new SerialPort(9600, SerialPort.Port.kOnboard);
 	}
 
-	/**
-	 * Runs once each time the robot is set to disabled
-	 */
 	@Override
 	public void disabledInit() {
 		teleopDrive.cancel();
 
 		driveSubsystem.drive(0, 0);
-		System.out.println("AFTER DISABLED: " + Devices.getInstance().getNavXGyro().getAngle());
 		Scheduler.getInstance().removeAll();
 
 	}
 
-	/**
-	 * Runs continuously while the robot is in the disabled state
-	 */
 	@Override
 	public void disabledPeriodic() {
         updateShuffleboardVisualizations();
@@ -260,9 +167,6 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * Runs once before the autonomous state
-	 */
 	@Override
 	public void autonomousInit() {
 		cvLight.set(Value.kForward);
@@ -272,9 +176,6 @@ public class Robot extends TimedRobot {
         teleopDrive.start();
 	}
 
-	/**
-	 * Runs continuously during the autonomous state
-	 */
 	@Override
 	public void autonomousPeriodic() {
         updateShuffleboardVisualizations();
@@ -286,32 +187,26 @@ public class Robot extends TimedRobot {
             double angle = jetsonPort.getVisionAngle1();
             double distance = jetsonPort.getVisionDistance1();
             double x1 = 29.75;
-            // double h = distance * Math.sin(Math.toRadians(angle));
-            // double x2 = distance * Math.cos(Math.toRadians(angle)) - x1;
+
             double x2 = distance - x1;
             double h = distance * Math.tan(Math.toRadians(angle));
 
             angle = (int) Math.toDegrees(Math.atan(h/x2));
-            // System.out.printf("Angle: %8.4f     New Ang: %8.4f     Distance: %8.4f\n", (float) jetsonPort.getVisionAngle1(), angle, (float) jetsonPort.getVisionDistance1());
         }
 
 		Scheduler.getInstance().run();
 	}
 
-	/**
-	 * Runs once before the teleop state
-	 */
 	@Override
 	public void teleopInit() {
-        autonomousInit();
+        cvLight.set(Value.kForward);
+		teleopDrive = new TeleopDrive();
+        teleopDrive.start();
         // AutonomousTester t = new AutonomousTester();
         // t.addDiagnosticTests();
         // t.start();
 	}
 
-	/**
-	 * Runs continuously during the teleop state
-	 */
 	@Override
 	public void teleopPeriodic() {
         autonomousPeriodic();
@@ -355,12 +250,6 @@ public class Robot extends TimedRobot {
         // distance3.setDouble(jetsonPort.getVisionDistance3());
 
         currentPositionEntry.setString(getCurrentPositionString());
-        
-        // if (Robot.cargo.getState() == null) {
-        //     cargoState.setString("Rearming");
-        // } else {
-        //     cargoState.setString(Robot.cargo.getState().toString());
-        // }
 
         cargoSecuredEntry.setBoolean(Robot.cargo.getState() == Robot.cargo.CAPTURING);
 		
@@ -371,7 +260,6 @@ public class Robot extends TimedRobot {
         elevatorOutputCurrentEntry.setDouble(elevator.spark.getSparkMaxObject().getOutputCurrent());
 
         manualControlEntry.setBoolean(RobotMap.MANUAL_CONTROL);
-        // elevatorMoving.setBoolean(elevator.isMoving());
         SmartDashboard.updateValues();
     }
 

@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -12,18 +5,15 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 
 import java.util.Stack;
 
-import org.usfirst.frc.team2473.framework.JetsonPort;
 import org.usfirst.frc.team2473.framework.State;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.robot.subsystems.Cargo;
-import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 import org.usfirst.frc.team2473.robot.subsystems.Arm.ArmPosition;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 /**
- * A class that sets the talons to specific powers upon current joystick
- * positions
+ * A class enables TeleOp driving for competiton
  */
 public class TeleopDrive extends Command {
 

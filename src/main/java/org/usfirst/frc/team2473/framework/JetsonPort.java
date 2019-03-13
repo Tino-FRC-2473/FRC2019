@@ -1,7 +1,5 @@
 package org.usfirst.frc.team2473.framework;
 
-import java.awt.Robot;
-
 import org.usfirst.frc.team2473.robot.RobotMap;
 
 import edu.wpi.first.wpilibj.SerialPort;

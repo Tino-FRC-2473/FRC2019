@@ -4,8 +4,6 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.usfirst.frc.team2473.robot.RobotMap;
-
 public class CHS_SparkMax {
 	private CANSparkMax spark;
 	private CANEncoder encoder;

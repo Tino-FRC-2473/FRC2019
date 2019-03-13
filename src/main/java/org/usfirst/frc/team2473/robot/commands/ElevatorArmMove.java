@@ -4,10 +4,9 @@ import org.usfirst.frc.team2473.robot.subsystems.Arm.ArmPosition;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
 
 /**
- * A class for testing a sequence of autonomous commands.
+ * A class for moving the elevator and the arm both at once
  */
 public class ElevatorArmMove extends CommandGroup {
 

@@ -1,46 +1,37 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package org.usfirst.frc.team2473.robot.commands;
 
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.robot.subsystems.Arm.ArmPosition;
-import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
- * A class that enables accurate elevator movement to a given distance
+ * A class that enables accurate arm movement to a given distance
  * at a given power.
  */
 public class ArmMove extends Command {
 	
 	/**
-	 * Lowest power elevator will run at towards the end of
+	 * Lowest power arm will run at towards the end of
 	 * the move.
 	 */
 	public static final double SLOW_POWER = 0.1;
 	
 	/**
-	 * The number of ticks that the elevator should
+	 * The number of ticks that the arm should
 	 * be at if it has reached its goal.
 	 */
 	private double absoluteTickGoal;
 	
 	/**
-	 * The absolute number of ticks that the elevator
+	 * The absolute number of ticks that the arm
 	 * was at after the last call of execute.
 	 */
 	private double prevTicks;
 	
 	/**
-	 * Initial power to move the elevator at.
+	 * Initial power to move the arm at.
 	 */
     private double power;
 	private double initialPower; //TODO may be useless
@@ -51,8 +42,8 @@ public class ArmMove extends Command {
 	private ArmPosition targetPos;
 	
 	/**
-	 * Create a ElevatorMove object with given inch goal and power.
-	 * @param pos ElevatorPosition to move to
+	 * Create an ArmMove object with given inch goal and power.
+	 * @param pos ArmPosition to move to
 	 * @param power initial power to move at
 	 */
     public ArmMove(ArmPosition pos, double power) {
@@ -74,7 +65,7 @@ public class ArmMove extends Command {
     }
 	
 	/**
-	 * Set the power to move the robot at.
+	 * Set the power to move the arm at.
 	 * @param power power
 	 */
 	public void setPower(double power) {
@@ -138,12 +129,6 @@ public class ArmMove extends Command {
 		Robot.arm.set(tempPower);
 				
 		prevTicks = currTicks;
-		//Checks if while executing, elevator move is moving by a minimum number of ticks per cycle.
-		// if(delta < RobotMap.ELEVATOR_MIN_TICKS){
-		// 	SmartDashboard.putBoolean("Elevator Status", false);
-		// } else if (!SmartDashboard.getBoolean("Elevator Status", true) && delta > RobotMap.ELEVATOR_MIN_TICKS){
-		// 	SmartDashboard.putBoolean("Elevator Status", true);
-		// }
 		
 	}
 

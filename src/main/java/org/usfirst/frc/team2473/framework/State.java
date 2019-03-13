@@ -1,7 +1,5 @@
 package org.usfirst.frc.team2473.framework;
 
-import org.usfirst.frc.team2473.robot.subsystems.Cargo;
-
 public abstract class State {
 	private String name;
 

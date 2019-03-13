@@ -1,23 +1,12 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package org.usfirst.frc.team2473.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
-import org.usfirst.frc.team2473.robot.subsystems.Arm.ArmPosition;
-import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-
-import org.usfirst.frc.team2473.framework.JetsonPort;
 
 /**
  * A class that aligns the robot to the hatch based on the angle provided by CV
@@ -31,12 +20,7 @@ public class AlignToHatch extends Command {
     public int distance = 0;
     public static int x = 0;
 
-    // private boolean hasMovedUp;
-    // private boolean hasMovedBase;
-
-    // private ElevatorMove move = null;
     private boolean canSwitchTargets = true;
-    private boolean hasBeenInThresholdDistance = false;
 
     public static boolean isRunning = false;
 
@@ -53,7 +37,6 @@ public class AlignToHatch extends Command {
         angle = -99;
         distance = -99;
         isRunning = false;
-        hasBeenInThresholdDistance = false;
     }
 
     public void calculateTarget() {
@@ -63,15 +46,12 @@ public class AlignToHatch extends Command {
 
         CVData[] targets = new CVData[]{target1, target2, target3};
 
-        //System.out.println(Arrays.toString(targets));
-
         if (Math.abs(Robot.oi.getWheel().getX()) < 0.2) {
             canSwitchTargets = true;
         }
 
         if (angle == -99 && distance == -99) {
             Arrays.sort(targets);
-            //System.out.println("TARGET: " + targets[0]);
             int i = 0;
             while (i < 3 && targets[i].angle == -99 && targets[i].distance == -99) i++;
             
@@ -149,7 +129,6 @@ public class AlignToHatch extends Command {
             if (delta3 != null) deltas.add(delta3);
 
             Collections.sort(deltas);
-            //System.out.println("Deltas: " + deltas);
 
             CVData closestTarget = null;
 
@@ -168,7 +147,6 @@ public class AlignToHatch extends Command {
                         break;
                 }
     
-                //System.out.println("TARGET: " + closestTarget);
                 angle = closestTarget.angle;
                 distance = closestTarget.distance;
                 x = closestTarget.x;
@@ -188,31 +166,20 @@ public class AlignToHatch extends Command {
         // Modify angle if we are scoring a hatch
         if (RobotMap.SCORING_HATCH && distance > 35) {
             double x1 = 29.75;
-            // double h = distance * Math.sin(Math.toRadians(angle));
-            // double x2 = distance * Math.cos(Math.toRadians(angle)) - x1;
             double x2 = distance - x1;
             double h = distance * Math.tan(Math.toRadians(angle));
 
             angle = (int) Math.toDegrees(Math.atan(h/x2));
-            // System.out.println("Mod Angle: "+angle);
         }
 
-        //System.out.println(distance);
 
         double thresholdAngle = 2;
         double thresholdDistance = 50;
-        
-        // angle = Robot.jetsonPort.getVisionAngle();
-        // distance = Robot.jetsonPort.getVisionDistance();
-
-        // temporarily negate angle for moving to targets
-        // if (!RobotMap.SCORING_HATCH) angle = -angle;`
 
         System.out.println(distance);
         if (Robot.elevator.isMoving() || Robot.arm.isMoving()) {
             Robot.driveSubsystem.stopMotors();
         } else if ((TeleopDrive.hasRaised) || distance < thresholdDistance || angle == -99) { // keep going in this direction
-            hasBeenInThresholdDistance = true;
             Robot.driveSubsystem.drive(0.1, 0.1);
         } else if (Math.abs(angle) < thresholdAngle) {
             Robot.driveSubsystem.drive(normalPower, normalPower);
@@ -224,8 +191,6 @@ public class AlignToHatch extends Command {
             }
         }
 
-        // re-negate angle
-        // if (!RobotMap.SCORING_HATCH) angle = -angle;
         angle -=3;
         
     }

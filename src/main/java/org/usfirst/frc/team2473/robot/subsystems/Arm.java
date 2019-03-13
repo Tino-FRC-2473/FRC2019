@@ -1,27 +1,16 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2017-2018 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package org.usfirst.frc.team2473.robot.subsystems;
 
 import org.usfirst.frc.team2473.framework.CHS_SparkMax;
-import org.usfirst.frc.team2473.framework.Devices;
 import org.usfirst.frc.team2473.robot.RobotMap;
-import org.usfirst.frc.team2473.robot.commands.ElevatorMove;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANDigitalInput.LimitSwitchPolarity;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * This class contains all components of the robot necessary for driving.
+ * This class can control the arm
  */
 public class Arm extends Subsystem {
     
@@ -31,7 +20,6 @@ public class Arm extends Subsystem {
     public double lastNonZeroPower = 0;
 
     public enum ArmPosition {
-        //Units are encoder ticks. ground: -48.8
         ZERO(0), STOW(-10), START_CV(-40), CARGO_LOW(-19.6904), CARGO_MID(-19.6904), CARGO_HIGH(-19.6904), CARGO_PICKUP(-39), CARGO_GROUND(-48), HATCH_LOW(-44.69), HATCH_MID(-44.69), HATCH_HIGH(-39.4), HATCH_PICKUP(-43.3);
 
         private final double value;
@@ -63,7 +51,7 @@ public class Arm extends Subsystem {
 
 	/**
 	 * Gets the current instance.
-	 * @return current instance of Elevator
+	 * @return current instance of Arm
 	 */
 	public static Arm getInstance() {
 		return instance;
@@ -99,7 +87,6 @@ public class Arm extends Subsystem {
     }
     
     public void set(double speed) {
-        //System.out.println("Setting " + speed);
         if (!allowZero && speed > 0 && getEncoderTicks() > -5) {
             stop();
         } else if (!allowZero && speed < 0 && getEncoderTicks() < -49) {
@@ -107,7 +94,6 @@ public class Arm extends Subsystem {
         } else {
             if (speed != 0) {
                 lastNonZeroPower = speed;
-                // System.out.println("NON_ZERO: " + lastNonZeroPower);
             }
             spark.set(speed);
         }
@@ -135,13 +121,9 @@ public class Arm extends Subsystem {
     }
 
     public boolean isMoving() {
-        // System.out.println(spark.getSparkMaxObject().get());
         return Math.abs(spark.getSparkMaxObject().get()) != 0;
     }
     
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void initDefaultCommand() {}
 	
