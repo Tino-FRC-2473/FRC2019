@@ -10,6 +10,7 @@ package org.usfirst.frc.team2473.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import org.usfirst.frc.team2473.robot.Robot;
 import org.usfirst.frc.team2473.robot.RobotMap;
+import org.usfirst.frc.team2473.robot.subsystems.Arm.ArmPosition;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
 import java.util.ArrayList;
@@ -181,23 +182,36 @@ public class AlignToHatch extends Command {
         isRunning = true;
 
         calculateTarget();
-
+        angle += 3;
         if (distance == 99) return;
+
+        // Modify angle if we are scoring a hatch
+        if (RobotMap.SCORING_HATCH && distance > 35) {
+            double x1 = 29.75;
+            // double h = distance * Math.sin(Math.toRadians(angle));
+            // double x2 = distance * Math.cos(Math.toRadians(angle)) - x1;
+            double x2 = distance - x1;
+            double h = distance * Math.tan(Math.toRadians(angle));
+
+            angle = (int) Math.toDegrees(Math.atan(h/x2));
+            // System.out.println("Mod Angle: "+angle);
+        }
 
         //System.out.println(distance);
 
         double thresholdAngle = 2;
         double thresholdDistance = 50;
+        
         // angle = Robot.jetsonPort.getVisionAngle();
         // distance = Robot.jetsonPort.getVisionDistance();
 
         // temporarily negate angle for moving to targets
-        if (!RobotMap.SCORING_HATCH) angle = -angle;
+        // if (!RobotMap.SCORING_HATCH) angle = -angle;`
 
         System.out.println(distance);
         if (Robot.elevator.isMoving() || Robot.arm.isMoving()) {
             Robot.driveSubsystem.stopMotors();
-        } else if (hasBeenInThresholdDistance || distance < thresholdDistance || angle == -99) { // keep going in this direction
+        } else if ((TeleopDrive.hasRaised) || distance < thresholdDistance || angle == -99) { // keep going in this direction
             hasBeenInThresholdDistance = true;
             Robot.driveSubsystem.drive(0.1, 0.1);
         } else if (Math.abs(angle) < thresholdAngle) {
@@ -211,7 +225,8 @@ public class AlignToHatch extends Command {
         }
 
         // re-negate angle
-        if (!RobotMap.SCORING_HATCH) angle = -angle;
+        // if (!RobotMap.SCORING_HATCH) angle = -angle;
+        angle -=3;
         
     }
 
