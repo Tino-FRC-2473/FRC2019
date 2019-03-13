@@ -24,8 +24,8 @@ public class OI {
 	private JoystickButton elevatorHighButton;
 	
 	private JoystickButton groundIntakeButton;
-	private JoystickButton stowArmButton;
     private JoystickButton releaseCargoButton;
+	private JoystickButton manualOverrideButton;
     private JoystickButton cargoHatchToggleButton;
 
 	public OI() {
@@ -51,8 +51,8 @@ public class OI {
 		elevatorHighButton = new JoystickButton(buttonPanel, 7);
 
 		groundIntakeButton = new JoystickButton(buttonPanel, 2);
-		stowArmButton = new JoystickButton(buttonPanel, 4);
-		releaseCargoButton = new JoystickButton(buttonPanel, 6);
+		releaseCargoButton = new JoystickButton(buttonPanel, 4);
+		manualOverrideButton = new JoystickButton(buttonPanel, 6);
 		cargoHatchToggleButton = new JoystickButton(buttonPanel, 8);
 		
 		cargoHatchToggleButton.whenPressed(new InstantCommand() {
@@ -118,8 +118,8 @@ public class OI {
 		return groundIntakeButton;
 	}
 
-	public JoystickButton getStowArmButton() {
-		return stowArmButton;
+	public JoystickButton getManualOverrideButton() {
+		return manualOverrideButton;
 	}
 
 	public JoystickButton getReleaseCargoButton() {
