@@ -26,7 +26,7 @@ public class Elevator extends Subsystem {
     
     public enum ElevatorPosition {
         //Units are encoder ticks. 
-        ZERO(0), CARGO_LOW(0), CARGO_MID(94), CARGO_HIGH(191), CARGO_PICKUP(0), CARGO_GROUND(0), HATCH_LOW(17.8), HATCH_MID(117.5), HATCH_HIGH(197), HATCH_PICKUP(0);
+        ZERO(0), CARGO_LOW(0), CARGO_MID(99), CARGO_HIGH(191), CARGO_PICKUP(0), CARGO_GROUND(0), HATCH_LOW(17.8), HATCH_MID(117.5), HATCH_HIGH(197), HATCH_PICKUP(0);
         // ZERO(0), HATCH_PICKUP(3.9), HATCH_LOW(11), HATCH_MID(111.334), HATCH_HIGH(193.87), CARGO_PICKUP(48.07), CARGO_LOW(4.071), CARGO_MID(105.550), CARGO_HIGH(199.537);
         //ZERO(0), HATCH_PICKUP(3.9), HATCH_LOW(11), HATCH_MID(111.334), HATCH_HIGH(203.87), CARGO_PICKUP(48.07), CARGO_LOW(4.071), CARGO_MID(105.550), CARGO_HIGH(199.537);
 
@@ -53,7 +53,7 @@ public class Elevator extends Subsystem {
 		instance = new Elevator();
 	}
     
-    private CHS_SparkMax spark; 
+    public CHS_SparkMax spark; 
 
     private boolean encoderResetComplete;
 
@@ -66,7 +66,7 @@ public class Elevator extends Subsystem {
 	}
 	
 	private Elevator() {
-		spark = new CHS_SparkMax(RobotMap.TALON_ELEVATOR, MotorType.kBrushless);
+        spark = new CHS_SparkMax(RobotMap.TALON_ELEVATOR, MotorType.kBrushless);
         setExecutingGoalPosition(ElevatorPosition.ZERO);
     }
 
@@ -99,7 +99,7 @@ public class Elevator extends Subsystem {
     }
 
     public void stop() {
-        spark.set(0);
+        spark.set(0.01);
     }
 
     public double getEncoderTicks() {
@@ -121,7 +121,7 @@ public class Elevator extends Subsystem {
 
     public boolean isMoving() {
         // System.out.println(spark.getSparkMaxObject().get());
-        return Math.abs(spark.getSparkMaxObject().get()) != 0;
+        return Math.abs(spark.getSparkMaxObject().get()) > 0.01;
     }
     
 	/**
