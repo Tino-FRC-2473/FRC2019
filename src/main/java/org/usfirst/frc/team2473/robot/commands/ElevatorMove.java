@@ -45,7 +45,8 @@ public class ElevatorMove extends Command {
     private boolean releaseElement;
 	private double initialPower; //TODO may be useless
 
-	private double initialTickDelta;
+    private double initialTickDelta;
+    private double initialTicks;
 
 	private ElevatorPosition targetPos;
 	
@@ -73,13 +74,16 @@ public class ElevatorMove extends Command {
 
 	@Override
 	protected void initialize() {
+
+        this.initialTicks = Robot.arm.getEncoderTicks();
+
         Robot.elevator.setExecutingGoalPosition(targetPos);
 
 		if (releaseElement) {
             targetPos = Robot.elevator.getExecutingGoalPosition();
 
             if (Robot.elevator.getExecutingGoalPosition() == ElevatorPosition.HATCH_PICKUP) {
-                this.initialTickDelta = (this.targetPos.getValue() + 10) - Robot.elevator.getEncoderTicks();
+                this.initialTickDelta = (this.targetPos.getValue() + 19) - Robot.elevator.getEncoderTicks();
             } else if (Robot.elevator.getExecutingGoalPosition() != ElevatorPosition.ZERO) {
                 this.initialTickDelta = (this.targetPos.getValue() - 10) - Robot.elevator.getEncoderTicks();
             }
@@ -112,7 +116,26 @@ public class ElevatorMove extends Command {
 		double currTicks = Robot.elevator.getEncoderTicks();
 		
 		double delta = currTicks - prevTicks;
-		
+        
+        if (currTicks > ElevatorPosition.HATCH_MID.getValue()) {
+            if (initialTickDelta > 0) {
+                tempPower = 0.4;
+            } else {
+                tempPower = -0.4;
+            }
+            
+        }
+        double P = Math.abs(initialTicks - currTicks)/RobotMap.K_ELEVATOR_RAMP_UP;
+        double dampenPower = SLOW_POWER + (P *(Math.abs(tempPower) - SLOW_POWER));
+
+		if (Math.abs(currTicks - initialTicks) < RobotMap.K_ELEVATOR_RAMP_UP) {
+            if (initialTickDelta > 0) {
+				tempPower = dampenPower;
+			} else {
+				tempPower = -dampenPower;
+			}
+        }
+
 		/* If the elevator has exceeded the threshold below, it will move at a slower power */
 		if (Math.abs(absoluteTickGoal - (currTicks + delta)) < RobotMap.K_ENCODER_ELEVATOR_THRESHOLD) { // Math.abs() allows this to work regardless of moving direction (forwards or backwards)
 			if (initialTickDelta > 0) {
@@ -122,24 +145,13 @@ public class ElevatorMove extends Command {
 			}
         }
         
-        if (currTicks > ElevatorPosition.HATCH_MID.getValue()) {
-            if (initialTickDelta > 0) {
-                tempPower = 0.3;
-            } else {
-                tempPower = -0.3;
-            }
-            
-        }
-		Robot.elevator.set(tempPower);
+        
+
+
+        Robot.elevator.set(tempPower);
+        System.out.println("Ele power: " + tempPower);
 				
 		prevTicks = currTicks;
-		//Checks if while executing, elevator move is moving by a minimum number of ticks per cycle.
-		// if(delta < RobotMap.ELEVATOR_MIN_TICKS){
-		// 	SmartDashboard.putBoolean("Elevator Status", false);
-		// } else if (!SmartDashboard.getBoolean("Elevator Status", true) && delta > RobotMap.ELEVATOR_MIN_TICKS){
-		// 	SmartDashboard.putBoolean("Elevator Status", true);
-		// }
-		
 	}
 
 	@Override
