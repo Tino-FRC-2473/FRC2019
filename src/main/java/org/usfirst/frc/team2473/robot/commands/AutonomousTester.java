@@ -1,9 +1,13 @@
 package org.usfirst.frc.team2473.robot.commands;
 
 import org.usfirst.frc.team2473.robot.Robot;
+import org.usfirst.frc.team2473.robot.RobotMap;
 import org.usfirst.frc.team2473.robot.subsystems.Arm.ArmPosition;
+import org.usfirst.frc.team2473.robot.subsystems.Elevator.ElevatorPosition;
 
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.WaitCommand;
 
 /**
@@ -20,6 +24,69 @@ public class AutonomousTester extends CommandGroup {
 	 * Constructs an empty tester.
 	 */
 	public AutonomousTester() {
+    }
+
+    public void addDiagnosticTests() {
+        addSequential(new CVLightOn());
+        addSequential(new RunSparkRaw(0.5, 1));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new RunSparkRaw(-0.5, 1));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ElevatorZero());
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ArmZero());
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(3));
+        addSequential(new CVLightOn());
+        addSequential(new ArmMove(ArmPosition.CARGO_PICKUP, 0.5));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ArmMove(ArmPosition.STOW, 0.5));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ElevatorMove(ElevatorPosition.HATCH_LOW, false, 0.5));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ElevatorMove(ElevatorPosition.HATCH_MID, false, 0.5));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ArmMove(ArmPosition.HATCH_MID, 0.5));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ElevatorMove(ElevatorPosition.HATCH_LOW, false, 0.5));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ArmMove(ArmPosition.STOW, 0.5));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new RunRoller(1, 1));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new RunRoller(-1, 1));
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ElevatorZero());
+        addSequential(new CVLightOff());
+        addSequential(new WaitCommand(1));
+        addSequential(new CVLightOn());
+        addSequential(new ArmZero());
+        addSequential(new CVLightOff());
+        
     }
 
     public void addArmRampTests(double power) {
@@ -105,4 +172,18 @@ public class AutonomousTester extends CommandGroup {
     		addSequential(new WaitCommand(WAIT));
     	}
 	}
+}
+
+class CVLightOn extends InstantCommand {
+    @Override
+    protected void execute() {
+        Robot.cvLight.set(Value.kForward);
+    }
+}
+
+class CVLightOff extends InstantCommand {
+    @Override
+    protected void execute() {
+        Robot.cvLight.set(Value.kOff);
+    }
 }

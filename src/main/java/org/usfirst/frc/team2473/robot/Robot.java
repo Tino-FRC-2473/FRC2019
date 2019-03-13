@@ -67,8 +67,6 @@ public class Robot extends TimedRobot {
 	Preferences prefs;
     Thread m_visionThread;
     
-    // NetworkTableEntry switchedCameras = Shuffleboard.getTab("Drive").add("Cameras Switched", false).withWidget(BuiltInWidgets.kToggleSwitch).getEntry();
-
     // NetworkTableEntry angle1 = Shuffleboard.getTab("Drive").add("Angle 1", 0).getEntry();
     // NetworkTableEntry angle2 = Shuffleboard.getTab("Drive").add("Angle 2", 0).getEntry();
     // NetworkTableEntry angle3 = Shuffleboard.getTab("Drive").add("Angle 3", 0).getEntry();
@@ -76,6 +74,7 @@ public class Robot extends TimedRobot {
     // NetworkTableEntry distance2 = Shuffleboard.getTab("Drive").add("Distance 2", 0).getEntry();
     // NetworkTableEntry distance3 = Shuffleboard.getTab("Drive").add("Distance 3", 0).getEntry();
     
+    NetworkTableEntry manualControlEntry = Shuffleboard.getTab("Drive").add("Manual Control", RobotMap.MANUAL_CONTROL).getEntry();
     NetworkTableEntry currentPositionEntry = Shuffleboard.getTab("Drive").add("Current Position", ElevatorPosition.ZERO.toString()).getEntry();
     NetworkTableEntry lastPressedEntry = Shuffleboard.getTab("Drive").add("Last Pressed Position", getLastPressedPositionString()).getEntry();
     // NetworkTableEntry cargoState = Shuffleboard.getTab("Drive").add("Cargo State", "Rearming").getEntry();
@@ -84,6 +83,8 @@ public class Robot extends TimedRobot {
     NetworkTableEntry cvRunningEntry = Shuffleboard.getTab("Drive").add("CV Running", RobotMap.CV_RUNNING).getEntry();
     NetworkTableEntry scoringHatchEntry = Shuffleboard.getTab("Drive").add("Scoring Hatch", RobotMap.SCORING_HATCH).getEntry();
     // NetworkTableEntry elevatorMoving = Shuffleboard.getTab("Drive").add("Elevator Moving", Robot.elevator.isMoving()).getEntry();
+
+    NetworkTableEntry elevatorOutputCurrentEntry = Shuffleboard.getTab("Drive").add("Elevator Output Current", elevator.spark.getSparkMaxObject().getOutputCurrent()).withWidget(BuiltInWidgets.kGraph).getEntry();
 
     /**
 	 * Runs once when the robot turns on
@@ -187,15 +188,12 @@ public class Robot extends TimedRobot {
 				} else {
 					
 					// Put a rectangle on the image
-					if ((RobotMap.SCORING_HATCH && !RobotMap.CAMERAS_SWITCHED) || (!RobotMap.SCORING_HATCH && RobotMap.CAMERAS_SWITCHED)) {
+					double shift = 3;
 
-						double shift = 3;
-
-						Imgproc.line(matFront, new Point(x1 + shift, 0), new Point(x1 + shift, 120), new Scalar(255, 0, 0), 1);
-						Imgproc.line(matFront, new Point(x2 + shift, 0), new Point(x2 + shift, 120), new Scalar(255, 0, 0), 1);
-						Imgproc.line(matFront, new Point(x3 + shift, 0), new Point(x3 + shift, 120), new Scalar(255, 0, 0), 1);
-						Imgproc.line(matFront, new Point(alignX + shift, 0), new Point(alignX + shift, 120), alignColor, 1);
-					}
+					Imgproc.line(matFront, new Point(x1 + shift, 0), new Point(x1 + shift, 120), new Scalar(255, 0, 0), 1);
+					Imgproc.line(matFront, new Point(x2 + shift, 0), new Point(x2 + shift, 120), new Scalar(255, 0, 0), 1);
+					Imgproc.line(matFront, new Point(x3 + shift, 0), new Point(x3 + shift, 120), new Scalar(255, 0, 0), 1);
+					Imgproc.line(matFront, new Point(alignX + shift, 0), new Point(alignX + shift, 120), alignColor, 1);
 					// Give the output stream a new image to display
 					
 					outputStreamFront.putFrame(matFront);
@@ -269,15 +267,9 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		cvLight.set(Value.kForward);
         new ElevatorZero().start();
-        // new ArmRampDown(0.5).start();
         new ArmZero().start();
 		teleopDrive = new TeleopDrive();
         teleopDrive.start();
-        // new ArmMove(ArmPosition.CARGO_PICKUP, 0.1).start();
-        // AutonomousTester tester = new AutonomousTester();
-        // tester.addArmRampTests(0.4);
-        // tester.start();
-		// new StraightDrive(10, 0.2).start();
 	}
 
 	/**
@@ -286,27 +278,23 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
         updateShuffleboardVisualizations();
-        // System.out.println("POW: " + Robot.arm.lastNonZeroPower);
-		//System.out.println(jetsonPort.getVisionX1() + " " + jetsonPort.getVisionX2() + " " + jetsonPort.getVisionX3());
-		// serialPort.writeString("Hello World!");
 
-		// double voltageMotorSide = Robot.cargo.getSharpVoltageMotorSide();
-		// double voltageLimitSide = Robot.cargo.getSharpVoltageLimitSide();
-		// System.out.println(voltageMotorSide - voltageLimitSide);
-
-        // System.out.println("Encoder Ticks: " + Robot.elevator.getEncoderTicks());
         jetsonPort.updateVisionValues();
 
-		if (++i % 4 == 0) {
-            // jetsonPort.printVisionAngles();
-            arm.printEncoders();
+		if (RobotMap.CV_RUNNING) {
+                
+            double angle = jetsonPort.getVisionAngle1();
+            double distance = jetsonPort.getVisionDistance1();
+            double x1 = 29.75;
+            // double h = distance * Math.sin(Math.toRadians(angle));
+            // double x2 = distance * Math.cos(Math.toRadians(angle)) - x1;
+            double x2 = distance - x1;
+            double h = distance * Math.tan(Math.toRadians(angle));
+
+            angle = (int) Math.toDegrees(Math.atan(h/x2));
+            // System.out.printf("Angle: %8.4f     New Ang: %8.4f     Distance: %8.4f\n", (float) jetsonPort.getVisionAngle1(), angle, (float) jetsonPort.getVisionDistance1());
         }
 
-		//System.out.println(jetsonPort.getVisionDistance1());
-
-		// driveSubsystem.printEncoders();
-
-		// System.out.println("Hello World!");
 		Scheduler.getInstance().run();
 	}
 
@@ -315,11 +303,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopInit() {
-		cvLight.set(Value.kForward);
-		jetsonPort.updateVisionValues();
-		jetsonPort.printVisionAngles();
-		teleopDrive = new TeleopDrive();
-		teleopDrive.start();
+        autonomousInit();
+        // AutonomousTester t = new AutonomousTester();
+        // t.addDiagnosticTests();
+        // t.start();
 	}
 
 	/**
@@ -327,42 +314,38 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-        updateShuffleboardVisualizations();
-
-		jetsonPort.updateVisionValues();
-
-		//System.out.println(elevator.getEncoderTicks());
-
-
-		if (++i % 4 == 0) {
-			if (RobotMap.CV_RUNNING) {
-				//jetsonPort.printVisionAngles();
-			}
-			//System.out.println("Robot is currently running " + (RobotMap.RUNNING_FORWARD ? "forward." : "backward."));
-		}
-
-		Scheduler.getInstance().run();
+        autonomousPeriodic();
+        // Scheduler.getInstance().run();
 	}
+
+    @Override
+    public void testInit() {
+        AutonomousTester t = new AutonomousTester();
+        t.addDiagnosticTests();
+        t.start();
+    }
 
 	@Override
 	public void testPeriodic() {
+        Scheduler.getInstance().run();
     }
 
     private String getLastPressedPositionString() {
+        if (TeleopDrive.lastPressedPosition == null) return "STOW";
         return "Elevator: " + TeleopDrive.lastPressedPosition.toString() + "\n"
                 + "Arm: " + TeleopDrive.getArmPositionFromElevator();
     }
 
     private String getCurrentPositionString() {
+        if (TeleopDrive.lastPressedPosition == null) return "STOW";
         return "Elevator: " + elevator.getExecutingGoalPosition().toString() + "\n"
                 + "Arm: " + arm.getExecutingGoalPosition().toString();
     }
     
     public void updateShuffleboardVisualizations() {
 
-        // RobotMap.CAMERAS_SWITCHED = switchedCameras.getBoolean(false);
-        // RobotMap.CAMERAS_SWITCHED = SmartDashboard.getBoolean("Cameras Switched", false);
-        // System.out.println(RobotMap.CAMERAS_SWITCHED);
+        // RobotMap.CAMERAS_SWITCHED = switchedCameras.getBoolean(false);        
+        // System.out.println(RobotMap.MANUAL_CONTROL);
 
         // angle1.setDouble(jetsonPort.getVisionAngle1());
         // angle2.setDouble(jetsonPort.getVisionAngle2());
@@ -385,6 +368,9 @@ public class Robot extends TimedRobot {
         
         scoringHatchEntry.setBoolean(RobotMap.SCORING_HATCH);
         cvRunningEntry.setBoolean(RobotMap.CV_RUNNING);
+        elevatorOutputCurrentEntry.setDouble(elevator.spark.getSparkMaxObject().getOutputCurrent());
+
+        manualControlEntry.setBoolean(RobotMap.MANUAL_CONTROL);
         // elevatorMoving.setBoolean(elevator.isMoving());
         SmartDashboard.updateValues();
     }
