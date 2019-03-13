@@ -32,14 +32,13 @@ public class TeleopDrive extends Command {
 	private final double M = (1 - RobotMap.K_START_STALL_POWER) / (1 - RobotMap.DEADBAND_MINIMUM_POWER);
 
 	double prevAngle;
-	double elevatorPower = 0.6;
+	double elevatorPower = 0.8;
 	double armPower = 0.5;
 	
 	private Enum lastCargoEvent = null;
 	public static ElevatorPosition lastPressedPosition = ElevatorPosition.ZERO;
     
-    private boolean hasMovedArm = false;
-    private boolean hasRaised = false;
+    public static boolean hasRaised = false;
 
 	Stack<Enum> eventStack;
 
@@ -61,20 +60,9 @@ public class TeleopDrive extends Command {
         Robot.oi.getCVButton().whenPressed(new InstantCommand() {
             @Override
             protected void execute() {
-                // if (!isLastPressedCargo() && !(lastPressedPosition == ElevatorPosition.HATCH_HIGH || lastPressedPosition == ElevatorPosition.HATCH_MID)) {
-                //     new ElevatorMove(lastPressedPosition, false, elevatorPower).start();
-                // } else if (isLastPressedCargo()) {
-                //     new ElevatorMove(ElevatorPosition.CARGO_PICKUP, false, elevatorPower).start();
-                // } else {
-                //     if (Robot.elevator.getExecutingGoalPosition() != ElevatorPosition.HATCH_HIGH) {
-                //         new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, elevatorPower).start();
-                //     }
-                //     else {
-                //         new ElevatorMove(ElevatorPosition.HATCH_LOW, false, elevatorPower).start();
-                //     }
-                // }
-                new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.START_CV, elevatorPower, armPower).start();
-                hasMovedArm = false;
+                if (!RobotMap.MANUAL_CONTROL) {
+                    new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.START_CV, elevatorPower, armPower).start();
+                }
                 hasRaised = false;
             }
         });
@@ -88,7 +76,7 @@ public class TeleopDrive extends Command {
         // System.out.printf("Elevator: %8.4f     Arm: %8.4f\n", Robot.elevator.getEncoderTicks(), Robot.arm.getEncoderTicks());
         updateDialPosition();
         driveAndAlign();
-		// updateCargo();
+        // updateCargo();
 
 	}
 
@@ -116,25 +104,16 @@ public class TeleopDrive extends Command {
 			protected void execute() {
 				if (RobotMap.SCORING_HATCH) return;
 
-				if (lastPressedPosition == ElevatorPosition.HATCH_HIGH || lastPressedPosition == ElevatorPosition.CARGO_HIGH) {
-                    ElevatorArmMove e = new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.HATCH_LOW, elevatorPower, armPower);
-                    new ArmRampStow(e).start();
-				} else {
-                    ElevatorArmMove e = new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower);
-                    new ArmRampStow(e).start();
-				}
+				ElevatorArmMove e = new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower);
+                new ArmRampStow(e).start();
 				Robot.roller.set(0);
 			}
 		});
 
-		Robot.oi.getStowArmButton().whenPressed(new InstantCommand() {
+		Robot.oi.getManualOverrideButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (Robot.arm.getExecutingGoalPosition() != ArmPosition.ZERO) {
-					new ArmMove(ArmPosition.STOW, armPower).start();
-				} else {
-					new ArmMove(getArmPositionFromElevator(), armPower).start();
-				}
+				RobotMap.MANUAL_CONTROL = !RobotMap.MANUAL_CONTROL;
 			}
 		});
 
@@ -203,12 +182,11 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
                 updateDialPosition();
-				if (!RobotMap.CV_RUNNING) {
+				if (!RobotMap.CV_RUNNING || RobotMap.MANUAL_CONTROL) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
-                    new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
+                    new ElevatorArmMove(ElevatorPosition.HATCH_PICKUP, ArmPosition.HATCH_PICKUP, elevatorPower, armPower).start();
                 }
-                hasMovedArm = false;
 			}
 		});
 
@@ -216,12 +194,11 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
                 updateDialPosition();
-                if (!RobotMap.CV_RUNNING) {
+                if (!RobotMap.CV_RUNNING || RobotMap.MANUAL_CONTROL) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
                     new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
                 }
-                hasMovedArm = false;
 			}
 		});
 
@@ -229,13 +206,12 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
                 updateDialPosition();
-                if (!RobotMap.CV_RUNNING) {
+                if (!RobotMap.CV_RUNNING || RobotMap.MANUAL_CONTROL) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
                     new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
                 }
                 
-                hasMovedArm = false;
             }
 		});
 
@@ -243,12 +219,11 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
                 updateDialPosition();
-                if (!RobotMap.CV_RUNNING) {
-                    new ElevatorArmMove(lastPressedPosition, ArmPosition.STOW, elevatorPower, armPower).start();
+                if (!RobotMap.CV_RUNNING || RobotMap.MANUAL_CONTROL) {
+                    new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
                     new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
                 }
-                hasMovedArm = false;
 			}
 		});
 
@@ -283,8 +258,15 @@ public class TeleopDrive extends Command {
             lastPressedPosition = (RobotMap.SCORING_HATCH) ? ElevatorPosition.HATCH_LOW : ElevatorPosition.CARGO_LOW;
         } else if (midPosition) {
             lastPressedPosition = (RobotMap.SCORING_HATCH) ? ElevatorPosition.HATCH_MID : ElevatorPosition.CARGO_MID;
-        } else {
+        } else if (highPosition) {
             lastPressedPosition = (RobotMap.SCORING_HATCH) ? ElevatorPosition.HATCH_HIGH : ElevatorPosition.CARGO_HIGH;
+        } else {
+            if (lastPressedPosition != null) {
+                ElevatorArmMove e = new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower);
+                new ArmRampStow(e).start();
+                lastPressedPosition = null;
+            }
+            
         }
     }
 
@@ -320,12 +302,16 @@ public class TeleopDrive extends Command {
             //     new ArmMove(ArmPosition.START_CV, armPower).start();
             //     hasMovedArm = true;
             // }
-            int highRaiseDist = 53;
-			if (AlignToHatch.isRunning && alignToHatch.distance < highRaiseDist && !hasRaised) {
-                System.out.println("HIGH RAISE");
-                new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
-                hasRaised = true;
-			}
+            if (!RobotMap.MANUAL_CONTROL) {
+                int highRaiseDist = 60;
+                if (!RobotMap.SCORING_HATCH) highRaiseDist = 50;
+                if (AlignToHatch.isRunning && alignToHatch.distance < highRaiseDist && !hasRaised) {
+                    System.out.println("HIGH RAISE");
+                    new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
+                    hasRaised = true;
+                }
+            }
+            
 		} else { // Move using controls, not CV
             alignToHatch.reset();
             // if (RobotMap.SCORING_HATCH && AlignToHatch.isRunning != wasRunningCV) {

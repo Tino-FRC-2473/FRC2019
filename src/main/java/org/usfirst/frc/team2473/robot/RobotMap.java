@@ -19,6 +19,9 @@ public class RobotMap {
     public static final int TALON_ELEVATOR = 11;
     public static final int TALON_ARM = 12;
     public static final int TALON_ROLLER = 13;
+
+    public static final int K_ELEVATOR_RAMP_DOWN = 5;
+    public static final int K_ELEVATOR_RAMP_UP = 10;
     
     public static final int K_ARM_RAMP_DOWN = 18;
     public static final int K_ARM_RAMP_UP = 8;
@@ -35,7 +38,7 @@ public class RobotMap {
 	public static double K_TURN = 0.95;
 
     public static boolean SCORING_HATCH = true;
-    public static boolean CAMERAS_SWITCHED = false;
+    public static boolean MANUAL_CONTROL = false;
     public static boolean CV_RUNNING = false;
 	
 	public static double DEADBAND_MINIMUM_POWER = 0.2;
