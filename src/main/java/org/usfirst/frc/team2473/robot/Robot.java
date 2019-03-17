@@ -182,17 +182,17 @@ public class Robot extends TimedRobot {
 
         jetsonPort.updateVisionValues();
 
-		if (RobotMap.CV_RUNNING) {
+		// if (RobotMap.CV_RUNNING) {
                 
-            double angle = jetsonPort.getVisionAngle1();
-            double distance = jetsonPort.getVisionDistance1();
-            double x1 = 29.75;
+        //     double angle = jetsonPort.getVisionAngle1();
+        //     double distance = jetsonPort.getVisionDistance1();
+        //     double x1 = 29.75;
 
-            double x2 = distance - x1;
-            double h = distance * Math.tan(Math.toRadians(angle));
+        //     double x2 = distance - x1;
+        //     double h = distance * Math.tan(Math.toRadians(angle));
 
-            angle = (int) Math.toDegrees(Math.atan(h/x2));
-        }
+        //     angle = (int) Math.toDegrees(Math.atan(h/x2));
+        // }
 
 		Scheduler.getInstance().run();
 	}
