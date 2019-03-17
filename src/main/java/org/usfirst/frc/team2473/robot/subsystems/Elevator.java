@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Elevator extends Subsystem {
     
     public enum ElevatorPosition {
-        ZERO(0), CARGO_LOW(0), CARGO_MID(99), CARGO_HIGH(191), CARGO_PICKUP(0), CARGO_GROUND(0), HATCH_LOW(17.8), HATCH_MID(117.5), HATCH_HIGH(197), HATCH_PICKUP(0);
+        ZERO(0), RELEASE_CARGO_MECH(7), CARGO_LOW(0), CARGO_MID(99), CARGO_HIGH(191), CARGO_PICKUP(0), CARGO_GROUND(0), HATCH_LOW(17.8), HATCH_MID(117.5), HATCH_HIGH(197), HATCH_PICKUP(0);
         
         private final double value;
 

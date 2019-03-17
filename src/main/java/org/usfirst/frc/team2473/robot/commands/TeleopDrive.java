@@ -50,9 +50,9 @@ public class TeleopDrive extends Command {
         Robot.oi.getCVButton().whenPressed(new InstantCommand() {
             @Override
             protected void execute() {
-                if (!RobotMap.MANUAL_CONTROL) {
-                    new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.START_CV, elevatorPower, armPower).start();
-                }
+				if (!RobotMap.CV_RUNNING) return;
+
+				new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.START_CV, elevatorPower, armPower).start();
                 hasRaised = false;
             }
         });
@@ -103,7 +103,16 @@ public class TeleopDrive extends Command {
 		Robot.oi.getManualOverrideButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-				RobotMap.MANUAL_CONTROL = !RobotMap.MANUAL_CONTROL;
+				updateDialPosition();
+				new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
+			}
+		});
+
+		Robot.oi.getManualOverrideButton().whenReleased(new InstantCommand() {
+			@Override
+			protected void execute() {
+				updateDialPosition();
+				new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
 			}
 		});
 
@@ -172,10 +181,10 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
                 updateDialPosition();
-				if (!RobotMap.CV_RUNNING || RobotMap.MANUAL_CONTROL) {
+				if (!RobotMap.CV_RUNNING) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
-                    new ElevatorArmMove(ElevatorPosition.HATCH_PICKUP, ArmPosition.HATCH_PICKUP, elevatorPower, armPower).start();
+                    new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
                 }
 			}
 		});
@@ -184,7 +193,7 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
                 updateDialPosition();
-                if (!RobotMap.CV_RUNNING || RobotMap.MANUAL_CONTROL) {
+                if (!RobotMap.CV_RUNNING) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
                     new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
@@ -196,7 +205,7 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
                 updateDialPosition();
-                if (!RobotMap.CV_RUNNING || RobotMap.MANUAL_CONTROL) {
+                if (!RobotMap.CV_RUNNING) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
                     new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
@@ -209,7 +218,7 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
                 updateDialPosition();
-                if (!RobotMap.CV_RUNNING || RobotMap.MANUAL_CONTROL) {
+                if (!RobotMap.CV_RUNNING) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
                     new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
@@ -220,7 +229,9 @@ public class TeleopDrive extends Command {
 		Robot.oi.getReleaseElementButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
+				if (lastPressedPosition == ElevatorPosition.ZERO) {
+					new ElevatorMove(ElevatorPosition.RELEASE_CARGO_MECH, false, elevatorPower).start();
+				} else if (RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
 					new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, elevatorPower).start();
 				}
 			}
@@ -229,7 +240,7 @@ public class TeleopDrive extends Command {
 		Robot.oi.getReleaseElementButton().whenReleased(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
+				if (lastPressedPosition != ElevatorPosition.ZERO && RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
 					new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, elevatorPower).start();
 				}
 			}
@@ -286,21 +297,22 @@ public class TeleopDrive extends Command {
 
         // Align To Hatch
 
-		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get()) {
+		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get() && lastPressedPosition != null) {
             alignToHatch.move();
             // if (!hasMovedArm) {
             //     new ArmMove(ArmPosition.START_CV, armPower).start();
             //     hasMovedArm = true;
+			// }
+			
+            // if (!RobotMap.MANUAL_CONTROL) {
+            //     int highRaiseDist = 60;
+            //     if (!RobotMap.SCORING_HATCH) highRaiseDist = 50;
+            //     if (AlignToHatch.isRunning && alignToHatch.distance < highRaiseDist && !hasRaised) {
+            //         System.out.println("HIGH RAISE");
+            //         new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
+            //         hasRaised = true;
+            //     }
             // }
-            if (!RobotMap.MANUAL_CONTROL) {
-                int highRaiseDist = 60;
-                if (!RobotMap.SCORING_HATCH) highRaiseDist = 50;
-                if (AlignToHatch.isRunning && alignToHatch.distance < highRaiseDist && !hasRaised) {
-                    System.out.println("HIGH RAISE");
-                    new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
-                    hasRaised = true;
-                }
-            }
             
 		} else { // Move using controls, not CV
             alignToHatch.reset();
