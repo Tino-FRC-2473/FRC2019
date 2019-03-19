@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Elevator extends Subsystem {
     
     public enum ElevatorPosition {
-        ZERO(0), RELEASE_CARGO_MECH(7), CARGO_LOW(0), CARGO_MID(99), CARGO_HIGH(191), CARGO_PICKUP(0), CARGO_GROUND(0), HATCH_LOW(17.8), HATCH_MID(117.5), HATCH_HIGH(197), HATCH_PICKUP(0);
+        ZERO(0), RELEASE_CARGO_MECH(7), CARGO_LOW(2.4), CARGO_MID(98.6), CARGO_HIGH(191), CARGO_PICKUP(0), CARGO_GROUND(0), HATCH_LOW(22.4), HATCH_MID(118.6), HATCH_HIGH(197), HATCH_PICKUP(0);
         
         private final double value;
 
@@ -79,6 +79,11 @@ public class Elevator extends Subsystem {
     public void set(double speed) {
         //System.out.println("Setting " + speed);
         spark.set(speed);
+
+        if ((speed < 0 && getEncoderTicks() < 10) || (speed > 0 && getEncoderTicks() > 190)) {
+            int sign = (speed < 0) ? -1 : 1;
+            spark.set(sign * 0.1);
+        }
 
         if(Math.abs(speed) >= ElevatorMove.SLOW_POWER - 0.01)
             encoderResetComplete = false;

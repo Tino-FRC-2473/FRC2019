@@ -32,7 +32,8 @@ public class ArmZero extends Command {
 	protected void end() {
         System.out.println("limit switch pressed");
 		Robot.arm.stop();
-        Robot.arm.resetEncoders();
+		Robot.arm.resetEncoders();
+		System.out.println("Arm encoders reset");
         Robot.arm.allowZero = false;
 	}
 

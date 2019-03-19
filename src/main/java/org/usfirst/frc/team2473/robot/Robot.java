@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		oi = new OI();
 
-		teleopDrive = new TeleopDrive();
+		teleopDrive = new TeleopDrive(true); // ?
 
 		cvLight = new Relay(0);
 		prefs = Preferences.getInstance();
@@ -153,7 +153,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledInit() {
-		teleopDrive.cancel();
+        teleopDrive.cancel();
 
 		driveSubsystem.drive(0, 0);
 		Scheduler.getInstance().removeAll();
@@ -172,14 +172,14 @@ public class Robot extends TimedRobot {
 		cvLight.set(Value.kForward);
         new ElevatorZero().start();
         new ArmZero().start();
-		teleopDrive = new TeleopDrive();
+        teleopDrive = new TeleopDrive(true);
         teleopDrive.start();
 	}
 
 	@Override
 	public void autonomousPeriodic() {
         updateShuffleboardVisualizations();
-
+        System.out.println(elevator.getEncoderTicks());
         jetsonPort.updateVisionValues();
 
 		// if (RobotMap.CV_RUNNING) {
@@ -200,7 +200,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopInit() {
         cvLight.set(Value.kForward);
-		teleopDrive = new TeleopDrive();
+        teleopDrive = new TeleopDrive(false);
         teleopDrive.start();
         // AutonomousTester t = new AutonomousTester();
         // t.addDiagnosticTests();
