@@ -46,7 +46,7 @@ public class AlignToHatch extends Command {
 
         CVData[] targets = new CVData[]{target1, target2, target3};
 
-        if (Math.abs(Robot.oi.getWheel().getX()) < 0.2) {
+        if (Math.abs(Robot.oi.getWheel().getX()) < 0.1) {
             canSwitchTargets = true;
         }
 
@@ -62,7 +62,7 @@ public class AlignToHatch extends Command {
                 distance = targets[i].distance;
                 x = targets[i].x;
             }
-        } else if (Robot.oi.getWheel().getX() > 0.4 && canSwitchTargets) {
+        } else if (Robot.oi.getWheel().getX() > 0.2 && canSwitchTargets) {
             CVData closestRightTarget = null;
 
             for (CVData target : targets) {
