@@ -30,12 +30,18 @@ public class TeleopDrive extends Command {
     
 	public static boolean hasRaised = false;
 	
-	public boolean hasUnlatchedCargoMech = false;
+	public static boolean hasUnlatchedCargoMech = false;
 
 	Stack<Enum> eventStack;
 
-	public TeleopDrive() {
+	public static boolean hasCreatedButtons = false;
+
+	private boolean isAuto;
+
+	public TeleopDrive(boolean auto) {
 		requires(Robot.driveSubsystem);
+
+		this.isAuto = auto;
 
 		alignToHatch = new AlignToHatch();
 		
@@ -44,23 +50,44 @@ public class TeleopDrive extends Command {
 
 	@Override
 	protected void initialize() {
+		hasUnlatchedCargoMech = !isAuto;
+		Robot.roller.set(0);
+		Robot.cargo.setState(Robot.cargo.RELEASING);
+
+		if (hasCreatedButtons) return;
+
 		initializeElevatorButtons();
 		initializeArmButtons();
         initializeRawArmButtons();
-        Robot.roller.set(0);
 
         Robot.oi.getCVButton().whenPressed(new InstantCommand() {
             @Override
             protected void execute() {
 				if (!RobotMap.CV_RUNNING) return;
-
-				new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.START_CV, elevatorPower, armPower).start();
-                hasRaised = false;
+				
+				if (Robot.arm.getExecutingGoalPosition() == ArmPosition.STOW && isCVOperable()) {
+					new ElevatorArmMove(ElevatorPosition.HATCH_PICKUP, ArmPosition.START_CV, elevatorPower, armPower).start();
+				}
+				hasRaised = false;
             }
-        });
+		});
+		
+		hasCreatedButtons = true;
+	}
 
-
-		Robot.cargo.setState(Robot.cargo.RELEASING);
+	private static boolean isCVOperable() {
+		ElevatorPosition ePos = Robot.elevator.getExecutingGoalPosition();
+		
+		switch (ePos) {
+			case CARGO_LOW:
+				return false;
+			case CARGO_HIGH:
+				return false;
+			case HATCH_HIGH:
+				return false;
+			default:
+				return true;
+		}
 	}
 
 	@Override
@@ -141,7 +168,7 @@ public class TeleopDrive extends Command {
 		ArmPosition armPos = null;
 		switch (lastPressedPosition) {
 			case ZERO:
-				armPos = ArmPosition.ZERO;
+				armPos = ArmPosition.STOW;
 				break;
 			case HATCH_PICKUP:
 				armPos = ArmPosition.HATCH_PICKUP;
@@ -243,10 +270,13 @@ public class TeleopDrive extends Command {
 		Robot.oi.getReleaseElementButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
+				System.out.println("WHEN PRESSED ---------------");
 				if (!hasUnlatchedCargoMech) {
+					System.out.println("RELEASING CARGO MECH");
 					new ElevatorMove(ElevatorPosition.RELEASE_CARGO_MECH, false, elevatorPower).start();
 					hasUnlatchedCargoMech = true;
 				} else if (RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
+					System.out.println("NORMAL RELEASE ELEMENT");
 					new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, elevatorPower).start();
 				}
 			}
@@ -312,7 +342,7 @@ public class TeleopDrive extends Command {
 
         // Align To Hatch
 
-		if (RobotMap.CV_RUNNING && Robot.oi.getCVButton().get() && lastPressedPosition != null) {
+		if (RobotMap.CV_RUNNING && isCVOperable() && Robot.oi.getCVButton().get() && lastPressedPosition != null) {
             alignToHatch.move();
             // if (!hasMovedArm) {
             //     new ArmMove(ArmPosition.START_CV, armPower).start();
@@ -340,6 +370,12 @@ public class TeleopDrive extends Command {
 			// Deadband
 			if (Math.abs(throttleZ) > RobotMap.DEADBAND_MINIMUM_POWER) {
 				outputZ = throttleZ;
+			}
+
+			if (outputZ < 0) {
+				outputZ *= 1.5;
+
+				if (outputZ < -1) outputZ = -1;
 			}
 
 			if (Math.abs(wheelX) > RobotMap.DEADBAND_MINIMUM_TURN) {
