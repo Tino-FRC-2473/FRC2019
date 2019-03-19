@@ -28,7 +28,9 @@ public class TeleopDrive extends Command {
 	private Enum lastCargoEvent = null;
 	public static ElevatorPosition lastPressedPosition = ElevatorPosition.ZERO;
     
-    public static boolean hasRaised = false;
+	public static boolean hasRaised = false;
+	
+	public boolean hasUnlatchedCargoMech = false;
 
 	Stack<Enum> eventStack;
 
@@ -180,7 +182,10 @@ public class TeleopDrive extends Command {
 		Robot.oi.getElevatorPickupButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-                updateDialPosition();
+				updateDialPosition();
+				
+				if (!hasUnlatchedCargoMech) return;
+
 				if (!RobotMap.CV_RUNNING) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
@@ -192,7 +197,10 @@ public class TeleopDrive extends Command {
 		Robot.oi.getElevatorLowButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-                updateDialPosition();
+				updateDialPosition();
+				
+				if (!hasUnlatchedCargoMech) return;
+
                 if (!RobotMap.CV_RUNNING) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
@@ -204,7 +212,10 @@ public class TeleopDrive extends Command {
 		Robot.oi.getElevatorMidButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-                updateDialPosition();
+				updateDialPosition();
+				
+				if (!hasUnlatchedCargoMech) return;
+				
                 if (!RobotMap.CV_RUNNING) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
@@ -218,6 +229,9 @@ public class TeleopDrive extends Command {
 			@Override
 			protected void execute() {
                 updateDialPosition();
+				
+				if (!hasUnlatchedCargoMech) return;
+				
                 if (!RobotMap.CV_RUNNING) {
                     new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
                 } else {
@@ -229,8 +243,9 @@ public class TeleopDrive extends Command {
 		Robot.oi.getReleaseElementButton().whenPressed(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (lastPressedPosition == ElevatorPosition.ZERO) {
+				if (!hasUnlatchedCargoMech) {
 					new ElevatorMove(ElevatorPosition.RELEASE_CARGO_MECH, false, elevatorPower).start();
+					hasUnlatchedCargoMech = true;
 				} else if (RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
 					new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, elevatorPower).start();
 				}
@@ -240,7 +255,7 @@ public class TeleopDrive extends Command {
 		Robot.oi.getReleaseElementButton().whenReleased(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (lastPressedPosition != ElevatorPosition.ZERO && RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
+				if (hasUnlatchedCargoMech && RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
 					new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, elevatorPower).start();
 				}
 			}
@@ -329,6 +344,19 @@ public class TeleopDrive extends Command {
 
 			if (Math.abs(wheelX) > RobotMap.DEADBAND_MINIMUM_TURN) {
 				outputX = wheelX;
+			} else {
+				if (wheelX != 0) {
+					outputX = 0.1;
+				} else {
+					outputX = 0;
+				}
+			}
+
+			outputX *= 1.5;
+			if (outputX > 1) {
+				outputX = 1;
+			} else if (outputX < -1) {
+				outputX = -1;
 			}
 
 			Robot.driveSubsystem.teleopDrive(outputZ, outputX);
