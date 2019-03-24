@@ -160,11 +160,10 @@ public class AlignToHatch extends Command {
         isRunning = true;
 
         calculateTarget();
-        angle += 3;
-        if (distance == 99) return;
+        if (angle != -99) angle += 3;
 
         // Modify angle if we are scoring a hatch
-        if (RobotMap.SCORING_HATCH && distance > 35) {
+        if (RobotMap.SCORING_HATCH && distance > 35 && angle != -99) {
             double x1 = 29.75;
             double x2 = distance - x1;
             double h = distance * Math.tan(Math.toRadians(angle));

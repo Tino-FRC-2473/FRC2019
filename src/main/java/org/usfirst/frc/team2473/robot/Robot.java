@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
 
 		teleopDrive = new TeleopDrive(true); // ?
 
-		cvLight = new Relay(0);
+        cvLight = new Relay(0);
 		prefs = Preferences.getInstance();
 
 		try {
@@ -98,7 +98,12 @@ public class Robot extends TimedRobot {
 		UsbCamera frontCam = CameraServer.getInstance().startAutomaticCapture("Front Camera", 0);
 		frontCam.setBrightness(25);
 		frontCam.setFPS(15);
-		frontCam.setResolution(160, 120);
+        frontCam.setResolution(160, 120);
+        
+        UsbCamera armCam = CameraServer.getInstance().startAutomaticCapture("Arm Camera", 1);
+		armCam.setBrightness(25);
+		armCam.setFPS(15);
+		armCam.setResolution(160, 120);
 
 		m_visionThread = new Thread(() -> {
 
@@ -180,6 +185,7 @@ public class Robot extends TimedRobot {
 	public void autonomousPeriodic() {
         updateShuffleboardVisualizations();
         System.out.println(elevator.getEncoderTicks());
+        jetsonPort.printVisionAngles();
         jetsonPort.updateVisionValues();
 
 		// if (RobotMap.CV_RUNNING) {

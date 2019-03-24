@@ -213,11 +213,7 @@ public class TeleopDrive extends Command {
 				
 				if (!hasUnlatchedCargoMech) return;
 
-				if (!RobotMap.CV_RUNNING) {
-                    new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
-                } else {
-                    new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
-                }
+                new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
 			}
 		});
 
@@ -228,11 +224,7 @@ public class TeleopDrive extends Command {
 				
 				if (!hasUnlatchedCargoMech) return;
 
-                if (!RobotMap.CV_RUNNING) {
-                    new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
-                } else {
-                    new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
-                }
+                new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
 			}
 		});
 
@@ -242,12 +234,8 @@ public class TeleopDrive extends Command {
 				updateDialPosition();
 				
 				if (!hasUnlatchedCargoMech) return;
-				
-                if (!RobotMap.CV_RUNNING) {
-                    new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
-                } else {
-                    new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
-                }
+                
+                new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
                 
             }
 		});
@@ -258,12 +246,8 @@ public class TeleopDrive extends Command {
                 updateDialPosition();
 				
 				if (!hasUnlatchedCargoMech) return;
-				
-                if (!RobotMap.CV_RUNNING) {
-                    new ElevatorArmMove(lastPressedPosition, getArmPositionFromElevator(), elevatorPower, armPower).start();
-                } else {
-                    new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
-                }
+                
+                new ElevatorArmMove(ElevatorPosition.HATCH_LOW, ArmPosition.STOW, elevatorPower, armPower).start();
 			}
 		});
 
@@ -275,7 +259,7 @@ public class TeleopDrive extends Command {
 					System.out.println("RELEASING CARGO MECH");
 					new ElevatorMove(ElevatorPosition.RELEASE_CARGO_MECH, false, elevatorPower).start();
 					hasUnlatchedCargoMech = true;
-				} else if (RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
+				} else if (RobotMap.SCORING_HATCH) {
 					System.out.println("NORMAL RELEASE ELEMENT");
 					new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), true, elevatorPower).start();
 				}
@@ -285,8 +269,18 @@ public class TeleopDrive extends Command {
 		Robot.oi.getReleaseElementButton().whenReleased(new InstantCommand() {
 			@Override
 			protected void execute() {
-				if (hasUnlatchedCargoMech && RobotMap.CV_RUNNING && RobotMap.SCORING_HATCH) {
+				if (hasUnlatchedCargoMech && RobotMap.SCORING_HATCH) {
 					new ElevatorMove(Robot.elevator.getExecutingGoalPosition(), false, elevatorPower).start();
+				}
+			}
+		});
+
+		Robot.oi.getArmResetButton().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				if (Robot.elevator.getEncoderTicks() < 100) {
+					new ArmZero().start();
+					new ElevatorZero().start();
 				}
 			}
 		});
@@ -372,28 +366,45 @@ public class TeleopDrive extends Command {
 				outputZ = throttleZ;
 			}
 
-			if (outputZ < 0) {
-				outputZ *= 1.5;
+			if (outputZ > 0) { // backwards
+				outputZ *= 1.25;
 
 				if (outputZ < -1) outputZ = -1;
-			}
-
-			if (Math.abs(wheelX) > RobotMap.DEADBAND_MINIMUM_TURN) {
-				outputX = wheelX;
 			} else {
-				if (wheelX != 0) {
-					outputX = 0.1;
-				} else {
-					outputX = 0;
-				}
+                outputZ *= 1.25;
+
+				if (outputZ > 1) outputZ = 1;
+			}
+			
+
+			// if (Math.abs(wheelX) > RobotMap.DEADBAND_MINIMUM_TURN) {
+			// 	outputX = wheelX;
+			// } else {
+			// 	if (wheelX!=0) {
+			// 		outputX = 0.1;
+			// 	} else {
+			// 		outputX = 0;
+			// 	}
+			// }
+
+			// outputX *= 1.5;
+
+			// if (outputX > 1) {
+			// 	outputX = 1;
+			// } else if (outputX < -1) {
+			// 	outputX = -1;
+			// }
+			int sign = (wheelX < 0) ? -1 : 1;
+			wheelX = Math.abs(wheelX);
+
+			if (wheelX < RobotMap.DEADBAND_MINIMUM_TURN) {
+				outputX = 0;
+			} else {
+				double M = (1-RobotMap.MINIMUM_DRIVE_TURN_POWER)/(1-RobotMap.DEADBAND_MINIMUM_TURN);
+				outputX = M * (wheelX - RobotMap.DEADBAND_MINIMUM_TURN) + RobotMap.MINIMUM_DRIVE_TURN_POWER;
 			}
 
-			outputX *= 1.5;
-			if (outputX > 1) {
-				outputX = 1;
-			} else if (outputX < -1) {
-				outputX = -1;
-			}
+			outputX *= sign;
 
 			Robot.driveSubsystem.teleopDrive(outputZ, outputX);
 		}
