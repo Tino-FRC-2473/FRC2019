@@ -14,6 +14,7 @@ public class OI {
 	private JoystickButton armDown;
 
     private JoystickButton cvButton;
+    private JoystickButton armResetButton;
 	private Joystick buttonPanel;
 	
     private JoystickButton shiftElevatorButton;
@@ -41,6 +42,7 @@ public class OI {
 		armDown = new JoystickButton(wheel, 3);
         
 		cvButton = new JoystickButton(wheel, 6);
+		armResetButton = new JoystickButton(wheel, 5);
 		
 		buttonPanel = new Joystick(3);
 
@@ -96,6 +98,10 @@ public class OI {
 
 	public JoystickButton getCVButton() {
 		return cvButton;
+	}
+	
+	public JoystickButton getArmResetButton() {
+		return armResetButton;
     }
 
 	public JoystickButton getElevatorPickupButton() {

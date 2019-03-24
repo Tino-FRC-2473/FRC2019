@@ -42,7 +42,8 @@ public class RobotMap {
     public static boolean CV_RUNNING = false;
 	
 	public static double DEADBAND_MINIMUM_POWER = 0.2;
-	public static double DEADBAND_MINIMUM_TURN = 0.1;
+    public static double DEADBAND_MINIMUM_TURN = 0.1;
+    public static double MINIMUM_DRIVE_TURN_POWER = 0.3;
 
 
     public static final int CV_LIGHT = 1;
