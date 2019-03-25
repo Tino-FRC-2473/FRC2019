@@ -13,7 +13,7 @@ import java.util.Collections;
  */
 public class AlignToHatch extends Command {
 
-    double normalPower = 0.2;
+    double normalPower = 0.3;
     double turnPower = 0.08;
     double lowPower = 0.1;
     private int angle = 0;
@@ -23,6 +23,8 @@ public class AlignToHatch extends Command {
     private boolean canSwitchTargets = true;
 
     public static boolean isRunning = false;
+
+    public static boolean isCurrentlyTurning = true;
 
     public AlignToHatch() {
         requires(Robot.driveSubsystem);
@@ -37,6 +39,7 @@ public class AlignToHatch extends Command {
         angle = -99;
         distance = -99;
         isRunning = false;
+        isCurrentlyTurning = true;
     }
 
     public void calculateTarget() {
@@ -162,6 +165,19 @@ public class AlignToHatch extends Command {
         calculateTarget();
         if (angle != -99) angle += 3;
 
+
+        /*
+
+        --------------
+            TODO    
+        --------------
+
+        I don't think we need the first two clauses in the below if statement,
+        since during CV the arm is always deployed out, and I don't think
+        we need a distance check.
+
+        */
+
         // Modify angle if we are scoring a hatch
         if (RobotMap.SCORING_HATCH && distance > 35 && angle != -99) {
             double x1 = 29.75;
@@ -172,25 +188,47 @@ public class AlignToHatch extends Command {
         }
 
 
-        double thresholdAngle = 2;
-        double thresholdDistance = 50;
+        double thresholdAngle = 1;
 
         System.out.println(distance);
+        
         if (Robot.elevator.isMoving() || Robot.arm.isMoving()) {
             Robot.driveSubsystem.stopMotors();
-        } else if ((TeleopDrive.hasRaised) || distance < thresholdDistance || angle == -99) { // keep going in this direction
-            Robot.driveSubsystem.drive(0.1, 0.1);
-        } else if (Math.abs(angle) < thresholdAngle) {
-            Robot.driveSubsystem.drive(normalPower, normalPower);
+        } else if (isCurrentlyTurning) {
+            double power = RobotMap.MINIMUM_DRIVE_TURN_POWER + 0.05*Math.abs(angle);
+            if (angle > thresholdAngle) {
+                Robot.driveSubsystem.drive(power, -power);
+            } else if (angle < -thresholdAngle) {
+                Robot.driveSubsystem.drive(-power, power);
+            } else {
+                isCurrentlyTurning = false;
+            }
         } else {
-            if (angle > thresholdAngle) { // Robot is to the left of the target
-                Robot.driveSubsystem.drive(turnPower + lowPower, lowPower);
-            } else { // Robot is to the right of the target
-                Robot.driveSubsystem.drive(lowPower, turnPower + lowPower);
+            if (angle > 0) {
+                Robot.driveSubsystem.drive(normalPower + 0.02, normalPower);
+            } else if (angle < 0) {
+                Robot.driveSubsystem.drive(normalPower, normalPower + 0.02);
+            } else {
+                Robot.driveSubsystem.drive(normalPower, normalPower);
             }
         }
+        
+        
+        // if (Robot.elevator.isMoving() || Robot.arm.isMoving()) {
+        //     Robot.driveSubsystem.stopMotors();
+        // } else if ((TeleopDrive.hasRaised) || distance < thresholdDistance || angle == -99) { // keep going in this direction
+        //     Robot.driveSubsystem.drive(0.1, 0.1);
+        // } else if (Math.abs(angle) < thresholdAngle) {
+        //     Robot.driveSubsystem.drive(normalPower, normalPower);
+        // } else {
+        //     if (angle > thresholdAngle) { // Robot is to the left of the target
+        //         Robot.driveSubsystem.drive(turnPower + lowPower, lowPower);
+        //     } else { // Robot is to the right of the target
+        //         Robot.driveSubsystem.drive(lowPower, turnPower + lowPower);
+        //     }
+        // }
 
-        angle -=3;
+        if (angle != -99) angle -=3;
         
     }
 
