@@ -13,7 +13,7 @@ import java.util.Collections;
  */
 public class AlignToHatch extends Command {
 
-    double normalPower = 0.3;
+    double normalPower = 0.25;
     double turnPower = 0.08;
     double lowPower = 0.1;
     private int angle = 0;
@@ -163,7 +163,7 @@ public class AlignToHatch extends Command {
         isRunning = true;
 
         calculateTarget();
-        if (angle != -99) angle += 3;
+        // if (angle != -99) angle += 3;
 
 
         /*
@@ -187,29 +187,46 @@ public class AlignToHatch extends Command {
             angle = (int) Math.toDegrees(Math.atan(h/x2));
         }
 
-
+        double turnThresholdAngle = 3;
         double thresholdAngle = 1;
 
         System.out.println(distance);
         
-        if (Robot.elevator.isMoving() || Robot.arm.isMoving()) {
+        if (angle == -99 || Robot.elevator.isMoving() || Robot.arm.isMoving()) {
             Robot.driveSubsystem.stopMotors();
         } else if (isCurrentlyTurning) {
-            double power = RobotMap.MINIMUM_DRIVE_TURN_POWER + 0.05*Math.abs(angle);
-            if (angle > thresholdAngle) {
+            double power = 0.03*Math.abs(angle);
+            double maxTurn = 0.15;
+            if (power > maxTurn) power = maxTurn;
+            if (power < -maxTurn) power = -maxTurn;
+
+            System.out.println("POWER:     -------   " + power);
+            
+            if (angle > turnThresholdAngle) {
                 Robot.driveSubsystem.drive(power, -power);
-            } else if (angle < -thresholdAngle) {
+            } else if (angle < -turnThresholdAngle) {
                 Robot.driveSubsystem.drive(-power, power);
             } else {
                 isCurrentlyTurning = false;
             }
         } else {
-            if (angle > 0) {
-                Robot.driveSubsystem.drive(normalPower + 0.02, normalPower);
-            } else if (angle < 0) {
-                Robot.driveSubsystem.drive(normalPower, normalPower + 0.02);
+
+            double tempPower = normalPower;
+            double addedPower = 0.05;
+            if (distance < 55) {
+                tempPower = 0.15;
+                addedPower = 0.025;
+            }
+
+            if (angle > thresholdAngle) {
+                System.out.println("angle > 0");
+                Robot.driveSubsystem.drive(tempPower + addedPower, tempPower);
+            } else if (angle < -thresholdAngle) {
+                System.out.println("angle < 0");
+                Robot.driveSubsystem.drive(tempPower, tempPower + addedPower);
             } else {
-                Robot.driveSubsystem.drive(normalPower, normalPower);
+                System.out.println("angle = 0");
+                Robot.driveSubsystem.drive(tempPower, tempPower);
             }
         }
         
@@ -228,7 +245,7 @@ public class AlignToHatch extends Command {
         //     }
         // }
 
-        if (angle != -99) angle -=3;
+        // if (angle != -99) angle -=3;
         
     }
 
