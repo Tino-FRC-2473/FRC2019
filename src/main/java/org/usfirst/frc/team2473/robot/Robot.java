@@ -68,6 +68,7 @@ public class Robot extends TimedRobot {
     // NetworkTableEntry distance3 = Shuffleboard.getTab("Drive").add("Distance 3", 0).getEntry();
     
     NetworkTableEntry manualControlEntry = Shuffleboard.getTab("Drive").add("Manual Control", RobotMap.MANUAL_CONTROL).getEntry();
+    NetworkTableEntry canRunCVEntry = Shuffleboard.getTab("Drive").add("Can Run CV?", false).getEntry();
     NetworkTableEntry currentPositionEntry = Shuffleboard.getTab("Drive").add("Current Position", ElevatorPosition.ZERO.toString()).getEntry();
     NetworkTableEntry lastPressedEntry = Shuffleboard.getTab("Drive").add("Last Pressed Position", getLastPressedPositionString()).getEntry();
     NetworkTableEntry cargoSecuredEntry = Shuffleboard.getTab("Drive").add("Cargo Secured", false).getEntry();
@@ -256,7 +257,12 @@ public class Robot extends TimedRobot {
         // distance3.setDouble(jetsonPort.getVisionDistance3());
 
         currentPositionEntry.setString(getCurrentPositionString());
-
+        
+        boolean target1 = jetsonPort.getVisionAngle1() != -99;
+        boolean target2 = jetsonPort.getVisionAngle2() != -99;
+        boolean target3 = jetsonPort.getVisionAngle3() != -99;
+        canRunCVEntry.setBoolean(target1 || target2 || target3);
+        
         cargoSecuredEntry.setBoolean(Robot.cargo.getState() == Robot.cargo.CAPTURING);
 		
         lastPressedEntry.setString(getLastPressedPositionString());
