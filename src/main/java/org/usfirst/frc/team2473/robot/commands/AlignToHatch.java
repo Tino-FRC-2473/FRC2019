@@ -13,7 +13,7 @@ import java.util.Collections;
  */
 public class AlignToHatch extends Command {
 
-    double normalPower = 0.25;
+    double normalPower = 0.3;
     double turnPower = 0.08;
     double lowPower = 0.1;
     private int angle = 0;
@@ -192,11 +192,11 @@ public class AlignToHatch extends Command {
 
         System.out.println(distance);
         
-        if (angle == -99 || Robot.elevator.isMoving() || Robot.arm.isMoving()) {
+        if (angle == -99 || Robot.elevator.isMoving() || Robot.arm.isMoving() || distance < 50) {
             Robot.driveSubsystem.stopMotors();
         } else if (isCurrentlyTurning) {
             double power = 0.03*Math.abs(angle);
-            double maxTurn = 0.15;
+            double maxTurn = 0.165;
             if (power > maxTurn) power = maxTurn;
             if (power < -maxTurn) power = -maxTurn;
 
@@ -213,10 +213,10 @@ public class AlignToHatch extends Command {
 
             double tempPower = normalPower;
             double addedPower = 0.05;
-            if (distance < 55) {
-                tempPower = 0.15;
-                addedPower = 0.025;
-            }
+            // if (distance < 55) {
+            //     tempPower = 0.15;
+            //     addedPower = 0.025;
+            // }
 
             if (angle > thresholdAngle) {
                 System.out.println("angle > 0");
