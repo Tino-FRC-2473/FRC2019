@@ -265,7 +265,7 @@ public class Robot extends TimedRobot {
         boolean target1 = a1 != -99;
         boolean target2 = a2 != -99;
         boolean target3 = a3 != -99;
-        canRunCVEntry.setBoolean((target1 || target2 || target3) && !(a1 == 0 && a2 == 0 && a3 == 0));
+        canRunCVEntry.setBoolean(RobotMap.CV_RUNNING && (target1 || target2 || target3) && !(a1 == 0 && a2 == 0 && a3 == 0));
         
         cargoSecuredEntry.setBoolean(Robot.cargo.getState() == Robot.cargo.CAPTURING);
 		
