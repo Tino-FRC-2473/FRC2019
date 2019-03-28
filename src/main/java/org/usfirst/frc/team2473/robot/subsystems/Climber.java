@@ -30,11 +30,11 @@ public class Climber extends Subsystem {
     }
 
     public void setFrontDeploy() {
-        frontTalon.set(1);
+        frontTalon.set(-1);
     }
 
     public void setFrontRetract() {
-        frontTalon.set(-1);
+        frontTalon.set(1);
     }
 
     public void setFrontStop() {
