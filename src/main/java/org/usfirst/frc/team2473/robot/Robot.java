@@ -20,6 +20,7 @@ import org.usfirst.frc.team2473.robot.commands.ElevatorZero;
 import org.usfirst.frc.team2473.robot.commands.TeleopDrive;
 import org.usfirst.frc.team2473.robot.subsystems.Arm;
 import org.usfirst.frc.team2473.robot.subsystems.Cargo;
+import org.usfirst.frc.team2473.robot.subsystems.Climber;
 import org.usfirst.frc.team2473.robot.subsystems.Elevator;
 import org.usfirst.frc.team2473.robot.subsystems.Roller;
 import org.usfirst.frc.team2473.robot.subsystems.SparkDriveSubsystem;
@@ -47,6 +48,7 @@ public class Robot extends TimedRobot {
     public static Elevator elevator = Elevator.getInstance();
     public static Arm arm = Arm.getInstance();
     public static Roller roller = Roller.getInstance();
+    public static Climber climber = Climber.getInstance();
 
 	TeleopDrive teleopDrive;
 	public static Relay cvLight;

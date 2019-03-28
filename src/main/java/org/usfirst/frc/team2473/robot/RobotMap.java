@@ -20,6 +20,10 @@ public class RobotMap {
     public static final int TALON_ARM = 12;
     public static final int TALON_ROLLER = 13;
 
+    public static final int TALON_FRONT_CLIMB = 15;
+    public static final int TALON_BACK_CLIMB = 16;
+    
+
     public static final int K_ELEVATOR_RAMP_DOWN = 5;
     public static final int K_ELEVATOR_RAMP_UP = 10;
     

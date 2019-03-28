@@ -58,7 +58,8 @@ public class TeleopDrive extends Command {
 
 		initializeElevatorButtons();
 		initializeArmButtons();
-        initializeRawArmButtons();
+		initializeRawArmButtons();
+		initializeClimbButtons();
 
         Robot.oi.getCVButton().whenPressed(new InstantCommand() {
             @Override
@@ -196,6 +197,76 @@ public class TeleopDrive extends Command {
 				break;
 		}
 		return armPos;
+	}
+
+	public void initializeClimbButtons() {
+		Robot.oi.getClimbFrontDeploy().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				Robot.climber.setFrontDeploy();
+			}
+		});
+
+		Robot.oi.getClimbFrontDeploy().whenReleased(new InstantCommand() {
+			@Override
+			protected void execute() {
+				Robot.climber.setFrontStop();
+			}
+		});
+
+
+
+
+		Robot.oi.getClimbFrontRetract().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				Robot.climber.setFrontRetract();
+			}
+		});
+
+		Robot.oi.getClimbFrontRetract().whenReleased(new InstantCommand() {
+			@Override
+			protected void execute() {
+				Robot.climber.setFrontStop();
+			}
+		});
+
+
+		
+
+		Robot.oi.getClimbBackDeploy().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				Robot.climber.setBackDeploy();
+			}
+		});
+
+		Robot.oi.getClimbBackDeploy().whenReleased(new InstantCommand() {
+			@Override
+			protected void execute() {
+				Robot.climber.setBackStop();
+			}
+		});
+
+
+		
+
+		Robot.oi.getClimbBackRetract().whenPressed(new InstantCommand() {
+			@Override
+			protected void execute() {
+				Robot.climber.setBackRetract();
+			}
+		});
+
+		Robot.oi.getClimbBackRetract().whenReleased(new InstantCommand() {
+			@Override
+			protected void execute() {
+				Robot.climber.setBackStop();
+			}
+		});
+
+
+		
 	}
     
     public void initializeElevatorButtons() {

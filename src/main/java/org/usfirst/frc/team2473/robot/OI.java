@@ -13,6 +13,11 @@ public class OI {
 	private JoystickButton armUp;
 	private JoystickButton armDown;
 
+	private JoystickButton climbFrontDeploy;
+	private JoystickButton climbFrontRetract;
+	private JoystickButton climbBackDeploy;
+	private JoystickButton climbBackRetract;
+
     private JoystickButton cvButton;
     private JoystickButton armResetButton;
 	private Joystick buttonPanel;
@@ -43,6 +48,11 @@ public class OI {
         
 		cvButton = new JoystickButton(wheel, 6);
 		armResetButton = new JoystickButton(wheel, 5);
+
+		climbFrontDeploy = new JoystickButton(wheel, 0);
+		climbFrontRetract = new JoystickButton(wheel, 0);
+		climbBackDeploy = new JoystickButton(wheel, 0);
+		climbBackRetract = new JoystickButton(wheel, 0);
 		
 		buttonPanel = new Joystick(3);
 
@@ -150,5 +160,21 @@ public class OI {
 
 	public JoystickButton getArmDownButton() {
 		return armDown;
+	}
+
+	public JoystickButton getClimbFrontDeploy() {
+		return climbFrontDeploy;
+	}
+
+	public JoystickButton getClimbFrontRetract() {
+		return climbFrontRetract;
+	}
+
+	public JoystickButton getClimbBackDeploy() {
+		return climbBackDeploy;
+	}
+
+	public JoystickButton getClimbBackRetract() {
+		return climbBackRetract;
 	}
 }
