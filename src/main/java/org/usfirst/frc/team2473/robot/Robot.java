@@ -185,8 +185,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousPeriodic() {
         updateShuffleboardVisualizations();
-        System.out.println(elevator.getEncoderTicks());
-        jetsonPort.printVisionAngles();
+        // System.out.println(elevator.getEncoderTicks());
+        // jetsonPort.printVisionAngles();
         jetsonPort.updateVisionValues();
 
 		// if (RobotMap.CV_RUNNING) {

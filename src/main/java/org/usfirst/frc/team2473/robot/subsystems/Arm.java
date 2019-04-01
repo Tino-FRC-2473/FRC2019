@@ -20,7 +20,7 @@ public class Arm extends Subsystem {
     public double lastNonZeroPower = 0;
 
     public enum ArmPosition {
-        ZERO(0), STOW(-10), START_CV(-43.3), CARGO_LOW(-19.6904), CARGO_MID(-19.6904), CARGO_HIGH(-19.6904), CARGO_PICKUP(-39), CARGO_GROUND(-48), HATCH_LOW(-44.69), HATCH_MID(-44.69), HATCH_HIGH(-39.4), HATCH_PICKUP(-43.3);
+        ZERO(0), STOW(-10), START_CV(-43.3), CARGO_LOW(-19.6904), CARGO_MID(-19.6904), CARGO_HIGH(-19.6904), CARGO_PICKUP(-10), CARGO_GROUND(-48), HATCH_LOW(-44.69), HATCH_MID(-44.69), HATCH_HIGH(-39.4), HATCH_PICKUP(-43.3);
 
         private final double value;
 

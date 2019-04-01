@@ -366,16 +366,10 @@ public class TeleopDrive extends Command {
 				outputZ = throttleZ;
 			}
 
-			if (outputZ > 0) { // backwards
-				outputZ *= 1.25;
+			outputZ *= 1.25;
 
-				if (outputZ < -1) outputZ = -1;
-			} else {
-                outputZ *= 1.25;
-
-				if (outputZ > 1) outputZ = 1;
-			}
-			
+			if (outputZ < -1) outputZ = -1;
+			if (outputZ > 1) outputZ = 1;
 
 			// if (Math.abs(wheelX) > RobotMap.DEADBAND_MINIMUM_TURN) {
 			// 	outputX = wheelX;

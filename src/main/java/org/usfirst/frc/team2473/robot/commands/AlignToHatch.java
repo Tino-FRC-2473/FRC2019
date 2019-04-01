@@ -195,8 +195,8 @@ public class AlignToHatch extends Command {
         if (angle == -99 || Robot.elevator.isMoving() || Robot.arm.isMoving() || distance < 50) {
             Robot.driveSubsystem.stopMotors();
         } else if (isCurrentlyTurning) {
-            double power = 0.03*Math.abs(angle);
-            double maxTurn = 0.165;
+            double power = 0.045*Math.abs(angle);
+            double maxTurn = 0.2;
             if (power > maxTurn) power = maxTurn;
             if (power < -maxTurn) power = -maxTurn;
 
